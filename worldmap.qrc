@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>worldmap.png</file>
+    </qresource>
+</RCC>

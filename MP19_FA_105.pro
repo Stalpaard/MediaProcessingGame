@@ -19,6 +19,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp
 
+
+
 HEADERS += \
     mainwindow.h \
     world.h \
@@ -36,3 +38,15 @@ unix:!macx: LIBS += -L$$PWD/./ -lworld
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
+
+DISTFILES += \
+    worldmap.png
+
+
+unix:!macx: LIBS += -L$$PWD/../Media_Processing_Final/world_v3/ -lworld
+
+INCLUDEPATH += $$PWD/../Media_Processing_Final/world_v3
+DEPENDPATH += $$PWD/../Media_Processing_Final/world_v3
+
+RESOURCES += \
+    worldmap.qrc
