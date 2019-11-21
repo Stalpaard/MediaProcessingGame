@@ -12,5 +12,6 @@ int main(int argc, char *argv[])
     epicweerelt.createWorld(":/img/worldmap.png",1,1);
     w.show();
 
+
     return a.exec();
 }
