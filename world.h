@@ -24,6 +24,7 @@ public:
 
 protected:
     int xPos;
+
     int yPos;
     float value;
 };
