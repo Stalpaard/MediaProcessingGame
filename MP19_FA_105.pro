@@ -17,8 +17,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     graphicalview.cpp \
-    main.cpp \
     mainwindow.cpp \
+    Node.cpp \
+    aStar.cpp \
     modelworld.cpp
 
 
@@ -26,6 +27,7 @@ SOURCES += \
 HEADERS += \
     graphicalview.h \
     mainwindow.h \
+    Node.h \
     modelworld.h \
     world.h \
     world_global.h
