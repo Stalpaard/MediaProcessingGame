@@ -2,9 +2,10 @@
 
 #include <QGraphicsView>
 
-GraphicalView::GraphicalView(std::shared_ptr<QGraphicsScene> scene)
+GraphicalView::GraphicalView(QGraphicsScene* scene)
 {
-    setScene(scene.get());
+    setScene(scene);
+    setViewportUpdateMode(ViewportUpdateMode::SmartViewportUpdate);
 }
 
 
@@ -12,16 +13,21 @@ GraphicalView::GraphicalView(std::shared_ptr<QGraphicsScene> scene)
 void GraphicalView::keyPressEvent(QKeyEvent* keyEvent){
     switch(keyEvent->key()){
     case Qt::Key_Up:
-        emit movementKeyPressed(ModelWorld::Direction::UP);
+        emit movementKeyPressed(Direction::UP);
         break;
     case Qt::Key_Down:
-        emit movementKeyPressed(ModelWorld::Direction::DOWN);
+        emit movementKeyPressed(Direction::DOWN);
         break;
     case Qt::Key_Left:
-        emit movementKeyPressed(ModelWorld::Direction::LEFT);
+        emit movementKeyPressed(Direction::LEFT);
         break;
     case Qt::Key_Right:
-        emit movementKeyPressed(ModelWorld::Direction::RIGHT);
+        emit movementKeyPressed(Direction::RIGHT);
         break;
     }
+}
+
+void GraphicalView::updateImage(){
+    fitInView(sceneRect(),Qt::KeepAspectRatio);
+    //update();
 }

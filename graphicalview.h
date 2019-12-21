@@ -3,17 +3,19 @@
 
 #include <QGraphicsView>
 #include <QKeyEvent>
-#include "modelworld.h"
+#include "direction.h"
 
 class GraphicalView : public QGraphicsView
 {
     Q_OBJECT
 private:
-    void keyPressEvent(QKeyEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 public:
-    GraphicalView(std::shared_ptr<QGraphicsScene> scene);
+    GraphicalView(QGraphicsScene* scene);
 signals:
-    void movementKeyPressed(ModelWorld::Direction direction);
+    void movementKeyPressed(Direction direction);
+public slots:
+    void updateImage();
 };
 
 #endif // GRAPHICALVIEW_H
