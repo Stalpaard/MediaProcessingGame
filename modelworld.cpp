@@ -131,16 +131,18 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                 }
                 else std::cout << "Healthpack encountered!" << newHealth << std::endl;
 
-                protagonist->setHealth(newHealth);
                 if(newHealth > 0){
+                    protagonist->setHealth(newHealth);
                     occupant->setDefeated(true);
                     if(occupantStrength > 0){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
-                        protagonist->setEnergy(100.0f);
+                        protagonist->setEnergy(100.0f); //Defeating enemies restores energy
                     }
                     else destinationTile->setOccupied(false);
                 }
                 else{
+                    protagonist->setHealth(0);
+                    emit endGame();
                     //end game
                 }
             }
@@ -179,4 +181,5 @@ void ModelWorld::poisonTile(float value, int x, int y){
             }
         }
     }
+    emit updateView();
 }

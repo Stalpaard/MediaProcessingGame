@@ -16,10 +16,12 @@ class ModelWorld : public QObject
 
 public:
     ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks);
-    const std::vector<std::shared_ptr<Tile>>& getTiles() const{return tiles;}
-    const std::vector<std::shared_ptr<Enemy>>& getEnemies() const{return enemies;}
-    const std::vector<std::shared_ptr<Tile>>& getHealthPacks() const{return healthPacks;}
-    const std::shared_ptr<Protagonist>& getProtagonist() const{return protagonist;}
+    std::vector<std::shared_ptr<Tile>> getTiles() const{return tiles;}
+    std::vector<std::shared_ptr<Enemy>> getEnemies() const{return enemies;}
+    std::vector<std::shared_ptr<Tile>> getHealthPacks() const{return healthPacks;}
+    std::shared_ptr<Protagonist> getProtagonist() const{return protagonist;}
+    std::vector<std::vector<std::shared_ptr<MyTile>>> get2DRepresentation() const{return representation_2D;}
+
 
 private:
     void createWorld(QString filename, unsigned int nrOfEnemies, unsigned int nrOfHealthpacks);
@@ -46,6 +48,7 @@ public slots:
     void poisonTile(float value, int x, int y);
 signals:
     void updateView();
+    void endGame();
 
 };
 
