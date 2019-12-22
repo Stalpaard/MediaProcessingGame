@@ -22,14 +22,13 @@ ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, s
 
 void ModelWorld::initializeCollections(){
     //Initializing tiles and mytiles collections
-    std::vector<std::unique_ptr<Tile>> tempTiles = world.getTiles();
-    for(unsigned long i = 0; i < tempTiles.size(); i++){
-        std::shared_ptr<Tile> tempTile = std::move(tempTiles.at(i));
-        myTiles.push_back(std::make_shared<MyTile>(tempTile->getXPos(),tempTile->getYPos(),tempTile->getValue()));
-        tiles.push_back(std::move(tempTile));
+    for(auto& tile : world.getTiles()){
+        myTiles.push_back(std::make_shared<MyTile>(tile->getXPos(),tile->getYPos(),tile->getValue()));
     }
+
     //creating 2D representation
     std::vector<std::shared_ptr<MyTile>> row;
+
     for(int i = 0; i < rows ; i++){
         row.clear();
         for(int j = 0; j < columns; j++){
@@ -40,29 +39,23 @@ void ModelWorld::initializeCollections(){
     }
 
     //Initializing healthpacks collections
-    std::vector<std::unique_ptr<Tile>> tempHealthpacks = world.getHealthPacks();
-    for(unsigned long i = 0; i < tempHealthpacks.size(); i++){
-        std::shared_ptr<Tile> newHealthPack = std::move(tempHealthpacks.at(i));
-        int xPos = newHealthPack->getXPos();
-        int yPos = newHealthPack->getYPos();
-        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -newHealthPack->getValue(),healthpack_image.get());
+    for(auto& healthPack : world.getHealthPacks()){
+        int xPos = healthPack->getXPos();
+        int yPos = healthPack->getYPos();
+        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -healthPack->getValue(),healthpack_image.get());
         representation_2D.at(yPos).at(xPos)->setOccupant(tempMyHealthPack);
-        healthPacks.push_back(std::move(newHealthPack));
         myHealthPacks.push_back(tempMyHealthPack);
     }
 
-
     //Initializing enemies collections (Penemy/enemy)
-    std::vector<std::unique_ptr<Enemy>> tempEnemies = world.getEnemies();
-    for(unsigned long i = 0; i < tempEnemies.size(); i++){
-        std::shared_ptr<Enemy> newEnemy = std::move(tempEnemies.at(i));
-        int xPos = newEnemy->getXPos();
-        int yPos = newEnemy->getYPos();
-        std::string type = typeid(*(newEnemy.get())).name();
+    for(auto& enemy : world.getEnemies()){
+        int xPos = enemy->getXPos();
+        int yPos = enemy->getYPos();
+        std::string type = typeid(*(enemy.get())).name();
 
         if(type.find("PEnemy") != std::string::npos){
             std::cout << "PEnemy created at " << xPos <<","<<yPos<< std::endl;
-            std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,newEnemy->getValue(),penemy_image.get());
+            std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,enemy->getValue(),penemy_image.get());
             QObject::connect(
                 newMyPEnemy.get(), &MyPEnemy::poisonLevelUpdated,
                 this, &ModelWorld::poisonTile
@@ -71,13 +64,11 @@ void ModelWorld::initializeCollections(){
             myPEnemies.push_back(newMyPEnemy);
         }
         else{
-            std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,newEnemy->getValue(),enemy_image.get());
+            std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,enemy->getValue(),enemy_image.get());
             representation_2D.at(yPos).at(xPos)->setOccupant(tempMyEnemy);
             myEnemies.push_back(tempMyEnemy);
         }
-        enemies.push_back(std::move(newEnemy));
     }
-
     //Initializing protagonist
     std::unique_ptr<Protagonist> world_protagonist = world.getProtagonist();
     protagonist = std::move(world_protagonist);
