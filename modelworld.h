@@ -18,7 +18,7 @@ class ModelWorld : public QObject
     Q_OBJECT
 
 public:
-    ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks);
+    ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location);
     std::vector<std::shared_ptr<Tile>> getTiles() const{return tiles;}
     std::vector<std::shared_ptr<Enemy>> getEnemies() const{return enemies;}
     std::vector<std::shared_ptr<MyEnemy>> getMyEnemies() const{return myEnemies;}

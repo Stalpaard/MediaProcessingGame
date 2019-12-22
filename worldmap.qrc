@@ -7,5 +7,6 @@
         <file>Xenemy.png</file>
         <file>healthpack.png</file>
         <file>gravestone.png</file>
+        <file>worldmap4.png</file>
     </qresource>
 </RCC>

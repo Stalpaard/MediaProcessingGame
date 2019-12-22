@@ -19,20 +19,23 @@ MyGraphicsScene::MyGraphicsScene(std::string location, std::shared_ptr<ModelWorl
 }
 
 void MyGraphicsScene::updateImageData(){
+    //change QImage data according to changed conditions and generate new pixmap item
     clear();
     QImage scaled_copy = getScaled();
-    drawProtagonist(data_model->getProtagonist()->getXPos(), data_model->getProtagonist()->getYPos(), scaled_copy);
-    drawExtras(scaled_copy);
-    //change QImage data according to changed conditions and generate new pixmap item
+    drawEntities(scaled_copy);
     emit imageDataUpdated();
     addItem(new QGraphicsPixmapItem(QPixmap::fromImage(scaled_copy)));
 }
 
-void MyGraphicsScene::drawExtras(QImage &source){
-    QPainter painter;
-    painter.begin(&source);
+void MyGraphicsScene::drawEntities(QImage &source){
     QImage* image;
+    QPainter painter;
+
+    painter.begin(&source);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+    painter.drawImage(6+(32*data_model->getProtagonist()->getXPos()),1+(32*data_model->getProtagonist()->getYPos()),*(protagonist_image.get()));
+
     for (auto &enemy : data_model->getMyEnemies()) // access by reference to avoid copying
     {
         if(enemy->getDefeated()) image = gravestone_image.get();
@@ -64,12 +67,4 @@ void MyGraphicsScene::poisonLevelChanged(std::vector<std::tuple<int,int>> tuples
     }
     else scaled = std::make_shared<QImage>(world_data->scaled(world_data->width()*32, world_data->height()*32, Qt::AspectRatioMode::KeepAspectRatio));
     updateImageData();
-}
-
-void MyGraphicsScene::drawProtagonist(int x, int y, QImage& source){
-    QPainter painter;
-    painter.begin(&source);
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter.drawImage(6+(32*x),1+(32*y),*(protagonist_image.get()));
-    painter.end();
 }

@@ -2,17 +2,10 @@
 #include "iostream"
 
 const int poisonRange {1};
-/*
-ModelWorld* ModelWorld::getInstance(unsigned int enemies, unsigned int healthpacks){
-    if(instance == nullptr){
-        instance = std::make_shared<ModelWorld>(enemies,healthpacks);
-    }
-    return instance.get();
-}
-*/
-ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks)
+
+ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location)
 { 
-    world.createWorld(":img/worldmap.png",nrOfEnemies,nrOfHealthpacks);
+    world.createWorld(location.c_str(),nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
     columns = world.getCols();
     initializeCollections();
@@ -178,7 +171,7 @@ void ModelWorld::poisonTile(float value, int x, int y){
         else protagonist->setHealth(0);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
-
+    //Set poison levels and pass tuples to views
     unsigned long startY = y-poisonRange;
     unsigned long startX = x-poisonRange;
     std::vector<std::tuple<int,int>> tuples;

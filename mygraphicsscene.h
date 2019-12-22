@@ -28,8 +28,7 @@ private:
     std::shared_ptr<QImage> healthpack_image;
     std::shared_ptr<QImage> gravestone_image;
 
-    void drawProtagonist(int x, int y, QImage& source);
-    void drawExtras(QImage& source);
+    void drawEntities(QImage& source);
     void checkForPoison();
 
 signals:
