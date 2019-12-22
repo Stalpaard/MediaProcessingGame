@@ -14,8 +14,6 @@ public:
     GraphicalView(QGraphicsScene* scene);
 signals:
     void movementKeyPressed(Direction direction);
-public slots:
-    void updateImage();
 };
 
 #endif // GRAPHICALVIEW_H

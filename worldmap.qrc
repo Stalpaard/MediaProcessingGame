@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/img">
         <file>worldmap.png</file>
+        <file>protagonist.png</file>
+        <file>enemy.png</file>
+        <file>Penemy.png</file>
+        <file>Xenemy.png</file>
+        <file>healthpack.png</file>
+        <file>gravestone.png</file>
     </qresource>
 </RCC>
