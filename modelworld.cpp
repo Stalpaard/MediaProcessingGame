@@ -223,7 +223,7 @@ void ModelWorld::poisonTile(float value, int x, int y){
         if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
-    //Set poison levels and pass tuples to views
+    //Set poison levels and pass tuples of (int,int) to views
     unsigned long startY = y-poisonRange;
     unsigned long startX = x-poisonRange;
     std::vector<std::tuple<int,int>> tuples;
