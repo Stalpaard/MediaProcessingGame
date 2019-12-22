@@ -33,7 +33,7 @@ public:
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
 
-    std::vector<std::vector<std::shared_ptr<MyTile>>>get2DRepresentationAroundProtagonistWithRange(int range);
+    std::vector<std::vector<std::shared_ptr<MyTile>>>get2DRepresentationAroundPointWithRange(int x, int y, int range);
 
 
 private:

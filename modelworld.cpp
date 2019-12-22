@@ -86,9 +86,7 @@ void ModelWorld::initializeCollections(){
 }
 
 
-std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::get2DRepresentationAroundProtagonistWithRange(int range){
-    int xPos = protagonist->getXPos();
-    int yPos = protagonist->getYPos();
+std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::get2DRepresentationAroundPointWithRange(int xPos, int yPos, int range){
     std::vector<std::vector<std::shared_ptr<MyTile>>> result;
 
     int firstYpos = yPos - range;

@@ -36,7 +36,7 @@ void MyGraphicsScene::drawEntities(QImage &source, int protagonistX, int protago
     int xDistance, yDistance;
 
     //Get 2D representation of the world in range of the protagonist ('window' into the data)
-    std::vector<std::vector<std::shared_ptr<MyTile>>> areaOfInterest = data_model->get2DRepresentationAroundProtagonistWithRange(fieldOfView+1);
+    std::vector<std::vector<std::shared_ptr<MyTile>>> areaOfInterest = data_model->get2DRepresentationAroundPointWithRange(protagonistX,protagonistY,fieldOfView+1);
 
     painter.begin(&source);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
