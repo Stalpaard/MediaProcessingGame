@@ -33,7 +33,7 @@ public:
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
 
-    std::vector<std::vector<std::shared_ptr<MyTile>>>get2DRepresentationAroundPointWithRange(int x, int y, int range);
+    std::vector<std::vector<std::shared_ptr<MyTile>>>make2DRepresentationAroundPointWithRange(int x, int y, int range);
 
 
 private:
@@ -73,10 +73,16 @@ public slots:
     void protagonistMoveRequested(Direction direction);
     void poisonTile(float value, int x, int y);
     void zoomRequested(bool in_out);
+    void broadcastHealthChange(int h);
+    void broadcastEnergyChange(int e);
+    void cameraCenterChangeRequested(int x, int y);
 signals:
     void updateView();
+    void protagonistHealthChanged(int h);
+    void protagonistEnergyChanged(int e);
     void endGame();
-    void poisonVisualChange(std::vector<std::tuple<int,int>>, float level);
+    void changeCameraCenter(int x, int y);
+    void poisonVisualChange(std::vector<std::tuple<int,int>>& area, float level);
 
 };
 

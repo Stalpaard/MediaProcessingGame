@@ -20,14 +20,17 @@ private:
     QImage original_world_data;
     std::shared_ptr<ModelWorld> data_model;
 
-    void drawEntities(QImage& source, int protagonistX, int protagonistY, int fieldOfView);
-    QImage calculateScaled(int protagonistX, int protagonistY, int fieldOfView);
+    void drawEntities(QImage& source, int centerX, int centerY, int range);
+    QImage calculateScaled(int centerX, int centerY, int range);
+
+    std::tuple<int,int> camera_center;
 signals:
     void updateFitScene();
 
 public slots:
+    void updateCameraCenter(int x, int y);
     void updateImageData();
-    void poisonLevelChanged(std::vector<std::tuple<int,int>>, float level);
+    void poisonLevelChanged(std::vector<std::tuple<int,int>>& area, float level);
 };
 
 #endif // MYGRAPHICSSCENE_H

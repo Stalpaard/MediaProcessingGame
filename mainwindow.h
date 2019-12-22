@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <iostream>
-#include <QGraphicsView>
+#include "graphicalview.h"
 #include <QKeyEvent>
 
 QT_BEGIN_NAMESPACE
@@ -15,9 +15,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr, QGraphicsView* graphicalView = nullptr);
-    ~MainWindow();
-    void set2DGraphicsView(QGraphicsView newView);
+    MainWindow(QWidget *parent = nullptr, GraphicalView* graphicalView = nullptr);
+    ~MainWindow() override;
 
 private slots:
     void on_actionOpen_world_triggered();
@@ -29,16 +28,23 @@ private slots:
     void on_actionZoomIn_triggered();
     void on_actionZoomOut_triggered();
 
+    void on_actiontextView_triggered();
+
+public slots:
+    void protagonistHealthUpdate(int h);
+    void protagonistEnergyUpdate(int e);
+    void gameEnd();
+
 signals:
     void zoom(bool in_out);
 
 private:
 
     virtual void resizeEvent(QResizeEvent*) override;
-    //std::vector<QWidget*> visualizations;
 
     Ui::MainWindow *ui;
+    bool game_ended;
 
-    QGraphicsView* graphicalView;
+    GraphicalView* graphicalView;
 #endif // MAINWINDOW_H
 };

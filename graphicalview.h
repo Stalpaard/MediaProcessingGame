@@ -10,6 +10,7 @@ class GraphicalView : public QGraphicsView
     Q_OBJECT
 private:
     virtual void keyPressEvent(QKeyEvent *event) override;
+    bool gameEnded;
 public:
     GraphicalView(QGraphicsScene* scene);
 signals:
@@ -17,6 +18,7 @@ signals:
 
 public slots:
     void fitScene();
+    void gameEnd();
 };
 
 #endif // GRAPHICALVIEW_H

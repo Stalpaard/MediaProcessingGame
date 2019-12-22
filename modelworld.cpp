@@ -82,11 +82,23 @@ void ModelWorld::initializeCollections(){
     std::unique_ptr<Protagonist> world_protagonist = world.getProtagonist();
     protagonist = std::move(world_protagonist);
     myProtagonist = std::make_shared<MyProtagonist>(protagonist_image.get());
+    QObject::connect(
+        myProtagonist.get(), &MyProtagonist::posChanged,
+        this, &ModelWorld::cameraCenterChangeRequested
+    );
+    QObject::connect(
+        myProtagonist.get(), &MyProtagonist::healthChanged,
+        this, &ModelWorld::broadcastHealthChange
+    );
+    QObject::connect(
+        myProtagonist.get(), &MyProtagonist::energyChanged,
+        this, &ModelWorld::broadcastEnergyChange
+    );
 
 }
 
 
-std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::get2DRepresentationAroundPointWithRange(int xPos, int yPos, int range){
+std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentationAroundPointWithRange(int xPos, int yPos, int range){
     std::vector<std::vector<std::shared_ptr<MyTile>>> result;
 
     int firstYpos = yPos - range;
@@ -120,10 +132,22 @@ void ModelWorld::zoomRequested(bool in_out){
     emit updateView();
 }
 
+void ModelWorld::cameraCenterChangeRequested(int x, int y){
+    emit changeCameraCenter(x,y);
+}
+
+void ModelWorld::broadcastHealthChange(int h){
+    emit protagonistHealthChanged(h);
+    if(h <= 0) emit endGame();
+}
+
+void ModelWorld::broadcastEnergyChange(int e){
+    emit protagonistEnergyChanged(e);
+}
 
 void ModelWorld::protagonistMoveRequested(Direction direction){
-    int currentX = protagonist->getXPos();
-    int currentY = protagonist->getYPos();
+    int currentX = myProtagonist->getXPos();
+    int currentY = myProtagonist->getYPos();
     int newX=currentX;
     int newY=currentY;
     bool Xchanged = false;
@@ -157,46 +181,40 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
     }
 
     if(Xchanged || Ychanged){
-        float currentEnergy = protagonist->getEnergy();
+        float currentEnergy = myProtagonist->getEnergy();
         MyTile* destinationTile = representation_2D.at(newY).at(newX).get();
         float costOfMovement = destinationTile->getValue();
         if(currentEnergy > costOfMovement){
-            protagonist->setEnergy(currentEnergy-costOfMovement);
-            if(Xchanged) protagonist->setXPos(newX);
-            else if(Ychanged) protagonist->setYPos(newY);
-            std::cout << "Protagonist has new position: x = " << protagonist->getXPos() << " / y = " << protagonist->getYPos() << std::endl;
+            myProtagonist->setEnergy(currentEnergy-costOfMovement);
+            if(Xchanged) myProtagonist->setXPos(newX);
+            else if(Ychanged) myProtagonist->setYPos(newY);
+            std::cout << "Protagonist has new position: x = " << myProtagonist->getXPos() << " / y = " << myProtagonist->getYPos() << std::endl;
 
             //if occupied, check damage/heal, if not defeated, change special tile image, if defeated, end game
             if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->getDefeated())){
                 MyEnemy* occupant = destinationTile->getOccupant();
                 float occupantStrength = occupant->getValue();
-                float newHealth = protagonist->getHealth() - occupantStrength;
-                if(occupant->getValue() > 0){
-                    std::cout << "Enemy encountered!" << newHealth << std::endl;
-                }
-                else std::cout << "Healthpack encountered!" << newHealth << std::endl;
-
+                float newHealth = myProtagonist->getHealth() - occupantStrength;
                 if(newHealth > 0){
-                    protagonist->setHealth(newHealth);
+                    if(newHealth > 100) myProtagonist->setHealth(100);
+                    else myProtagonist->setHealth(newHealth);
                     occupant->setDefeated(true);
 
                     if(occupantStrength > 0){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
                         occupant->setRepresentation(gravestone_image.get());
-                        protagonist->setEnergy(100.0f); //Defeating enemies restores energy
+                        myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
                     }
                     else destinationTile->setOccupied(false);
                 }
                 else{
-                    protagonist->setHealth(0);
-                    emit endGame();
-                    //end game
+                    myProtagonist->setHealth(0);
                 }
             }
             else{
                 std::cout << "Tile not occupied!\n" << std::endl;
             }
-            std::cout << "Current health: " << protagonist->getHealth() << " Current energy: " << protagonist->getEnergy() << "\n" << std::endl;
+            std::cout << "Current health: " << myProtagonist->getHealth() << " Current energy: " << myProtagonist->getEnergy() << "\n" << std::endl;
 
             emit updateView();
         }
@@ -210,17 +228,17 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
 
 void ModelWorld::poisonTile(float value, int x, int y){
     //Protagonist operation first because first time no poison after defeating enemy
-    float protagonistPoison = representation_2D.at(protagonist->getYPos()).at(protagonist->getXPos())->getPoisonLevel();
+    float protagonistPoison = representation_2D.at(myProtagonist->getYPos()).at(myProtagonist->getXPos())->getPoisonLevel();
     if(protagonistPoison > 0){
-        float newHealth = protagonist->getHealth()-protagonistPoison;
-        if(newHealth > 0) protagonist->setHealth(protagonist->getHealth()-protagonistPoison);
-        else protagonist->setHealth(0);
+        float newHealth = myProtagonist->getHealth()-protagonistPoison;
+        if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
     //Set poison levels and pass tuples to views
     unsigned long startY = y-poisonRange;
     unsigned long startX = x-poisonRange;
     std::vector<std::tuple<int,int>> tuples;
+
     for(int i = 0; i <= 2*poisonRange; i++){
         for(int j = 0; j <= 2*poisonRange; j++){
             int tileX = startX+i;
