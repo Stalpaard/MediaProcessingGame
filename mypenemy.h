@@ -12,7 +12,7 @@ public:
     ~MyPEnemy() override = default;
     float getPoisonLevel() const;
     void setPoisonLevel(float value);
-    virtual void deathAction() override{std::cout << "Enemy at x=" << xPos << " y=" << yPos << " was a PEnemy!" << std::endl; poison();}
+    virtual void deathAction() override{poison();}
 
 
 public slots:

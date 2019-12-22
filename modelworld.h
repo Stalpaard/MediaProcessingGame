@@ -10,6 +10,7 @@
 #include "myhealthpack.h"
 #include "myprotagonist.h"
 #include "mypenemy.h"
+#include "myxenemy.h"
 #include <string>
 
 
@@ -38,15 +39,19 @@ private:
     void moveProtagonist(Direction direction);
     void addOccupantToTile(std::shared_ptr<Tile> newEnemy);
 
+    std::tuple<int,int> generateNewEnemyPosition();
+
     World world;
     int rows;
     int columns;
+    int nrOfXenemies;
     int fieldOfView;
 
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
     std::vector<std::shared_ptr<MyEnemy>> myEnemies;
     std::vector<std::shared_ptr<MyPEnemy>> myPEnemies;
+    std::vector<std::shared_ptr<MyXEnemy>> myXEnemies;
     std::vector<std::shared_ptr<MyHealthpack>> myHealthPacks;
 
     std::shared_ptr<QImage> protagonist_image;
@@ -68,6 +73,7 @@ public slots:
     void broadcastHealthChange(int h);
     void broadcastEnergyChange(int e);
     void cameraCenterChangeRequested(int x, int y);
+    void respawnEnemy(int x, int y);
 signals:
     void updateView();
     void protagonistHealthChanged(int h);

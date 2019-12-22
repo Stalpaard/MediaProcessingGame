@@ -6,6 +6,8 @@ const int default_fieldOfView = 5;
 
 ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location)
 { 
+    nrOfXenemies = qrand() % nrOfEnemies;
+    nrOfEnemies = nrOfEnemies - nrOfXenemies;
     world.createWorld(location.c_str(),nrOfEnemies,nrOfHealthpacks);
     protagonist_image = std::make_shared<QImage>(":img/protagonist.png");
     enemy_image = std::make_shared<QImage>(":img/enemy.png");
@@ -35,7 +37,7 @@ void ModelWorld::initializeCollections(){
             int index = i*columns+j;
             row.push_back(myTiles.at(index));
         }
-        representation_2D.push_back(std::move(row));
+        representation_2D.push_back(row);
     }
 
     //Initializing healthpacks collections
@@ -47,14 +49,14 @@ void ModelWorld::initializeCollections(){
         myHealthPacks.push_back(tempMyHealthPack);
     }
 
-    //Initializing enemies collections (Penemy/enemy)
+    //Initializing enemies collections (Penemy/enemy/Xenemy)
+
     for(auto& enemy : world.getEnemies()){
         int xPos = enemy->getXPos();
         int yPos = enemy->getYPos();
         std::string type = typeid(*(enemy.get())).name();
 
         if(type.find("PEnemy") != std::string::npos){
-            std::cout << "PEnemy created at " << xPos <<","<<yPos<< std::endl;
             std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,enemy->getValue(),penemy_image.get());
             QObject::connect(
                 newMyPEnemy.get(), &MyPEnemy::poisonLevelUpdated,
@@ -84,6 +86,34 @@ void ModelWorld::initializeCollections(){
         this, &ModelWorld::broadcastEnergyChange
     );
 
+    while(myXEnemies.size() < nrOfXenemies){
+        std::tuple<int,int> position = generateNewEnemyPosition();
+        int xPos = std::get<0>(position);
+        int yPos = std::get<1>(position);
+        std::shared_ptr<MyTile> tile = representation_2D.at(yPos).at(xPos);
+        std::shared_ptr<MyXEnemy> tempMyXenemy = std::make_shared<MyXEnemy>(xPos,yPos,qrand()%100,xenemy_image.get());
+        QObject::connect(
+            tempMyXenemy.get(), &MyXEnemy::respawn,
+            this, &ModelWorld::respawnEnemy
+        );
+        tile->setOccupant(tempMyXenemy);
+        myXEnemies.push_back(tempMyXenemy);
+    }
+
+}
+
+std::tuple<int,int> ModelWorld::generateNewEnemyPosition(){ //kan ook nog met oude collectie geïmplementeerd worden..
+    bool valid = false;
+    while(!valid){
+        int newX = qrand()%columns;
+        int newY = qrand()%rows;
+        if(newX == myProtagonist->getXPos() && newY == myProtagonist->getYPos()) continue;
+        std::shared_ptr<MyTile> tile = representation_2D.at(newY).at(newX);
+        if(!(tile->isOccupied()) && tile->getValue() != std::numeric_limits<float>::infinity()){
+            valid = true;
+            return std::make_tuple(newX,newY);
+        }
+    }
 }
 
 
@@ -115,6 +145,20 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 
 
 //SLOTS
+
+void ModelWorld::respawnEnemy(int x, int y){
+    std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
+    tile->setOccupied(false);
+    std::shared_ptr<MyEnemy> enemy = tile->getOccupant();
+    enemy->setRepresentation(xenemy_image.get()); //zombie
+    std::tuple<int,int> newPosition = generateNewEnemyPosition();
+    int newX = std::get<0>(newPosition);
+    int newY = std::get<1>(newPosition);
+    enemy->setXPos(newX);
+    enemy->setYPos(newY);
+    representation_2D.at(newY).at(newX)->setOccupant(enemy);
+}
+
 void ModelWorld::zoomRequested(bool in_out){
     if(in_out) setFieldOfView(fieldOfView-1);
     else setFieldOfView(fieldOfView+1);
@@ -171,7 +215,7 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
 
     if(Xchanged || Ychanged){
         float currentEnergy = myProtagonist->getEnergy();
-        MyTile* destinationTile = representation_2D.at(newY).at(newX).get();
+        std::shared_ptr<MyTile> destinationTile = representation_2D.at(newY).at(newX);
         float costOfMovement = destinationTile->getValue();
         if(currentEnergy > costOfMovement){
             myProtagonist->setEnergy(currentEnergy-costOfMovement);
@@ -181,30 +225,23 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
 
             //if occupied, check damage/heal, if not defeated, change special tile image, if defeated, end game
             if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->getDefeated())){
-                MyEnemy* occupant = destinationTile->getOccupant();
+                std::shared_ptr<MyEnemy> occupant = destinationTile->getOccupant();
                 float occupantStrength = occupant->getValue();
                 float newHealth = myProtagonist->getHealth() - occupantStrength;
                 if(newHealth > 0){
                     if(newHealth > 100) myProtagonist->setHealth(100);
                     else myProtagonist->setHealth(newHealth);
-                    occupant->setDefeated(true);
-
                     if(occupantStrength > 0){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
                         occupant->setRepresentation(gravestone_image.get());
                         myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
                     }
                     else destinationTile->setOccupied(false);
+                    occupant->setDefeated(true);
                 }
-                else{
-                    myProtagonist->setHealth(0);
-                }
-            }
-            else{
-                std::cout << "Tile not occupied!\n" << std::endl;
+                else myProtagonist->setHealth(0);
             }
             std::cout << "Current health: " << myProtagonist->getHealth() << " Current energy: " << myProtagonist->getEnergy() << "\n" << std::endl;
-
             emit updateView();
         }
         else {
@@ -221,6 +258,7 @@ void ModelWorld::poisonTile(float value, int x, int y){
     if(protagonistPoison > 0){
         float newHealth = myProtagonist->getHealth()-protagonistPoison;
         if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
+        else myProtagonist->setHealth(0);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
     //Set poison levels and pass tuples of (int,int) to views
