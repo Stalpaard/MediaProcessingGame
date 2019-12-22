@@ -20,13 +20,9 @@ class ModelWorld : public QObject
 
 public:
     ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location);
-    std::vector<std::shared_ptr<Tile>> getTiles() const{return tiles;}
-    std::vector<std::shared_ptr<Enemy>> getEnemies() const{return enemies;}
     std::vector<std::shared_ptr<MyEnemy>> getMyEnemies() const{return myEnemies;}
     std::vector<std::shared_ptr<MyPEnemy>> getMyPEnemies() const{return myPEnemies;}
-    std::vector<std::shared_ptr<Tile>> getHealthPacks() const{return healthPacks;}
     std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
-    Protagonist* getProtagonist() const{return protagonist.get();}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>> get2DRepresentation() const{return representation_2D;}
 
@@ -48,12 +44,9 @@ private:
     int fieldOfView;
 
 
-    std::vector<std::shared_ptr<Tile>> tiles;
     std::vector<std::shared_ptr<MyTile>> myTiles;
-    std::vector<std::shared_ptr<Enemy>> enemies;
     std::vector<std::shared_ptr<MyEnemy>> myEnemies;
     std::vector<std::shared_ptr<MyPEnemy>> myPEnemies;
-    std::vector<std::shared_ptr<Tile>> healthPacks;
     std::vector<std::shared_ptr<MyHealthpack>> myHealthPacks;
 
     std::shared_ptr<QImage> protagonist_image;
@@ -64,7 +57,6 @@ private:
     std::shared_ptr<QImage> gravestone_image;
 
 
-    std::shared_ptr<Protagonist> protagonist;
     std::shared_ptr<MyProtagonist> myProtagonist;
 
     std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
