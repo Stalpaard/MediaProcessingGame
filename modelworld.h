@@ -8,6 +8,7 @@
 #include "mytile.h"
 #include "myenemy.h"
 #include "myhealthpack.h"
+#include "myprotagonist.h"
 #include "mypenemy.h"
 #include <string>
 
@@ -25,8 +26,14 @@ public:
     std::vector<std::shared_ptr<MyPEnemy>> getMyPEnemies() const{return myPEnemies;}
     std::vector<std::shared_ptr<Tile>> getHealthPacks() const{return healthPacks;}
     std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
-    std::shared_ptr<Protagonist> getProtagonist() const{return protagonist;}
+    Protagonist* getProtagonist() const{return protagonist.get();}
+    MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>> get2DRepresentation() const{return representation_2D;}
+
+    int getFieldOfView() const{return fieldOfView;}
+    void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
+
+    std::vector<std::vector<std::shared_ptr<MyTile>>>get2DRepresentationAroundProtagonistWithRange(int range);
 
 
 private:
@@ -38,6 +45,7 @@ private:
     World world;
     int rows;
     int columns;
+    int fieldOfView;
 
 
     std::vector<std::shared_ptr<Tile>> tiles;
@@ -48,14 +56,23 @@ private:
     std::vector<std::shared_ptr<Tile>> healthPacks;
     std::vector<std::shared_ptr<MyHealthpack>> myHealthPacks;
 
+    std::shared_ptr<QImage> protagonist_image;
+    std::shared_ptr<QImage> enemy_image;
+    std::shared_ptr<QImage> penemy_image;
+    std::shared_ptr<QImage> xenemy_image;
+    std::shared_ptr<QImage> healthpack_image;
+    std::shared_ptr<QImage> gravestone_image;
+
 
     std::shared_ptr<Protagonist> protagonist;
+    std::shared_ptr<MyProtagonist> myProtagonist;
 
     std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
 
 public slots:
     void protagonistMoveRequested(Direction direction);
     void poisonTile(float value, int x, int y);
+    void zoomRequested(bool in_out);
 signals:
     void updateView();
     void endGame();

@@ -13,14 +13,14 @@ class WORLDSHARED_EXPORT Tile
 public:
     Tile(int xPosition, int yPosition, float tileWeight);
     virtual ~Tile() =default;
-    float getValue() const {return value;};
-    void setValue(float newValue) {value = newValue;};
-    int getXPos() const {return xPos;};
-    int getYPos() const {return yPos;};
-    void setXPos(int newPos) {xPos = newPos;};
+    float getValue() const {return value;}
+    void setValue(float newValue) {value = newValue;}
+    int getXPos() const {return xPos;}
+    int getYPos() const {return yPos;}
+    void setXPos(int newPos) {xPos = newPos;}
     void setYPos(int newPos) {yPos = newPos;}
     bool operator== (const Tile & other) const
-        {return (getXPos() == other.getXPos()) && (getYPos() == other.getYPos());};
+        {return (getXPos() == other.getXPos()) && (getYPos() == other.getYPos());}
 
 protected:
     int xPos;
@@ -35,7 +35,7 @@ public:
     Enemy(int xPosition, int yPosition, float strength);
     ~Enemy() override = default;
     bool getDefeated() const {return defeated;}
-    void setDefeated(bool value) {defeated = value; if (defeated) emit dead();};
+    void setDefeated(bool value) {defeated = value; if (defeated) emit dead();}
 
   signals:
     void dead();
@@ -71,7 +71,7 @@ public:
     void setXPos(int newPos) {xPos = newPos; emit posChanged(xPos, yPos);}
     void setYPos(int newPos) {yPos = newPos; emit posChanged(xPos, yPos);}
     void setPos(int newX, int newY) {if (xPos != newX || yPos != newY) {xPos = newX; yPos = newY; emit posChanged(xPos, yPos);}}
-    float getHealth() const {return health;};
+    float getHealth() const {return health;}
     void setHealth(float value) {health = value; emit healthChanged(static_cast<int>(health));}
 
     float getEnergy() const {return energy;}
@@ -97,8 +97,8 @@ public:
     std::vector<std::unique_ptr<Enemy>> getEnemies();
     std::vector<std::unique_ptr<Tile>> getHealthPacks();
     std::unique_ptr<Protagonist> getProtagonist();
-    int getRows() const {return rows;};
-    int getCols() const {return cols;};
+    int getRows() const {return rows;}
+    int getCols() const {return cols;}
 
 private:
     int rows, cols;

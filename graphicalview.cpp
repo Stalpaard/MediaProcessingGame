@@ -26,3 +26,8 @@ void GraphicalView::keyPressEvent(QKeyEvent* keyEvent){
         break;
     }
 }
+
+void GraphicalView::fitScene(){
+    fitInView(sceneRect(),Qt::KeepAspectRatio);
+}
+

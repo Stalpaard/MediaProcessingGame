@@ -26,6 +26,12 @@ private slots:
 
     void on_actiongraphicalView_triggered();
 
+    void on_actionZoomIn_triggered();
+    void on_actionZoomOut_triggered();
+
+signals:
+    void zoom(bool in_out);
+
 private:
 
     virtual void resizeEvent(QResizeEvent*) override;

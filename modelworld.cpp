@@ -2,12 +2,20 @@
 #include "iostream"
 
 const int poisonRange {1};
+const int default_fieldOfView = 5;
 
 ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location)
 { 
     world.createWorld(location.c_str(),nrOfEnemies,nrOfHealthpacks);
+    protagonist_image = std::make_shared<QImage>(":img/protagonist.png");
+    enemy_image = std::make_shared<QImage>(":img/enemy.png");
+    penemy_image = std::make_shared<QImage>(":img/Penemy.png");
+    xenemy_image = std::make_shared<QImage>(":img/Xenemy.png");
+    gravestone_image = std::make_shared<QImage>(":img/gravestone.png");
+    healthpack_image = std::make_shared<QImage>(":img/healthpack.png");
     rows = world.getRows();
     columns = world.getCols();
+    fieldOfView = default_fieldOfView;
     initializeCollections();
 
 }
@@ -37,7 +45,7 @@ void ModelWorld::initializeCollections(){
         std::shared_ptr<Tile> newHealthPack = std::move(tempHealthpacks.at(i));
         int xPos = newHealthPack->getXPos();
         int yPos = newHealthPack->getYPos();
-        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -newHealthPack->getValue());
+        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -newHealthPack->getValue(),healthpack_image.get());
         representation_2D.at(yPos).at(xPos)->setOccupant(tempMyHealthPack);
         healthPacks.push_back(std::move(newHealthPack));
         myHealthPacks.push_back(tempMyHealthPack);
@@ -54,7 +62,7 @@ void ModelWorld::initializeCollections(){
 
         if(type.find("PEnemy") != std::string::npos){
             std::cout << "PEnemy created at " << xPos <<","<<yPos<< std::endl;
-            std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,newEnemy->getValue());
+            std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,newEnemy->getValue(),penemy_image.get());
             QObject::connect(
                 newMyPEnemy.get(), &MyPEnemy::poisonLevelUpdated,
                 this, &ModelWorld::poisonTile
@@ -63,7 +71,7 @@ void ModelWorld::initializeCollections(){
             myPEnemies.push_back(newMyPEnemy);
         }
         else{
-            std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,newEnemy->getValue());
+            std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,newEnemy->getValue(),enemy_image.get());
             representation_2D.at(yPos).at(xPos)->setOccupant(tempMyEnemy);
             myEnemies.push_back(tempMyEnemy);
         }
@@ -73,10 +81,48 @@ void ModelWorld::initializeCollections(){
     //Initializing protagonist
     std::unique_ptr<Protagonist> world_protagonist = world.getProtagonist();
     protagonist = std::move(world_protagonist);
+    myProtagonist = std::make_shared<MyProtagonist>(protagonist_image.get());
 
 }
 
+
+std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::get2DRepresentationAroundProtagonistWithRange(int range){
+    int xPos = protagonist->getXPos();
+    int yPos = protagonist->getYPos();
+    std::vector<std::vector<std::shared_ptr<MyTile>>> result;
+
+    int firstYpos = yPos - range;
+    int lastYpos = yPos + range;
+    int firstXpos = xPos - range;
+    int lastXpos = xPos + range;
+
+    if(firstYpos < 0) firstYpos = 0;
+    if(lastYpos > rows) lastYpos = rows;
+    if(firstXpos < 0) firstXpos = 0;
+    if(lastXpos > columns) lastXpos = columns;
+
+    auto firstY = representation_2D.begin() + firstYpos;
+    auto lastY = representation_2D.begin() + lastYpos;
+
+    std::vector<std::vector<std::shared_ptr<MyTile>>> ySlice(firstY,lastY);
+
+    for(auto& row : ySlice){
+        auto firstX = row.begin() + firstXpos;
+        auto lastX = row.begin() + lastXpos;
+        result.push_back(std::vector<std::shared_ptr<MyTile>>(firstX,lastX));
+    }
+    return result;
+}
+
+
 //SLOTS
+void ModelWorld::zoomRequested(bool in_out){
+    if(in_out) setFieldOfView(fieldOfView-1);
+    else setFieldOfView(fieldOfView+1);
+    emit updateView();
+}
+
+
 void ModelWorld::protagonistMoveRequested(Direction direction){
     int currentX = protagonist->getXPos();
     int currentY = protagonist->getYPos();
@@ -123,8 +169,8 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
             std::cout << "Protagonist has new position: x = " << protagonist->getXPos() << " / y = " << protagonist->getYPos() << std::endl;
 
             //if occupied, check damage/heal, if not defeated, change special tile image, if defeated, end game
-            if(destinationTile->isOccupied()){
-                MyEnemy* occupant = destinationTile->getOccupant().get();
+            if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->getDefeated())){
+                MyEnemy* occupant = destinationTile->getOccupant();
                 float occupantStrength = occupant->getValue();
                 float newHealth = protagonist->getHealth() - occupantStrength;
                 if(occupant->getValue() > 0){
@@ -135,11 +181,13 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                 if(newHealth > 0){
                     protagonist->setHealth(newHealth);
                     occupant->setDefeated(true);
+
                     if(occupantStrength > 0){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
+                        occupant->setRepresentation(gravestone_image.get());
                         protagonist->setEnergy(100.0f); //Defeating enemies restores energy
                     }
-                    destinationTile->setOccupied(false);
+                    else destinationTile->setOccupied(false);
                 }
                 else{
                     protagonist->setHealth(0);

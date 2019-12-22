@@ -13,26 +13,17 @@ class MyGraphicsScene : public QGraphicsScene
 public:
     ~MyGraphicsScene() override = default;
     MyGraphicsScene(std::string location, std::shared_ptr<ModelWorld> model);
-    QImage getScaled() const {return *(scaled.get());}
     QImage getWorldData() const {return *(world_data.get());}
 
 private:
     std::shared_ptr<QImage> world_data;
-    std::shared_ptr<QImage> scaled;
+    QImage original_world_data;
     std::shared_ptr<ModelWorld> data_model;
 
-    std::shared_ptr<QImage> protagonist_image;
-    std::shared_ptr<QImage> enemy_image;
-    std::shared_ptr<QImage> penemy_image;
-    std::shared_ptr<QImage> xenemy_image;
-    std::shared_ptr<QImage> healthpack_image;
-    std::shared_ptr<QImage> gravestone_image;
-
-    void drawEntities(QImage& source);
-    void checkForPoison();
-
+    void drawEntities(QImage& source, int protagonistX, int protagonistY, int fieldOfView);
+    QImage calculateScaled(int protagonistX, int protagonistY, int fieldOfView);
 signals:
-    void imageDataUpdated();
+    void updateFitScene();
 
 public slots:
     void updateImageData();

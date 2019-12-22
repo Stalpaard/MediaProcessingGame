@@ -5,8 +5,10 @@ MainWindow::MainWindow(QWidget *parent, QGraphicsView *graphicalView)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    //ui->setupUi(this);
     this->graphicalView = graphicalView;
+    //ui->viewWidget = this->graphicalView;
+    ui->setupUi(this);
     setCentralWidget(graphicalView);
 }
 
@@ -35,4 +37,14 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
    QMainWindow::resizeEvent(event);
    graphicalView->fitInView(graphicalView->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void MainWindow::on_actionZoomIn_triggered()
+{
+    emit zoom(true);
+}
+
+void MainWindow::on_actionZoomOut_triggered()
+{
+    emit zoom(false);
 }

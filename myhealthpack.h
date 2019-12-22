@@ -7,7 +7,7 @@
 class MyHealthpack : public MyEnemy
 {
 public:
-    MyHealthpack(int xPosition, int yPosition, float health);
+    MyHealthpack(int xPosition, int yPosition, float health, QImage* representation);
 };
 
 #endif // MYHEALTHPACK_H

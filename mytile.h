@@ -10,7 +10,7 @@ public:
     MyTile(int xPosition, int yPosition, float tileWeight);
     bool isOccupied() const{return occupied;}
     void setOccupied(bool newvalue){occupied = newvalue;}
-    std::shared_ptr<MyEnemy> getOccupant() const{return occupant;}
+    MyEnemy* getOccupant() const{return occupant.get();}
     void setOccupant(std::shared_ptr<MyEnemy> newOccupant);
     float getPoisonLevel() const{return poisonLevel;}
     void setPoisonLevel(float newvalue){poisonLevel = newvalue;}

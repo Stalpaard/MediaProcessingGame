@@ -6,15 +6,63 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
-    <height>586</height>
+    <width>870</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout"/>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="mainLayout">
+      <item>
+       <layout class="QVBoxLayout" name="barLayout">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <item>
+         <widget class="QProgressBar" name="healthBar">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="value">
+           <number>24</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="energyBar">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="value">
+           <number>24</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QWidget" name="viewWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -22,7 +70,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>797</width>
+     <width>870</width>
      <height>22</height>
     </rect>
    </property>
@@ -47,6 +95,8 @@
    </attribute>
    <addaction name="actiongraphicalView"/>
    <addaction name="actiontextView"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
   </widget>
   <action name="actionOpen_world">
    <property name="text">
@@ -66,6 +116,16 @@
   <action name="actiontextView">
    <property name="text">
     <string>textView</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="text">
+    <string>ZoomIn</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="text">
+    <string>ZoomOut</string>
    </property>
   </action>
  </widget>

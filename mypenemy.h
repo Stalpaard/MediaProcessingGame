@@ -8,7 +8,7 @@ class MyPEnemy : public MyEnemy
 {
     Q_OBJECT
 public:
-    MyPEnemy(int xPosition, int yPosition, float strength);
+    MyPEnemy(int xPosition, int yPosition, float strength, QImage* representation);
     ~MyPEnemy() override = default;
     float getPoisonLevel() const;
     void setPoisonLevel(float value);

@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-MyPEnemy::MyPEnemy(int xPosition, int yPosition, float strength): MyEnemy(xPosition, yPosition, strength), poisonLevel{strength}
+MyPEnemy::MyPEnemy(int xPosition, int yPosition, float strength, QImage* representation): MyEnemy(xPosition, yPosition, strength, representation), poisonLevel{strength}
 {
   qsrand(time(nullptr));
 }
