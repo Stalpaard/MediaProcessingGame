@@ -48,9 +48,9 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
     for(std::vector<std::shared_ptr<MyTile>> row : areaOfInterest){
         for(std::shared_ptr<MyTile> column : row){
+            xDistance = column->getXPos()-centerX;
+            yDistance = column->getYPos()-centerY;
             if(column->isOccupied()){
-                xDistance = column->getXPos()-centerX;
-                yDistance = column->getYPos()-centerY;
                 std::shared_ptr<Entity> occupant = column->getOccupant();
                 float occupant_value = occupant->getValue();
                 std::shared_ptr<QImage> representation = occupant->getRepresentation();
@@ -58,9 +58,13 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
                 if(!(occupant->isDefeated())){
                     if(occupant_value > 0) painter.setPen(Qt::red);
-                    else painter.setPen(Qt::green);
+                    else painter.setPen(Qt::darkGreen);
                     painter.drawText(10+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
                 }
+            }
+            if(column->getPoisonLevel() > 0){
+                painter.setPen(Qt::green);
+                painter.drawText(10+(32*xDistance)+(range*32),20+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(column->getPoisonLevel()))));
             }
         }
     }
