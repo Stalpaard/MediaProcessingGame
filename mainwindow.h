@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <iostream>
 #include "graphicalview.h"
+#include "textedit.h"
+#include "textview.h"
 #include <QKeyEvent>
 
 QT_BEGIN_NAMESPACE
@@ -15,7 +17,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr, GraphicalView* graphicalView = nullptr);
+    MainWindow(QWidget *parent = nullptr, GraphicalView* graphicalView = nullptr, TextView* textView = nullptr);
     ~MainWindow() override;
 
 private slots:
@@ -46,5 +48,6 @@ private:
     bool game_ended;
 
     GraphicalView* graphicalView;
+    TextView* textView;
 #endif // MAINWINDOW_H
 };
