@@ -1,10 +1,6 @@
 #include "entity.h"
 #include <iostream>
 
-const int deathMaxIndex = 14;
-const int idleMaxIndex = 17;
-const int walkingMaxIndex = 23;
-
 Entity::Entity(int xPosition, int yPosition, float strength, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations):
     Tile{xPosition, yPosition, strength}, representation_index{0}, state{EntityState::IDLE}, stopAnimation{false}
 {

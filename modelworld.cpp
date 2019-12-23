@@ -28,7 +28,6 @@ void ModelWorld::initializeAnimations(){
     zombie_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
 
     for(int i = 0; i <= idleMaxIndex; i++){
-        std::cout << "biem" << std::endl;
         protagonist_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Idle/" + QString::number(i) + ".png")));
         enemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyEnemy/Idle/" + QString::number(i) + ".png")));
         penemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyPEnemy/Idle/" + QString::number(i) + ".png")));
@@ -54,7 +53,7 @@ void ModelWorld::initializeAnimations(){
 
     protagonist_walking = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
 
-    for(int i = 0; i <= deathMaxIndex; i++){
+    for(int i = 0; i <= walkingMaxIndex; i++){
         protagonist_walking->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Walking/" + QString::number(i) + ".png")));
     }
 }
