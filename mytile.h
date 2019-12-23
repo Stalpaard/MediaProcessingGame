@@ -11,15 +11,15 @@ public:
     bool isOccupied() const{return occupied;}
     float getInitValue() const{return init_value;}
     void setOccupied(bool newvalue){occupied = newvalue;}
-    std::shared_ptr<MyEnemy> getOccupant() const{return occupant;}
-    void setOccupant(std::shared_ptr<MyEnemy> newOccupant);
+    std::shared_ptr<Entity> getOccupant() const{return occupant;}
+    void setOccupant(std::shared_ptr<Entity> newOccupant);
     float getPoisonLevel() const{return poisonLevel;}
     void setPoisonLevel(float newvalue){poisonLevel = newvalue;}
 private:
     bool occupied;
     float init_value;
     float poisonLevel;
-    std::shared_ptr<MyEnemy> occupant;
+    std::shared_ptr<Entity> occupant;
 };
 
 #endif // MYTILE_H

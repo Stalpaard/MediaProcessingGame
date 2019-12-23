@@ -1,13 +1,10 @@
 #include "mygraphicsscene.h"
-#include <iostream>
-#include <QPainter>
-#include <string>
 
-MyGraphicsScene::MyGraphicsScene(std::string location, std::shared_ptr<ModelWorld> model)
+MyGraphicsScene::MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> model)
 {
-    world_data = std::make_shared<QImage>(location.c_str());
-    *(world_data.get()) = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
-    original_world_data = *(world_data.get());
+    world_data = std::make_shared<QImage>(location);
+    *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
+    original_world_data = *world_data;
     data_model = model;
     camera_center = std::make_tuple(0,0);
     updateImageData();
@@ -29,6 +26,11 @@ void MyGraphicsScene::updateImageData(){
     }
     drawEntities(scaled_copy, std::get<0>(camera_center), std::get<1>(camera_center), range);
     addItem(new QGraphicsPixmapItem(QPixmap::fromImage(scaled_copy)));
+    QTimer::singleShot(33, this, SLOT(updateImageData()));
+}
+
+void MyGraphicsScene::startAnimationLoop(){
+    updateImageData();
 
 }
 
@@ -49,13 +51,15 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
             if(column->isOccupied()){
                 xDistance = column->getXPos()-centerX;
                 yDistance = column->getYPos()-centerY;
-                std::shared_ptr<MyEnemy> occupant = column->getOccupant();
+                std::shared_ptr<Entity> occupant = column->getOccupant();
                 float occupant_value = occupant->getValue();
-                painter.drawImage(6+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),*(occupant->getRepresentation()));
-                if(!(occupant->getDefeated())){
+                std::shared_ptr<QImage> representation = occupant->getRepresentation();
+                painter.drawImage(6+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),*representation);
+
+                if(!(occupant->isDefeated())){
                     if(occupant_value > 0) painter.setPen(Qt::red);
                     else painter.setPen(Qt::green);
-                    painter.drawText(10+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),std::to_string(std::abs(static_cast<int>(occupant->getValue()))).c_str());
+                    painter.drawText(10+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
                 }
             }
         }

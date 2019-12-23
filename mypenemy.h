@@ -1,14 +1,14 @@
 #ifndef MYPENEMY_H
 #define MYPENEMY_H
 
-#include "myenemy.h"
+#include "entity.h"
 #include <iostream>
 
-class MyPEnemy : public MyEnemy
+class MyPEnemy : public Entity
 {
     Q_OBJECT
 public:
-    MyPEnemy(int xPosition, int yPosition, float strength, QImage* representation);
+    MyPEnemy(int xPosition, int yPosition, float strength, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations);
     ~MyPEnemy() override = default;
     float getPoisonLevel() const;
     void setPoisonLevel(float value);

@@ -5,7 +5,7 @@ MyTile::MyTile(int xPosition, int yPosition, float tileWeight) : Tile(xPosition,
     init_value = getValue();
 }
 
-void MyTile::setOccupant(std::shared_ptr<MyEnemy> newOccupant){
+void MyTile::setOccupant(std::shared_ptr<Entity> newOccupant){
     occupant = newOccupant;
     if(newOccupant) occupied = true;
     else occupied = false;

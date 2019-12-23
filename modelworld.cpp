@@ -3,24 +3,60 @@
 
 const int poisonRange {1};
 const int default_fieldOfView = 5;
+const int deathMaxIndex = 14;
+const int idleMaxIndex = 17;
+const int walkingMaxIndex = 23;
 
-ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location)
+ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, QString location)
 { 
     nrOfXenemies = qrand() % nrOfEnemies;
     nrOfEnemies = nrOfEnemies - nrOfXenemies;
-    world.createWorld(location.c_str(),nrOfEnemies,nrOfHealthpacks);
-    protagonist_image = std::make_shared<QImage>(":img/protagonist.png");
-    enemy_image = std::make_shared<QImage>(":img/enemy.png");
-    penemy_image = std::make_shared<QImage>(":img/Penemy.png");
-    xenemy_image = std::make_shared<QImage>(":img/Xenemy.png");
-    gravestone_image = std::make_shared<QImage>(":img/gravestone.png");
-    healthpack_image = std::make_shared<QImage>(":img/healthpack.png");
-    zombie_image = std::make_shared<QImage>(":img/zombie.png");
+    world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
     columns = world.getCols();
     fieldOfView = default_fieldOfView;
+    initializeAnimations();
     initializeCollections();
 
+}
+
+void ModelWorld::initializeAnimations(){
+    protagonist_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    enemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    penemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    xenemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    zombie_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+
+    for(int i = 0; i <= idleMaxIndex; i++){
+        std::cout << "biem" << std::endl;
+        protagonist_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Idle/" + QString::number(i) + ".png")));
+        enemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyEnemy/Idle/" + QString::number(i) + ".png")));
+        penemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyPEnemy/Idle/" + QString::number(i) + ".png")));
+        xenemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemy/Idle/" + QString::number(i) + ".png")));
+        zombie_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemyZombie/Idle/" + QString::number(i) + ".png")));
+
+    }
+
+    protagonist_dying = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    enemy_dying = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    penemy_dying = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    xenemy_dying = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    zombie_dying = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+
+    for(int i = 0; i <= deathMaxIndex; i++){
+
+        protagonist_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Dying/" + QString::number(i) + ".png")));
+        enemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyEnemy/Dying/" + QString::number(i) + ".png")));
+        penemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyPEnemy/Dying/" + QString::number(i) + ".png")));
+        xenemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemy/Dying/" + QString::number(i) + ".png")));
+        zombie_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemyZombie/Dying/" + QString::number(i) + ".png")));
+    }
+
+    protagonist_walking = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+
+    for(int i = 0; i <= deathMaxIndex; i++){
+        protagonist_walking->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Walking/" + QString::number(i) + ".png")));
+    }
 }
 
 void ModelWorld::initializeCollections(){
@@ -45,7 +81,8 @@ void ModelWorld::initializeCollections(){
     for(auto& healthPack : world.getHealthPacks()){
         int xPos = healthPack->getXPos();
         int yPos = healthPack->getYPos();
-        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -healthPack->getValue(),healthpack_image.get());
+        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -healthPack->getValue(),protagonist_walking,protagonist_walking,protagonist_walking);
+        tempMyHealthPack->setWalking(true);//TEMP
         representation_2D.at(yPos).at(xPos)->setOccupant(tempMyHealthPack);
         myHealthPacks.push_back(tempMyHealthPack);
     }
@@ -55,10 +92,10 @@ void ModelWorld::initializeCollections(){
     for(auto& enemy : world.getEnemies()){
         int xPos = enemy->getXPos();
         int yPos = enemy->getYPos();
-        std::string type = typeid(*(enemy.get())).name();
+        QString type = typeid(*(enemy.get())).name();
 
-        if(type.find("PEnemy") != std::string::npos){
-            std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,enemy->getValue(),penemy_image.get());
+        if(type.contains("PEnemy")){
+            std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,enemy->getValue(),penemy_idle,penemy_dying,protagonist_walking);
             QObject::connect(
                 newMyPEnemy.get(), &MyPEnemy::poisonLevelUpdated,
                 this, &ModelWorld::poisonTile
@@ -67,13 +104,13 @@ void ModelWorld::initializeCollections(){
             myPEnemies.push_back(newMyPEnemy);
         }
         else{
-            std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,enemy->getValue(),enemy_image.get());
+            std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,enemy->getValue(),enemy_idle,enemy_dying,protagonist_walking);
             representation_2D.at(yPos).at(xPos)->setOccupant(tempMyEnemy);
             myEnemies.push_back(tempMyEnemy);
         }
     }
     //Initializing protagonist
-    myProtagonist = std::make_shared<MyProtagonist>(protagonist_image.get());
+    myProtagonist = std::make_shared<MyProtagonist>(protagonist_idle,protagonist_dying,protagonist_walking);
     QObject::connect(
         myProtagonist.get(), &MyProtagonist::posChanged,
         this, &ModelWorld::cameraCenterChangeRequested
@@ -92,7 +129,7 @@ void ModelWorld::initializeCollections(){
         int xPos = std::get<0>(position);
         int yPos = std::get<1>(position);
         std::shared_ptr<MyTile> tile = representation_2D.at(yPos).at(xPos);
-        std::shared_ptr<MyXEnemy> tempMyXenemy = std::make_shared<MyXEnemy>(xPos,yPos,qrand()%100,xenemy_image.get());
+        std::shared_ptr<MyXEnemy> tempMyXenemy = std::make_shared<MyXEnemy>(xPos,yPos,qrand()%100,xenemy_idle,xenemy_dying,protagonist_walking);
         QObject::connect(
             tempMyXenemy.get(), &MyXEnemy::respawn,
             this, &ModelWorld::respawnEnemy
@@ -151,8 +188,10 @@ void ModelWorld::respawnEnemy(int x, int y){
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
     tile->setValue(tile->getInitValue());
-    std::shared_ptr<MyEnemy> enemy = tile->getOccupant();
-    enemy->setRepresentation(zombie_image.get());
+    std::shared_ptr<Entity> enemy = tile->getOccupant();
+    enemy->setIdleAnimations(zombie_idle);
+    enemy->setDeathAnimations(zombie_dying);
+    enemy->setDefeated(false);
     std::tuple<int,int> newPosition = generateNewEnemyPosition();
     int newX = std::get<0>(newPosition);
     int newY = std::get<1>(newPosition);
@@ -164,7 +203,7 @@ void ModelWorld::respawnEnemy(int x, int y){
 void ModelWorld::zoomRequested(bool in_out){
     if(in_out) setFieldOfView(fieldOfView-1);
     else setFieldOfView(fieldOfView+1);
-    emit updateView();
+    //emit updateView();
 }
 
 void ModelWorld::cameraCenterChangeRequested(int x, int y){
@@ -226,8 +265,8 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
             std::cout << "Protagonist has new position: x = " << myProtagonist->getXPos() << " / y = " << myProtagonist->getYPos() << std::endl;
 
             //if occupied, check damage/heal, if not defeated, change special tile image, if defeated, end game
-            if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->getDefeated())){
-                std::shared_ptr<MyEnemy> occupant = destinationTile->getOccupant();
+            if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->isDefeated())){
+                std::shared_ptr<Entity> occupant = destinationTile->getOccupant();
                 float occupantStrength = occupant->getValue();
                 float newHealth = myProtagonist->getHealth() - occupantStrength;
                 if(newHealth > 0){
@@ -235,7 +274,7 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                     else myProtagonist->setHealth(newHealth);
                     if(occupantStrength > 0){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
-                        occupant->setRepresentation(gravestone_image.get());
+                        //occupant->setAnimations(protagonist_dying);
                         myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
                     }
                     else destinationTile->setOccupied(false);
@@ -244,7 +283,7 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                 else myProtagonist->setHealth(0);
             }
             std::cout << "Current health: " << myProtagonist->getHealth() << " Current energy: " << myProtagonist->getEnergy() << "\n" << std::endl;
-            emit updateView();
+            //emit updateView();
         }
         else {
             std::cout << "Insufficient energy for requested movement\n" << std::endl;

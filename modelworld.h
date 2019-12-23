@@ -11,7 +11,6 @@
 #include "myprotagonist.h"
 #include "mypenemy.h"
 #include "myxenemy.h"
-#include <string>
 
 
 
@@ -20,7 +19,7 @@ class ModelWorld : public QObject
     Q_OBJECT
 
 public:
-    ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, std::string location);
+    ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, QString location);
     std::vector<std::shared_ptr<MyEnemy>> getMyEnemies() const{return myEnemies;}
     std::vector<std::shared_ptr<MyPEnemy>> getMyPEnemies() const{return myPEnemies;}
     std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
@@ -36,6 +35,7 @@ public:
 private:
     void createWorld(QString filename, unsigned int nrOfEnemies, unsigned int nrOfHealthpacks);
     void initializeCollections();
+    void initializeAnimations();
     void moveProtagonist(Direction direction);
     void addOccupantToTile(std::shared_ptr<Tile> newEnemy);
 
@@ -61,6 +61,18 @@ private:
     std::shared_ptr<QImage> healthpack_image;
     std::shared_ptr<QImage> gravestone_image;
     std::shared_ptr<QImage> zombie_image;
+
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> protagonist_idle;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> protagonist_walking;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> protagonist_dying;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> enemy_idle;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> enemy_dying;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> penemy_idle;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> penemy_dying;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> xenemy_idle;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> xenemy_dying;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_idle;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_dying;
 
 
     std::shared_ptr<MyProtagonist> myProtagonist;

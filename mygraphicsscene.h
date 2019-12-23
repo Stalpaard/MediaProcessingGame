@@ -2,9 +2,10 @@
 #define MYGRAPHICSSCENE_H
 
 #include <QGraphicsScene>
-#include <string>
 #include "QGraphicsPixmapItem"
 #include <memory>
+#include <QTimer>
+#include <QPainter>
 #include "modelworld.h"
 
 class MyGraphicsScene : public QGraphicsScene
@@ -12,7 +13,7 @@ class MyGraphicsScene : public QGraphicsScene
     Q_OBJECT
 public:
     ~MyGraphicsScene() override = default;
-    MyGraphicsScene(std::string location, std::shared_ptr<ModelWorld> model);
+    MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> model);
     QImage getWorldData() const {return *(world_data.get());}
 
 private:
@@ -21,6 +22,7 @@ private:
     std::shared_ptr<ModelWorld> data_model;
 
     void drawEntities(QImage& source, int centerX, int centerY, int range);
+    void startAnimationLoop();
     QImage calculateScaled(int centerX, int centerY, int range);
 
     std::tuple<int,int> camera_center;
