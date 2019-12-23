@@ -1,15 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView)
+MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    setWindowTitle(tr("Our Game"));
     this->graphicalView = graphicalView;
     ui->setupUi(this);
     game_ended = false;
     ui->viewWidget->insertWidget(1,graphicalView);
     ui->viewWidget->setCurrentIndex(1);
+
+    ui->viewWidget->insertWidget(2, textView);
 }
 
 MainWindow::~MainWindow()
