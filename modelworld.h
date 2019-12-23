@@ -69,12 +69,14 @@ private:
 
 public slots:
     void protagonistMoveRequested(Direction direction);
-    void poisonTile(float value, int x, int y);
     void zoomRequested(bool in_out);
+    void cameraCenterChangeRequested(int x, int y);
+
+private slots:
+    void respawnEnemy(int x, int y);
+    void poisonTile(float value, int x, int y);
     void broadcastHealthChange(int h);
     void broadcastEnergyChange(int e);
-    void cameraCenterChangeRequested(int x, int y);
-    void respawnEnemy(int x, int y);
 signals:
     void updateView();
     void protagonistHealthChanged(int h);
