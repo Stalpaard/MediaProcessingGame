@@ -74,9 +74,10 @@ void MyGraphicsScene::updateCameraCenter(int x, int y){
 
 void MyGraphicsScene::poisonLevelChanged(std::vector<std::tuple<int,int>>& tuples, float level){
     for (auto &tuple : tuples){
-
-            if(level > 0) world_data->setPixel(std::get<0>(tuple),std::get<1>(tuple),255);
+            int greenLevel = static_cast<int>(level);
+            if(greenLevel > 255) greenLevel = 255;
+            else if(greenLevel < 0) greenLevel = 0;
+            if(level > 0) world_data->setPixelColor(std::get<0>(tuple),std::get<1>(tuple),QColor(0,greenLevel,0));
             else world_data->setPixelColor(std::get<0>(tuple),std::get<1>(tuple),original_world_data.pixelColor(std::get<0>(tuple),std::get<1>(tuple)));
     }
-    updateImageData();
 }
