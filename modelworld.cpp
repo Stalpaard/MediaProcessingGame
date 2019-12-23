@@ -15,6 +15,7 @@ ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, s
     xenemy_image = std::make_shared<QImage>(":img/Xenemy.png");
     gravestone_image = std::make_shared<QImage>(":img/gravestone.png");
     healthpack_image = std::make_shared<QImage>(":img/healthpack.png");
+    zombie_image = std::make_shared<QImage>(":img/zombie.png");
     rows = world.getRows();
     columns = world.getCols();
     fieldOfView = default_fieldOfView;
@@ -149,8 +150,9 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 void ModelWorld::respawnEnemy(int x, int y){
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
+    tile->setValue(tile->getInitValue());
     std::shared_ptr<MyEnemy> enemy = tile->getOccupant();
-    enemy->setRepresentation(xenemy_image.get()); //zombie
+    enemy->setRepresentation(zombie_image.get());
     std::tuple<int,int> newPosition = generateNewEnemyPosition();
     int newX = std::get<0>(newPosition);
     int newY = std::get<1>(newPosition);

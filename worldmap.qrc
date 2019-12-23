@@ -11,5 +11,6 @@
         <file>maze1.png</file>
         <file>maze2.png</file>
         <file>maze3.png</file>
+        <file>zombie.png</file>
     </qresource>
 </RCC>

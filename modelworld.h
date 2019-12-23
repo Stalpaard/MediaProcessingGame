@@ -60,6 +60,7 @@ private:
     std::shared_ptr<QImage> xenemy_image;
     std::shared_ptr<QImage> healthpack_image;
     std::shared_ptr<QImage> gravestone_image;
+    std::shared_ptr<QImage> zombie_image;
 
 
     std::shared_ptr<MyProtagonist> myProtagonist;

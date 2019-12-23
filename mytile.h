@@ -9,6 +9,7 @@ class MyTile : public Tile
 public:
     MyTile(int xPosition, int yPosition, float tileWeight);
     bool isOccupied() const{return occupied;}
+    float getInitValue() const{return init_value;}
     void setOccupied(bool newvalue){occupied = newvalue;}
     std::shared_ptr<MyEnemy> getOccupant() const{return occupant;}
     void setOccupant(std::shared_ptr<MyEnemy> newOccupant);
@@ -16,6 +17,7 @@ public:
     void setPoisonLevel(float newvalue){poisonLevel = newvalue;}
 private:
     bool occupied;
+    float init_value;
     float poisonLevel;
     std::shared_ptr<MyEnemy> occupant;
 };

@@ -1,7 +1,7 @@
 #include "mygraphicsscene.h"
 #include <iostream>
 #include <QPainter>
-
+#include <string>
 
 MyGraphicsScene::MyGraphicsScene(std::string location, std::shared_ptr<ModelWorld> model)
 {
@@ -49,7 +49,14 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
             if(column->isOccupied()){
                 xDistance = column->getXPos()-centerX;
                 yDistance = column->getYPos()-centerY;
-                painter.drawImage(6+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),*(column->getOccupant()->getRepresentation()));
+                std::shared_ptr<MyEnemy> occupant = column->getOccupant();
+                float occupant_value = occupant->getValue();
+                painter.drawImage(6+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),*(occupant->getRepresentation()));
+                if(!(occupant->getDefeated())){
+                    if(occupant_value > 0) painter.setPen(Qt::red);
+                    else painter.setPen(Qt::green);
+                    painter.drawText(10+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),std::to_string(std::abs(static_cast<int>(occupant->getValue()))).c_str());
+                }
             }
         }
     }
