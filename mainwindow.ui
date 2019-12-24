@@ -26,6 +26,19 @@
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
+         <widget class="QLabel" name="remainingEnemiesLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Remaining Enemies: 100</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="healthLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">

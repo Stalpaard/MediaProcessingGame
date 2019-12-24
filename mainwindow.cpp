@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView)
+MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView, int amountOfEnemies)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), game_ended{false}
 {
@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     ui->animationSlider->setValue(15);
     ui->sliderLabel->setText("Animation speed (" + QString::number(15) + " ms/frame)");
     ui->viewWidget->insertWidget(3, textView);
-
+    updateRemainingEnemies(amountOfEnemies);
 }
 
 
@@ -106,4 +106,8 @@ void MainWindow::gameDefeat(){
 void MainWindow::gameVictory(){
     game_ended = true;
     ui->viewWidget->setCurrentIndex(1);
+}
+
+void MainWindow::updateRemainingEnemies(int value) {
+    ui->remainingEnemiesLabel->setText("Remaining enemies: " + QString::number(value));
 }

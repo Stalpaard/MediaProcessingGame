@@ -14,7 +14,7 @@ class MyGraphicsScene : public QGraphicsScene
     Q_OBJECT
 public:
     ~MyGraphicsScene() override = default;
-    MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> model);
+    MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model);
     QImage getWorldData() const {return *(world_data.get());}
     void setAnimationMilliSec(int newvalue){animationMilliSec = newvalue;}
 

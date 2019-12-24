@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr, GraphicalView* graphicalView = nullptr, TextView* textView = nullptr);
+    MainWindow(QWidget *parent = nullptr, GraphicalView* graphicalView = nullptr, TextView* textView = nullptr, int amountOfEnemies = 0);
     ~MainWindow() override;
 
 private slots:
@@ -38,6 +38,7 @@ public slots:
     void protagonistEnergyUpdate(int e);
     void gameDefeat();
     void gameVictory();
+    void updateRemainingEnemies(int remainingAmount);
 
 signals:
     void zoom(bool in_out);

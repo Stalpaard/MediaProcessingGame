@@ -10,6 +10,7 @@ const int walkingMaxIndex = 23;
 ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, QString location)
 { 
     remainingEnemies = nrOfEnemies;
+    emit remainingEnemiesChanged(nrOfEnemies);
     nrOfXenemies = qrand() % (nrOfEnemies/2);
     nrOfEnemies = nrOfEnemies - nrOfXenemies;
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
@@ -188,6 +189,7 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 
 void ModelWorld::respawnEnemy(int x, int y){
     remainingEnemies++;
+    emit remainingEnemiesChanged(remainingEnemies);
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
     tile->setValue(tile->getInitValue());
@@ -285,6 +287,7 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                         //occupant->setAnimations(protagonist_dying);
                         myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
                         remainingEnemies--;
+                        emit remainingEnemiesChanged(remainingEnemies);
                         if(remainingEnemies == 0){
                             emit gameVictory();
                             emit endGame();

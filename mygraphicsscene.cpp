@@ -2,7 +2,7 @@
 
 const int defaultAnimationMillisec = 15;
 
-MyGraphicsScene::MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> model) : animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}
+MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model) : animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}
 {
     world_data = std::make_shared<QImage>(location);
     *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);

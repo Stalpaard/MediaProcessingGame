@@ -95,6 +95,7 @@ private slots:
     void broadcastHealthChange(int h);
     void broadcastEnergyChange(int e);
 signals:
+    void remainingEnemiesChanged(int remainingAmount);
     void updateView();
     void protagonistHealthChanged(int h);
     void protagonistEnergyChanged(int e);
