@@ -119,7 +119,6 @@ void MainWindow::setEnabled2DViewWidgets(bool newvalue){
 //PUBLIC SLOTS
 
 void MainWindow::protagonistHealthUpdate(int h){
-    std::cout << "yesboi" << std::endl;
    ui->healthBar->setValue(h);
 }
 
@@ -128,7 +127,6 @@ void MainWindow::protagonistEnergyUpdate(int e){
 }
 
 void MainWindow::gameEnd(){
-    std::cout << "ended" << std::endl;
     game_ended = true;
     ui->viewWidget->setCurrentIndex(0);
 }
