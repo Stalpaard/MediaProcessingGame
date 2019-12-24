@@ -27,10 +27,15 @@ private slots:
 
     void on_actiongraphicalView_triggered();
 
-    void on_actionZoomIn_triggered();
-    void on_actionZoomOut_triggered();
-
     void on_actiontextView_triggered();
+
+    void on_actionpanLeft_triggered();
+
+    void on_actionpanTop_triggered();
+
+    void on_actionpanBottom_triggered();
+
+    void on_actionpanRight_triggered();
 
 public slots:
     void protagonistHealthUpdate(int h);
@@ -39,6 +44,7 @@ public slots:
 
 signals:
     void zoom(bool in_out);
+    void pan(int dx, int dy);
 
 private:
 

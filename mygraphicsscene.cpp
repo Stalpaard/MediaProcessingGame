@@ -1,6 +1,8 @@
 #include "mygraphicsscene.h"
 
-MyGraphicsScene::MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> model)
+const int defaultAnimationMillisec = 15;
+
+MyGraphicsScene::MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> model) : animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}
 {
     world_data = std::make_shared<QImage>(location);
     *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
@@ -10,7 +12,7 @@ MyGraphicsScene::MyGraphicsScene(QString location, std::shared_ptr<ModelWorld> m
     updateImageData();
 }
 
-    QImage MyGraphicsScene::calculateScaled(int centerX, int centerY, int range){
+QImage MyGraphicsScene::calculateScaled(int centerX, int centerY, int range){
     QImage newImage = world_data->copy(QRect(QPoint(centerX-range,centerY-range),QPoint(centerX+range,centerY+range)));
     return newImage.scaled(newImage.width()*32,newImage.height()*32, Qt::AspectRatioMode::KeepAspectRatio);
 }
@@ -19,6 +21,9 @@ void MyGraphicsScene::updateImageData(){
     //change QImage data according to changed conditions and generate new pixmap item
     clear();
     int range = data_model->getFieldOfView();
+
+    if(camera_center != target_camera_center && !(data_model->getMyProtagonist()->isWalking())) camera_center = target_camera_center;
+
     QImage scaled_copy = calculateScaled(std::get<0>(camera_center), std::get<1>(camera_center), range);
     if(sceneRect() != scaled_copy.rect()){
         setSceneRect(scaled_copy.rect());
@@ -26,7 +31,7 @@ void MyGraphicsScene::updateImageData(){
     }
     drawEntities(scaled_copy, std::get<0>(camera_center), std::get<1>(camera_center), range);
     addItem(new QGraphicsPixmapItem(QPixmap::fromImage(scaled_copy)));
-    QTimer::singleShot(33, this, SLOT(updateImageData()));
+    QTimer::singleShot(animationMilliSec, this, SLOT(updateImageData()));
 }
 
 void MyGraphicsScene::startAnimationLoop(){
@@ -38,13 +43,46 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     QPainter painter;
 
     int xDistance, yDistance;
+    MyProtagonist* protagonist = data_model->getMyProtagonist();
 
     //Get 2D representation of the world in range of the protagonist ('window' into the data)
     std::vector<std::vector<std::shared_ptr<MyTile>>> areaOfInterest = data_model->make2DRepresentationAroundPointWithRange(centerX,centerY,range+1);
 
     painter.begin(&source);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    painter.drawImage((range*32)+6,(range*32)+1,*(data_model->getMyProtagonist()->getRepresentation()));
+
+    xDistance = protagonist->getXPos()-std::get<0>(target_camera_center);
+    yDistance = protagonist->getYPos()-std::get<1>(target_camera_center);
+    if(!(xDistance > range || yDistance > range)){
+        if(camera_center != target_camera_center){
+                moveCounter++;
+                if(moveCounter >= 32){
+                    moveCounter=0;
+                    camera_center = target_camera_center;
+                    emit moveCompleted();
+                }
+                else{
+                    switch(movingDirection){
+                    case Direction::UP :
+                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+moveCounter+(32*yDistance),*(protagonist->getRepresentation()));
+                        break;
+                    case Direction::DOWN :
+                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1-moveCounter+(32*yDistance),*(protagonist->getRepresentation()));
+                        break;
+                    case Direction::LEFT :
+                        painter.drawImage((range*32)+6-moveCounter+(32*xDistance),(range*32)+1+(32*yDistance),*(protagonist->getRepresentation()));
+                        break;
+                    case Direction::RIGHT :
+                        painter.drawImage((range*32)+6+moveCounter+(32*xDistance),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
+                        break;
+                    }
+                }
+        }
+        else painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
+    }
+
+
+
 
     for(std::vector<std::shared_ptr<MyTile>> row : areaOfInterest){
         for(std::shared_ptr<MyTile> column : row){
@@ -72,8 +110,31 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     painter.end();
 }
 
-void MyGraphicsScene::updateCameraCenter(int x, int y){
-    camera_center = std::make_tuple(x,y);
+void MyGraphicsScene::updateCameraCenter(int dx, int dy){
+    std::cout << "change camera request x=" << dx << " y=" << dy << std::endl;
+    int currentcameraX = std::get<0>(camera_center);
+    int currentcameraY = std::get<1>(camera_center);
+    int newCameraX = currentcameraX+dx;
+    int newCameraY = currentcameraY+dy;
+    if(newCameraX > data_model->getColumns()) newCameraX = data_model->getColumns();
+    else if(newCameraX < 0) newCameraX = 0;
+    if(newCameraY > data_model->getRows()) newCameraY = data_model->getRows();
+    else if(newCameraY < 0 ) newCameraY = 0;
+
+    target_camera_center = std::make_tuple(newCameraX,newCameraY);
+
+    if(newCameraX != currentcameraX){
+        if(currentcameraX-newCameraX > 0){
+            movingDirection = Direction::LEFT;
+        }
+        else movingDirection = Direction::RIGHT;
+    }
+    else if(newCameraY != currentcameraY){
+        if(currentcameraY-newCameraY > 0){
+            movingDirection = Direction::DOWN;
+        }
+        else movingDirection = Direction::UP;
+    }
 }
 
 void MyGraphicsScene::poisonLevelChanged(std::vector<std::tuple<int,int>>& tuples, float level){

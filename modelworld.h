@@ -28,6 +28,8 @@ public:
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
+    int getRows() const{return rows;}
+    int getColumns() const{return columns;}
 
     std::vector<std::vector<std::shared_ptr<MyTile>>>make2DRepresentationAroundPointWithRange(int x, int y, int range);
 
@@ -73,6 +75,7 @@ private:
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> xenemy_dying;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_idle;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_dying;
+    std::shared_ptr<std::vector<std::shared_ptr<QImage>>> healthpack_idle;
 
 
     std::shared_ptr<MyProtagonist> myProtagonist;
@@ -81,6 +84,7 @@ private:
 
 public slots:
     void protagonistMoveRequested(Direction direction);
+    void protagonistMoveCompleted();
     void zoomRequested(bool in_out);
     void cameraCenterChangeRequested(int x, int y);
 

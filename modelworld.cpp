@@ -9,7 +9,7 @@ const int walkingMaxIndex = 23;
 
 ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, QString location)
 { 
-    nrOfXenemies = qrand() % nrOfEnemies;
+    nrOfXenemies = qrand() % (nrOfEnemies/2);
     nrOfEnemies = nrOfEnemies - nrOfXenemies;
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
@@ -26,6 +26,7 @@ void ModelWorld::initializeAnimations(){
     penemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
     xenemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
     zombie_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
+    healthpack_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
 
     for(int i = 0; i <= idleMaxIndex; i++){
         protagonist_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Idle/" + QString::number(i) + ".png")));
@@ -33,7 +34,7 @@ void ModelWorld::initializeAnimations(){
         penemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyPEnemy/Idle/" + QString::number(i) + ".png")));
         xenemy_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemy/Idle/" + QString::number(i) + ".png")));
         zombie_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemyZombie/Idle/" + QString::number(i) + ".png")));
-
+        healthpack_idle->push_back(std::make_shared<QImage>(QImage(":img/Animations/Healthpack/Idle/" + QString::number(i) + ".png")));
     }
 
     protagonist_dying = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
@@ -80,7 +81,7 @@ void ModelWorld::initializeCollections(){
     for(auto& healthPack : world.getHealthPacks()){
         int xPos = healthPack->getXPos();
         int yPos = healthPack->getYPos();
-        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -healthPack->getValue(),protagonist_walking,protagonist_walking,protagonist_walking);
+        std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -healthPack->getValue(),healthpack_idle,healthpack_idle,healthpack_idle);
         tempMyHealthPack->setWalking(true);//TEMP
         representation_2D.at(yPos).at(xPos)->setOccupant(tempMyHealthPack);
         myHealthPacks.push_back(tempMyHealthPack);
@@ -219,45 +220,47 @@ void ModelWorld::broadcastEnergyChange(int e){
 }
 
 void ModelWorld::protagonistMoveRequested(Direction direction){
-    int currentX = myProtagonist->getXPos();
-    int currentY = myProtagonist->getYPos();
-    int newX=currentX;
-    int newY=currentY;
-    bool Xchanged = false;
-    bool Ychanged = false;
+    if(!(myProtagonist->isWalking())){
+        int currentX = myProtagonist->getXPos();
+        int currentY = myProtagonist->getYPos();
+        int newX=currentX;
+        int newY=currentY;
+        bool Xchanged = false;
+        bool Ychanged = false;
 
-    switch(direction){
-        case Direction::DOWN : //Down and up flipped due to flipped y-axis
-        if(currentY + 1 < rows){
-            newY = currentY + 1;
-            Ychanged = true;
-        }
-        break;
-    case Direction::UP :
-        if(currentY - 1 >= 0){
-            newY = currentY - 1;
-            Ychanged = true;
-        }
-        break;
-    case Direction::LEFT :
-        if(currentX - 1 >= 0){
-            newX = currentX - 1;
-            Xchanged = true;
-        }
-        break;
-    case Direction::RIGHT :
-        if(currentX + 1 < columns){
-            newX = currentX + 1;
-            Xchanged = true;
-        }
-        break;
-    }
+        switch(direction){
+          case Direction::DOWN : //Down and up flipped due to flipped y-axis
+           if(currentY + 1 < rows){
+               newY = currentY + 1;
+               Ychanged = true;
+           }
+           break;
+      case Direction::UP :
+            if(currentY - 1 >= 0){
+              newY = currentY - 1;
+               Ychanged = true;
+           }
+           break;
+     case Direction::LEFT :
+         if(currentX - 1 >= 0){
+               newX = currentX - 1;
+               Xchanged = true;
+          }
+           break;
+        case Direction::RIGHT :
+          if(currentX + 1 < columns){
+               newX = currentX + 1;
+               Xchanged = true;
+           }
+            break;
+       }
 
-    if(Xchanged || Ychanged){
-        float currentEnergy = myProtagonist->getEnergy();
+        if(Xchanged || Ychanged){
+            float currentEnergy = myProtagonist->getEnergy();
         std::shared_ptr<MyTile> destinationTile = representation_2D.at(newY).at(newX);
         float costOfMovement = destinationTile->getValue();
         if(currentEnergy > costOfMovement){
+            myProtagonist->setWalking(true);
             myProtagonist->setEnergy(currentEnergy-costOfMovement);
             if(Xchanged) myProtagonist->setXPos(newX);
             else if(Ychanged) myProtagonist->setYPos(newY);
@@ -289,7 +292,12 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
         }
 
     }
+    }
 
+}
+
+void ModelWorld::protagonistMoveCompleted(){
+    myProtagonist->setWalking(false);
 }
 
 void ModelWorld::poisonTile(float value, int x, int y){
@@ -310,8 +318,8 @@ void ModelWorld::poisonTile(float value, int x, int y){
         for(int j = 0; j <= 2*poisonRange; j++){
             int tileX = startX+i;
             int tileY = startY+j;
-            tuples.push_back(std::make_tuple(tileX,tileY));
-            if(tileX > 0 && tileY > 0 && tileX < rows && tileY < columns){
+            if(tileX >= 0 && tileY >= 0 && tileX < rows && tileY < columns){
+                tuples.push_back(std::make_tuple(tileX,tileY));
                 if(value < 0) representation_2D.at(tileY).at(tileX)->setPoisonLevel(0);
                 else representation_2D.at(tileY).at(tileX)->setPoisonLevel(value);
             }
@@ -319,3 +327,5 @@ void ModelWorld::poisonTile(float value, int x, int y){
     }
     emit poisonVisualChange(tuples, value);
 }
+
+

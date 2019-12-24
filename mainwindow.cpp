@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     ui->viewWidget->setCurrentIndex(1);
 
     ui->viewWidget->insertWidget(2, textView);
+
 }
 
 MainWindow::~MainWindow()
@@ -49,14 +50,24 @@ void MainWindow::resizeEvent(QResizeEvent* event)
    }
 }
 
-void MainWindow::on_actionZoomIn_triggered()
+void MainWindow::on_actionpanLeft_triggered()
 {
-    emit zoom(true);
+    emit pan(-1,0);
 }
 
-void MainWindow::on_actionZoomOut_triggered()
+void MainWindow::on_actionpanTop_triggered()
 {
-    emit zoom(false);
+    emit pan(0,-1);
+}
+
+void MainWindow::on_actionpanBottom_triggered()
+{
+    emit pan(0,1);
+}
+
+void MainWindow::on_actionpanRight_triggered()
+{
+    emit pan(1,0);
 }
 
 
@@ -76,5 +87,8 @@ void MainWindow::gameEnd(){
     game_ended = true;
     ui->viewWidget->setCurrentIndex(0);
 }
+
+
+
 
 

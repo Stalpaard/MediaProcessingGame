@@ -8,9 +8,14 @@ class MyProtagonist : public Entity //Entity
     Q_OBJECT
 public:
     MyProtagonist(std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations);
-    void setXPos(int newPos) {xPos = newPos; emit posChanged(xPos, yPos);}
-    void setYPos(int newPos) {yPos = newPos; emit posChanged(xPos, yPos);}
-    void setPos(int newX, int newY) {if (xPos != newX || yPos != newY) {xPos = newX; yPos = newY; emit posChanged(xPos, yPos);}}
+    void setXPos(int newPos) {int dx = newPos-xPos;xPos = newPos; emit posChanged(dx, 0);}
+    void setYPos(int newPos) {int dy = newPos-yPos;yPos = newPos; emit posChanged(0, dy);}
+    void setPos(int newX, int newY) {if (xPos != newX || yPos != newY) {
+            int dx = newX-xPos;
+            int dy = newY-yPos;
+            xPos = newX; yPos = newY;
+            emit posChanged(dx, dy);
+        }}
     float getHealth() const {return health;}
     void setHealth(float value) {health = value; emit healthChanged(static_cast<int>(health));}
 

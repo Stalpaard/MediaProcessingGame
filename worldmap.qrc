@@ -201,5 +201,23 @@
         <file>Animations/MyXEnemyZombie/Idle/7.png</file>
         <file>Animations/MyXEnemyZombie/Idle/8.png</file>
         <file>Animations/MyXEnemyZombie/Idle/9.png</file>
+        <file>Animations/Healthpack/Idle/0.png</file>
+        <file>Animations/Healthpack/Idle/1.png</file>
+        <file>Animations/Healthpack/Idle/10.png</file>
+        <file>Animations/Healthpack/Idle/11.png</file>
+        <file>Animations/Healthpack/Idle/12.png</file>
+        <file>Animations/Healthpack/Idle/13.png</file>
+        <file>Animations/Healthpack/Idle/14.png</file>
+        <file>Animations/Healthpack/Idle/15.png</file>
+        <file>Animations/Healthpack/Idle/16.png</file>
+        <file>Animations/Healthpack/Idle/17.png</file>
+        <file>Animations/Healthpack/Idle/2.png</file>
+        <file>Animations/Healthpack/Idle/3.png</file>
+        <file>Animations/Healthpack/Idle/4.png</file>
+        <file>Animations/Healthpack/Idle/5.png</file>
+        <file>Animations/Healthpack/Idle/6.png</file>
+        <file>Animations/Healthpack/Idle/7.png</file>
+        <file>Animations/Healthpack/Idle/8.png</file>
+        <file>Animations/Healthpack/Idle/9.png</file>
     </qresource>
 </RCC>

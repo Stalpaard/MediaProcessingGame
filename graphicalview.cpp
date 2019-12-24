@@ -1,4 +1,5 @@
 #include "graphicalview.h"
+#include <iostream>
 
 #include <QGraphicsView>
 
@@ -9,7 +10,10 @@ GraphicalView::GraphicalView(QGraphicsScene* scene)
     gameEnded = false;
 }
 
-
+void GraphicalView::wheelEvent(QWheelEvent *event){
+    if(event->angleDelta().y() > 0) emit zoom(true);
+    else emit zoom(false);
+}
 
 void GraphicalView::keyPressEvent(QKeyEvent* keyEvent){
     if(!(gameEnded)){

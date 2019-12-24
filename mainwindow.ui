@@ -88,7 +88,7 @@
       <item>
        <widget class="QStackedWidget" name="viewWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="end">
          <widget class="QFrame" name="frame">
@@ -171,8 +171,11 @@
    </attribute>
    <addaction name="actiongraphicalView"/>
    <addaction name="actiontextView"/>
-   <addaction name="actionZoomIn"/>
-   <addaction name="actionZoomOut"/>
+   <addaction name="separator"/>
+   <addaction name="actionpanLeft"/>
+   <addaction name="actionpanRight"/>
+   <addaction name="actionpanBottom"/>
+   <addaction name="actionpanTop"/>
   </widget>
   <action name="actionOpen_world">
    <property name="text">
@@ -194,14 +197,24 @@
     <string>textView</string>
    </property>
   </action>
-  <action name="actionZoomIn">
+  <action name="actionpanLeft">
    <property name="text">
-    <string>ZoomIn</string>
+    <string>panLeft</string>
    </property>
   </action>
-  <action name="actionZoomOut">
+  <action name="actionpanRight">
    <property name="text">
-    <string>ZoomOut</string>
+    <string>panRight</string>
+   </property>
+  </action>
+  <action name="actionpanTop">
+   <property name="text">
+    <string>panTop</string>
+   </property>
+  </action>
+  <action name="actionpanBottom">
+   <property name="text">
+    <string>panBottom</string>
    </property>
   </action>
  </widget>
