@@ -102,6 +102,7 @@ int MainController::startGameInstance(){
                             model.get(), &ModelWorld::protagonistMoveRequested
                         );
                     }
+                w.setWindowTitle("The Most Epic Game Ever");
                 w.show();
 
                 return app.exec();

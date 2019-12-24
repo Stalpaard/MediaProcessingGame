@@ -5,7 +5,6 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), game_ended{false}
 {
-    setWindowTitle(tr("Our Game"));
     this->graphicalView = graphicalView;
     ui->setupUi(this);
     ui->viewWidget->insertWidget(2,graphicalView);
