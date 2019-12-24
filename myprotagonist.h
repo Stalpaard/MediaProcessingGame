@@ -3,7 +3,7 @@
 
 #include "entity.h"
 
-class MyProtagonist : public Entity //Entity
+class MyProtagonist : public Entity
 {
     Q_OBJECT
 public:
@@ -21,7 +21,7 @@ public:
 
     float getEnergy() const {return energy;}
     void setEnergy(float value) {energy = value; emit energyChanged(static_cast<int>(energy));}
-    virtual void deathAction() override{} //maybe end game here
+    virtual void deathAction() override{}
 private:
     QImage* representation;
 signals:

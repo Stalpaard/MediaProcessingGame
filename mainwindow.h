@@ -6,7 +6,9 @@
 #include "graphicalview.h"
 #include "textedit.h"
 #include "textview.h"
+#include "direction.h"
 #include <QKeyEvent>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,18 +33,29 @@ private slots:
 
     void on_animationSlider_valueChanged(int value);
 
-    void on_UpPanKey_clicked();
+    void on_RightPanKey_pressed();
 
-    void on_LeftPanKey_clicked();
 
-    void on_RightPanKey_clicked();
 
-    void on_DownPanKey_clicked();
+    void on_RightPanKey_released();
+
+    void on_LeftPanKey_pressed();
+
+    void on_LeftPanKey_released();
+
+    void on_UpPanKey_pressed();
+
+    void on_UpPanKey_released();
+
+    void on_DownPanKey_pressed();
+
+    void on_DownPanKey_released();
 
 public slots:
     void protagonistHealthUpdate(int h);
     void protagonistEnergyUpdate(int e);
     void gameEnd();
+    void panLoop();
 
 signals:
     void zoom(bool in_out);
@@ -51,6 +64,8 @@ signals:
 
 private:
 
+    bool panBool;
+    Direction panDir;
     void setEnabled2DViewWidgets(bool newvalue);
     virtual void resizeEvent(QResizeEvent*) override;
 

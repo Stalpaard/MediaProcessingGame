@@ -3,12 +3,11 @@
 
 MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::MainWindow), panBool{false}, game_ended{false}
 {
     setWindowTitle(tr("Our Game"));
     this->graphicalView = graphicalView;
     ui->setupUi(this);
-    game_ended = false;
     ui->viewWidget->insertWidget(1,graphicalView);
     ui->viewWidget->setCurrentIndex(1);
     ui->animationSlider->setValue(15);
@@ -16,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     ui->viewWidget->insertWidget(2, textView);
 
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -53,26 +53,6 @@ void MainWindow::on_animationSlider_valueChanged(int value)
 {
     ui->sliderLabel->setText("Animation speed (" + QString::number(value) + " ms/frame)");
     emit changeAnimationSpeed(value);
-}
-
-void MainWindow::on_UpPanKey_clicked()
-{
-    emit pan(0,-1);
-}
-
-void MainWindow::on_LeftPanKey_clicked()
-{
-    emit pan(-1,0);
-}
-
-void MainWindow::on_RightPanKey_clicked()
-{
-    emit pan(1,0);
-}
-
-void MainWindow::on_DownPanKey_clicked()
-{
-    emit pan(0,1);
 }
 
 
@@ -132,7 +112,71 @@ void MainWindow::gameEnd(){
 }
 
 
+void MainWindow::panLoop(){
+    if(panBool){
+        switch(panDir){
+            case Direction::LEFT:
+                emit pan(-1,0);
+                break;
+            case Direction::RIGHT:
+                emit pan(1,0);
+                break;
+            case Direction::UP:
+                emit pan(0,-1);
+                break;
+            case Direction::DOWN:
+                emit pan(0,1);
+                break;
+        }
+        QTimer::singleShot(100, this, SLOT(panLoop()));
+    }
+}
 
 
+void MainWindow::on_RightPanKey_pressed()
+{
+    panBool = true;
+    panDir = Direction::RIGHT;
+    panLoop();
+}
 
+void MainWindow::on_RightPanKey_released()
+{
+    panBool = false;
+}
 
+void MainWindow::on_LeftPanKey_pressed()
+{
+    panBool = true;
+    panDir = Direction::LEFT;
+    panLoop();
+}
+
+void MainWindow::on_LeftPanKey_released()
+{
+    panBool = false;
+}
+
+void MainWindow::on_UpPanKey_pressed()
+{
+    panBool = true;
+    panDir = Direction::UP;
+    panLoop();
+}
+
+void MainWindow::on_UpPanKey_released()
+{
+    panBool = false;
+}
+
+void MainWindow::on_DownPanKey_pressed()
+{
+    panBool = true;
+    panDir = Direction::DOWN;
+    panLoop();
+}
+
+void MainWindow::on_DownPanKey_released()
+{
+    panBool = false;
+}

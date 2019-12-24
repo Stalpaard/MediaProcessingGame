@@ -216,6 +216,12 @@
             <height>581</height>
            </rect>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -228,11 +234,17 @@
           <widget class="QLabel" name="label">
            <property name="geometry">
             <rect>
-             <x>250</x>
-             <y>140</y>
-             <width>211</width>
-             <height>71</height>
+             <x>230</x>
+             <y>220</y>
+             <width>221</width>
+             <height>91</height>
             </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="font">
             <font>
@@ -242,8 +254,14 @@
            <property name="text">
             <string>DEFEAT</string>
            </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
            </property>
           </widget>
          </widget>
