@@ -69,11 +69,19 @@ void MainWindow::setEnabled2DViewWidgets(bool newvalue){
         ui->animationSlider->setEnabled(true);
         ui->animationSlider->setVisible(true);
         ui->sliderLabel->setVisible(true);
+        ui->helpLabel->setVisible(true);
+        ui->zoomHelpLabel->setVisible(true);
+        ui->panHelpLabel->setVisible(true);
+        ui->moveHelpLabel->setVisible(true);
     }
     else{
         ui->animationSlider->setEnabled(false);
         ui->animationSlider->setVisible(false);
         ui->sliderLabel->setVisible(false);
+        ui->helpLabel->setVisible(false);
+        ui->zoomHelpLabel->setVisible(false);
+        ui->panHelpLabel->setVisible(false);
+        ui->moveHelpLabel->setVisible(false);
     }
 }
 
