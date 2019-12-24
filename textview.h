@@ -2,8 +2,11 @@
 #define TEXTVIEW_H
 
 #include <QMainWindow>
-#include "textedit.h"
 #include <QVBoxLayout>
+#include <QString>
+
+#include "textedit.h"
+#include "modelworld.h"
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemModel;
@@ -19,11 +22,14 @@ class TextView : public QWidget
 {
      Q_OBJECT
 public:
-    TextView(QWidget *parent = nullptr,  std::vector<std::shared_ptr<Command>> *commands = nullptr);
+    TextView(QWidget *parent = nullptr,  std::vector<std::shared_ptr<Command>> *commands = nullptr, std::shared_ptr<ModelWorld> model =  nullptr);
+    void printEntities();
 
 private:
     QCompleter *completer;
     TextEdit *completingTextEdit;
+    QLabel *label;
+    std::shared_ptr<ModelWorld> data_model;
 };
 
 #endif // TEXTVIEW_H
