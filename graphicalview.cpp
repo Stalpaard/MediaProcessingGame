@@ -30,6 +30,19 @@ void GraphicalView::keyPressEvent(QKeyEvent* keyEvent){
         case Qt::Key_Right:
             emit movementKeyPressed(Direction::RIGHT);
             break;
+        case Qt::Key_Z :
+            emit pan(0,-1);
+            break;
+        case Qt::Key_Q :
+            emit pan(-1,0);
+            break;
+        case Qt::Key_S :
+            emit pan(0,1);
+            break;
+        case Qt::Key_D :
+            emit pan(1,0);
+            break;
+
         }
     }
 }

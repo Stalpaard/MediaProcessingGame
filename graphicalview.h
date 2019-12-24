@@ -17,6 +17,7 @@ public:
 signals:
     void movementKeyPressed(Direction direction);
     void zoom(bool in_out);
+    void pan(int x, int y);
 
 public slots:
     void fitScene();
