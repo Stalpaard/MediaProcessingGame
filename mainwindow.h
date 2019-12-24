@@ -43,6 +43,8 @@ public slots:
 signals:
     void zoom(bool in_out);
     void changeAnimationSpeed(int value);
+    void actionQuit();
+    void openNewWorld();
 
 private:
     void setEnabled2DViewWidgets(bool newvalue);
@@ -53,5 +55,6 @@ private:
 
     GraphicalView* graphicalView;
     TextView* textView;
-#endif // MAINWINDOW_H
 };
+
+#endif // MAINWINDOW_H

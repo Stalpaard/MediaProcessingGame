@@ -25,12 +25,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionOpen_world_triggered()
 {
-
+    emit openNewWorld();
 }
 
 void MainWindow::on_actionQuit_triggered()
 {
-
+    emit actionQuit();
 }
 
 void MainWindow::on_actiongraphicalView_triggered()
