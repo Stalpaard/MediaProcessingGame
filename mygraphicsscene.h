@@ -40,7 +40,7 @@ signals:
 
 public slots:
     void updateCameraCenter(int dx, int dy);
-    void updateImageData();
+    void animationLoop();
     void updateAnimationSpeed(int newvalue);
     void poisonLevelChanged(std::vector<std::tuple<int,int>>& area, float level);
 };
