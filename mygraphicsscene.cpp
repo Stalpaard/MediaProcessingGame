@@ -50,6 +50,10 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
     painter.begin(&source);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+    QFont font;
+    font.setPixelSize(15);
+    font.setFamily("Courier");
+    painter.setFont(font);
 
     xDistance = protagonist->getXPos()-std::get<0>(target_camera_center);
     yDistance = protagonist->getYPos()-std::get<1>(target_camera_center);
@@ -96,8 +100,8 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
                 if(!(occupant->isDefeated())){
                     if(occupant_value > 0) painter.setPen(Qt::red);
-                    else painter.setPen(Qt::darkGreen);
-                    painter.drawText(10+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
+                    else painter.setPen(Qt::white);
+                    painter.drawText(8+(32*xDistance)+(range*32),4+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
                 }
             }
             if(column->getPoisonLevel() > 0){
@@ -111,7 +115,6 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 }
 
 void MyGraphicsScene::updateCameraCenter(int dx, int dy){
-    std::cout << "change camera request x=" << dx << " y=" << dy << std::endl;
     int currentcameraX = std::get<0>(camera_center);
     int currentcameraY = std::get<1>(camera_center);
     int newCameraX = currentcameraX+dx;
@@ -145,4 +148,8 @@ void MyGraphicsScene::poisonLevelChanged(std::vector<std::tuple<int,int>>& tuple
             if(level > 0) world_data->setPixelColor(std::get<0>(tuple),std::get<1>(tuple),QColor(0,greenLevel,0));
             else world_data->setPixelColor(std::get<0>(tuple),std::get<1>(tuple),original_world_data.pixelColor(std::get<0>(tuple),std::get<1>(tuple)));
     }
+}
+
+void MyGraphicsScene::updateAnimationSpeed(int newvalue){
+    animationMilliSec = newvalue;
 }

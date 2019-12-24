@@ -29,13 +29,15 @@ private slots:
 
     void on_actiontextView_triggered();
 
-    void on_actionpanLeft_triggered();
+    void on_animationSlider_valueChanged(int value);
 
-    void on_actionpanTop_triggered();
+    void on_UpPanKey_clicked();
 
-    void on_actionpanBottom_triggered();
+    void on_LeftPanKey_clicked();
 
-    void on_actionpanRight_triggered();
+    void on_RightPanKey_clicked();
+
+    void on_DownPanKey_clicked();
 
 public slots:
     void protagonistHealthUpdate(int h);
@@ -45,9 +47,11 @@ public slots:
 signals:
     void zoom(bool in_out);
     void pan(int dx, int dy);
+    void changeAnimationSpeed(int value);
 
 private:
 
+    void setEnabled2DViewWidgets(bool newvalue);
     virtual void resizeEvent(QResizeEvent*) override;
 
     Ui::MainWindow *ui;

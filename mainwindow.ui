@@ -41,7 +41,7 @@
         <item>
          <widget class="QProgressBar" name="healthBar">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -70,7 +70,7 @@
         <item>
          <widget class="QProgressBar" name="energyBar">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -83,14 +83,130 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="sliderLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Animation Speed</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="animationSlider">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="PanKeys">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
+          <item>
+           <widget class="QPushButton" name="UpPanKey">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Pan Up</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="LeftRightPan">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMinimumSize</enum>
+            </property>
+            <item>
+             <widget class="QPushButton" name="LeftPanKey">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Pan Left</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="RightPanKey">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Pan Right</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="DownPanKey">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Pan Down</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
       <item>
        <widget class="QStackedWidget" name="viewWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="end">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <widget class="QFrame" name="frame">
           <property name="geometry">
            <rect>
@@ -132,8 +248,22 @@
           </widget>
          </widget>
         </widget>
-        <widget class="QWidget" name="view1"/>
-        <widget class="QWidget" name="view2"/>
+        <widget class="QWidget" name="view1">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+        <widget class="QWidget" name="view2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -170,12 +300,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actiongraphicalView"/>
-   <addaction name="actiontextView"/>
    <addaction name="separator"/>
-   <addaction name="actionpanLeft"/>
-   <addaction name="actionpanRight"/>
-   <addaction name="actionpanBottom"/>
-   <addaction name="actionpanTop"/>
+   <addaction name="actiontextView"/>
   </widget>
   <action name="actionOpen_world">
    <property name="text">
@@ -195,26 +321,6 @@
   <action name="actiontextView">
    <property name="text">
     <string>textView</string>
-   </property>
-  </action>
-  <action name="actionpanLeft">
-   <property name="text">
-    <string>panLeft</string>
-   </property>
-  </action>
-  <action name="actionpanRight">
-   <property name="text">
-    <string>panRight</string>
-   </property>
-  </action>
-  <action name="actionpanTop">
-   <property name="text">
-    <string>panTop</string>
-   </property>
-  </action>
-  <action name="actionpanBottom">
-   <property name="text">
-    <string>panBottom</string>
    </property>
   </action>
  </widget>

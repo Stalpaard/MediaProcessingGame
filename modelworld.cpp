@@ -152,6 +152,7 @@ std::tuple<int,int> ModelWorld::generateNewEnemyPosition(){ //kan ook nog met ou
             return std::make_tuple(newX,newY);
         }
     }
+    return std::make_tuple(0,0);
 }
 
 
