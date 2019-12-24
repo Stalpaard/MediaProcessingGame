@@ -54,7 +54,8 @@ private slots:
 public slots:
     void protagonistHealthUpdate(int h);
     void protagonistEnergyUpdate(int e);
-    void gameEnd();
+    void gameDefeat();
+    void gameVictory();
     void panLoop();
 
 signals:

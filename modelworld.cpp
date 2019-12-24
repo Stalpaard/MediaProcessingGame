@@ -9,6 +9,7 @@ const int walkingMaxIndex = 23;
 
 ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, QString location)
 { 
+    remainingEnemies = nrOfEnemies;
     nrOfXenemies = qrand() % (nrOfEnemies/2);
     nrOfEnemies = nrOfEnemies - nrOfXenemies;
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
@@ -186,6 +187,7 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 //SLOTS
 
 void ModelWorld::respawnEnemy(int x, int y){
+    remainingEnemies++;
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
     tile->setValue(tile->getInitValue());
@@ -213,7 +215,10 @@ void ModelWorld::cameraCenterChangeRequested(int x, int y){
 
 void ModelWorld::broadcastHealthChange(int h){
     emit protagonistHealthChanged(h);
-    if(h <= 0) emit endGame();
+    if(h <= 0){
+        emit gameDefeat();
+        emit endGame();
+    }
 }
 
 void ModelWorld::broadcastEnergyChange(int e){
@@ -279,6 +284,11 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
                         //occupant->setAnimations(protagonist_dying);
                         myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
+                        remainingEnemies--;
+                        if(remainingEnemies == 0){
+                            emit gameVictory();
+                            emit endGame();
+                        }
                     }
                     else destinationTile->setOccupied(false);
                     occupant->setDefeated(true);

@@ -8,11 +8,11 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     setWindowTitle(tr("Our Game"));
     this->graphicalView = graphicalView;
     ui->setupUi(this);
-    ui->viewWidget->insertWidget(1,graphicalView);
-    ui->viewWidget->setCurrentIndex(1);
+    ui->viewWidget->insertWidget(2,graphicalView);
+    ui->viewWidget->setCurrentIndex(2);
     ui->animationSlider->setValue(15);
     ui->sliderLabel->setText("Animation speed (" + QString::number(15) + " ms/frame)");
-    ui->viewWidget->insertWidget(2, textView);
+    ui->viewWidget->insertWidget(3, textView);
 
 }
 
@@ -36,7 +36,7 @@ void MainWindow::on_actionQuit_triggered()
 void MainWindow::on_actiongraphicalView_triggered()
 {
     if(!(game_ended)){
-        ui->viewWidget->setCurrentIndex(1);
+        ui->viewWidget->setCurrentIndex(2);
         setEnabled2DViewWidgets(true);
     }
 }
@@ -44,7 +44,7 @@ void MainWindow::on_actiongraphicalView_triggered()
 void MainWindow::on_actiontextView_triggered()
 {
     if(!(game_ended)){
-        ui->viewWidget->setCurrentIndex(2);
+        ui->viewWidget->setCurrentIndex(3);
         setEnabled2DViewWidgets(false);
     }
 }
@@ -59,7 +59,7 @@ void MainWindow::on_animationSlider_valueChanged(int value)
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
    QMainWindow::resizeEvent(event);
-   if(ui->viewWidget->currentIndex() == 1){
+   if(ui->viewWidget->currentIndex() == 2){
        graphicalView->fitInView(graphicalView->sceneRect(), Qt::KeepAspectRatio);
    }
 }
@@ -106,9 +106,14 @@ void MainWindow::protagonistEnergyUpdate(int e){
    ui->energyBar->setValue(e);
 }
 
-void MainWindow::gameEnd(){
+void MainWindow::gameDefeat(){
     game_ended = true;
     ui->viewWidget->setCurrentIndex(0);
+}
+
+void MainWindow::gameVictory(){
+    game_ended = true;
+    ui->viewWidget->setCurrentIndex(1);
 }
 
 

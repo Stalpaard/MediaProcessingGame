@@ -48,6 +48,7 @@ private:
     int columns;
     int nrOfXenemies;
     int fieldOfView;
+    int remainingEnemies;
 
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
@@ -97,6 +98,8 @@ signals:
     void updateView();
     void protagonistHealthChanged(int h);
     void protagonistEnergyChanged(int e);
+    void gameDefeat();
+    void gameVictory();
     void endGame();
     void changeCameraCenter(int x, int y);
     void poisonVisualChange(std::vector<std::tuple<int,int>>& area, float level);

@@ -198,9 +198,9 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
-        <widget class="QWidget" name="end">
+        <widget class="QWidget" name="defeat">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -266,13 +266,50 @@
           </widget>
          </widget>
         </widget>
-        <widget class="QWidget" name="view1">
+        <widget class="QWidget" name="win">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <widget class="QFrame" name="frame_2">
+          <property name="geometry">
+           <rect>
+            <x>-10</x>
+            <y>0</y>
+            <width>681</width>
+            <height>581</height>
+           </rect>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <widget class="QLabel" name="label_2">
+           <property name="geometry">
+            <rect>
+             <x>90</x>
+             <y>160</y>
+             <width>501</width>
+             <height>221</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>50</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Victory Royale</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </widget>
         </widget>
         <widget class="QWidget" name="view2">
          <property name="sizePolicy">
