@@ -39,6 +39,10 @@ private:
 public slots:
     void updateCameraCenter(int dx, int dy);
     void printEntities();
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 };
 
 #endif // TEXTVIEW_H

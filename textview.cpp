@@ -67,7 +67,7 @@ void TextView::printEntities()
             else if(column->isOccupied())
                 print.append(column->getOccupant()->getTextRepresentation());
             else if(column->getPoisonLevel() > 0)
-                print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; \">:::</span>");
+                print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; font-weight: bold;\">:::</span>");
             else
                 print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">   </span>");
         }
@@ -98,7 +98,7 @@ void TextView::fitLabel()
     if (factor < float(0.95) || factor > float(1.05))
     {
         float fontSize = float(font.pointSizeF())*factor;
-        if(fontSize < 1) fontSize = 1;
+        if(fontSize < 6) fontSize = 6;
         font.setPointSize(int(fontSize));
         label->setFont(font);
     }
@@ -117,6 +117,12 @@ void TextView::updateCameraCenter(int dx, int dy)
     else if(newCameraY < 0 ) newCameraY = 0;
 
     camera_center = std::make_tuple(newCameraX,newCameraY);
+    printEntities();
+}
+
+void TextView::resizeEvent(QResizeEvent *event)
+{
+    (void)event; //to silence warining
     printEntities();
 }
 
