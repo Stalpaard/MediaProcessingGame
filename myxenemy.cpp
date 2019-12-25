@@ -14,3 +14,8 @@ void MyXEnemy::deathAction(){
     }
     else emit dead();
 }
+QString MyXEnemy::getTextRepresentation()
+{
+    if(state == EntityState::DEFEATED) return "<span style=\"color:black; font-family: monospace;  white-space: pre;\"> x </span>";
+    else return "<span style=\"color:red; font-family: monospace;  white-space: pre; font-weight: bold;\"> X </span>";
+}

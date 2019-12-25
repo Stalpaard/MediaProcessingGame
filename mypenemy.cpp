@@ -39,3 +39,9 @@ void PEnemy::setPoisonLevel(float newvalue)
 {
   poisonLevel = newvalue;
 }
+
+QString MyPEnemy::getTextRepresentation()
+{
+    if(state == EntityState::DEFEATED) return "<span style=\"color:black; font-family: monospace;  white-space: pre;\"> x </span>";
+    else return "<span style=\"color:purple; font-family: monospace;  white-space: pre; font-weight: bold;\"> P </span>";
+}

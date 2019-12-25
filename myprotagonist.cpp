@@ -4,3 +4,8 @@ MyProtagonist::MyProtagonist(std::shared_ptr<std::vector<std::shared_ptr<QImage>
     Entity{0,0,0,idle_animations,death_animations,walking_animations}, health{100}, energy{100}
 {
 }
+
+QString MyProtagonist::getTextRepresentation()
+{
+    return "<span style=\"color:red; font-family: monospace;  white-space: pre; font-weight: bold;\">HUH</span>";
+}

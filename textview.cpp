@@ -41,18 +41,12 @@ void TextView::printEntities()
     int protagonistY = data_model->getMyProtagonist()->getYPos();
     std::get<0>(printSize) = 0;
     print = "";
-    //int xDistance, yDistance;
 
     QFont font=QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setPointSize(6);
 
     //Get 2D representation of the world in range of the protagonist ('window' into the data)
     std::vector<std::vector<std::shared_ptr<MyTile>>> areaOfInterest = data_model->make2DRepresentationAroundPointWithRange(std::get<0>(camera_center),std::get<1>(camera_center),data_model->getFieldOfView());
-
-
-//    painter.begin(&source);
-//    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-//    painter.drawImage((range*32)+6,(range*32)+1,*(data_model->getMyProtagonist()->getRepresentation()));
 
     for(std::vector<std::shared_ptr<MyTile>> row : areaOfInterest)
     {
@@ -67,29 +61,15 @@ void TextView::printEntities()
         for(std::shared_ptr<MyTile> column : row)
         {
             print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">|</span>");
-//            xDistance = column->getXPos()-centerX;
-//            yDistance = column->getYPos()-centerY;
+
             if (column->getXPos() == protagonistX && column->getYPos() == protagonistY)
                 print.append("<span style=\"color:blue; font-family: monospace;  white-space: pre; font-weight: bold;\">YOU</span>");
             else if(column->isOccupied())
-                print.append("<span style=\"color:red; font-family: monospace;  white-space: pre; font-weight: bold;\"> X </span>");
-            else print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">   </span>");
-
-//                std::shared_ptr<Entity> occupant = column->getOccupant();
-//                float occupant_value = occupant->getValue();
-//                std::shared_ptr<QImage> representation = occupant->getRepresentation();
-//                painter.drawImage(6+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),*representation);
-
-//                if(!(occupant->isDefeated())){
-//                    if(occupant_value > 0) painter.setPen(Qt::red);
-//                    else painter.setPen(Qt::darkGreen);
-//                    painter.drawText(10+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
-//                }
-//            }
-//            if(column->getPoisonLevel() > 0){
-//                painter.setPen(Qt::green);
-//                painter.drawText(10+(32*xDistance)+(range*32),20+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(column->getPoisonLevel()))));
-//            }
+                print.append(column->getOccupant()->getTextRepresentation());
+            else if(column->getPoisonLevel() > 0)
+                print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; \">:::</span>");
+            else
+                print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">   </span>");
         }
         print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">|<br></span>");
     }
@@ -119,7 +99,6 @@ void TextView::fitLabel()
     {
         float fontSize = float(font.pointSizeF())*factor;
         if(fontSize < 1) fontSize = 1;
-        std::cout << "fontsize = " << fontSize << std::endl;
         font.setPointSize(int(fontSize));
         label->setFont(font);
     }

@@ -6,4 +6,10 @@ MyEnemy::MyEnemy(int xPosition, int yPosition, float strength, std::shared_ptr<s
 {
 }
 
+QString MyEnemy::getTextRepresentation()
+{
+    if(state == EntityState::DEFEATED) return "<span style=\"color:black; font-family: monospace;  white-space: pre;\"> x </span>";
+    else return "<span style=\"color:red; font-family: monospace;  white-space: pre; font-weight: bold;\"> E </span>";
+}
+
 

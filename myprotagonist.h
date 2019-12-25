@@ -22,6 +22,8 @@ public:
     float getEnergy() const {return energy;}
     void setEnergy(float value) {energy = value; emit energyChanged(static_cast<int>(energy));}
     virtual void deathAction() override{}
+    QString getTextRepresentation() override;
+
 private:
     QImage* representation;
 signals:

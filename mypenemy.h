@@ -13,6 +13,7 @@ public:
     float getPoisonLevel() const;
     void setPoisonLevel(float value);
     virtual void deathAction() override{poison();}
+    QString getTextRepresentation() override;
 
 
 public slots:

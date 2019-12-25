@@ -5,3 +5,8 @@ MyHealthpack::MyHealthpack(int xPosition, int yPosition, float health, std::shar
 {
 
 }
+QString MyHealthpack::getTextRepresentation()
+{
+    if(state == EntityState::DEFEATED) return "<span style=\"color:red; font-family: monospace;  white-space: pre; font-weight: bold;\">   </span>";
+    else return "<span style=\"color:green; font-family: monospace;  white-space: pre; font-weight: bold;\"> + </span>";
+}

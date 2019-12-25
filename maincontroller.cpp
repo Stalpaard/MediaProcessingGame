@@ -108,6 +108,9 @@ int MainController::startGameInstance(){
                 QObject::connect(
                     model.get(), &ModelWorld::updateView,
                     textView, &TextView::printEntities);
+                QObject::connect(
+                    model.get(), &ModelWorld::poisonVisualChange,
+                    textView, &TextView::printEntities);
 
                 w.setWindowTitle("The Most Epic Game Ever");
                 w.show();
