@@ -36,9 +36,6 @@ public :
 
     std::vector<std::vector<std::shared_ptr<MyTile>>> map;
 
-    //!!!!!!!!!!!!!!!!!!!!!! CONSIDER USING UNIQUE POINTERS TO NODES INSTEAD OF THE NODES ITSELF !!!!!!!!!!!!!!
-    //std::priority_queue <Node,std::vector<Node>,Compare> openlist;
-    //std::unordered_map <Node> closedlist;  For later
     std::vector <Node*> closedlist; // inneficient for now
     std::set<Node*,APtrComp> openList;
 
