@@ -3,7 +3,6 @@
 
 #include "command.h"
 
-
 class CommandLeft : public Command
 {
     Q_OBJECT

@@ -113,7 +113,6 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
             break;
         }
     }
-
     QTextEdit::keyPressEvent(e);
     QString completionPrefix = textUnderCursor();
 

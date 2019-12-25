@@ -26,8 +26,14 @@ int MainController::startGameInstance(){
                 std::vector<std::shared_ptr<Command>> *commands = new std::vector<std::shared_ptr<Command>>;
                 commands->emplace_back(new CommandDown);
                 commands->emplace_back(new CommandLeft);
+                commands->emplace_back(new CommandPanDown);
+                commands->emplace_back(new CommandPanLeft);
+                commands->emplace_back(new CommandPanRight);
+                commands->emplace_back(new CommandPanUp);
                 commands->emplace_back(new CommandRight);
                 commands->emplace_back(new CommandUp);
+                commands->emplace_back(new CommandZoomIn);
+                commands->emplace_back(new CommandZoomOut);
                 TextView *textView = new TextView(nullptr, commands, model);
 
                 MainWindow w{nullptr, &view, textView,amountOfEnemies};
@@ -105,6 +111,15 @@ int MainController::startGameInstance(){
                         QObject::connect(
                             c.get(), &Command::moveCompleted,
                             model.get(), &ModelWorld::protagonistMoveCompleted);
+                        QObject::connect(
+                            c.get(), &Command::zoom,
+                            model.get(), &ModelWorld::zoomRequested);
+                        QObject::connect(
+                            c.get(), &Command::zoom,
+                            textView, &TextView::printEntities);
+                        QObject::connect(
+                            c.get(), &Command::updateCameraCenter,
+                            textView, &TextView::updateCameraCenter);
                     }
                 QObject::connect(
                     model.get(), &ModelWorld::changeCameraCenter,

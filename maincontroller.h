@@ -12,6 +12,12 @@
 #include "commandleft.h"
 #include "commandright.h"
 #include "command.h"
+#include "commandzoomin.h"
+#include "commandzoomout.h"
+#include "commandpandown.h"
+#include "commandpanleft.h"
+#include "commandpanright.h"
+#include "commandpanup.h"
 #include "textview.h"
 
 #include <QApplication>

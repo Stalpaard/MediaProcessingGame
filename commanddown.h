@@ -1,9 +1,7 @@
 #ifndef COMMANDDOWN_H
 #define COMMANDDOWN_H
 
-
 #include "command.h"
-
 
 class CommandDown : public Command
 {
@@ -15,6 +13,5 @@ public:
     void operator() ();
 
 };
-
 
 #endif // COMMANDDOWN_H
