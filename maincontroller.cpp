@@ -95,12 +95,16 @@ int MainController::startGameInstance(){
                     &w, &MainWindow::openNewWorld,
                     this, &MainController::openNewWorld
                 );
+
+                // Connects for the text view part
                 for (auto &c : *commands)
                     {
                         QObject::connect(
                             c.get(), &Command::movementKeyPressed,
-                            model.get(), &ModelWorld::protagonistMoveRequested
-                        );
+                            model.get(), &ModelWorld::protagonistMoveRequested);
+                        QObject::connect(
+                            c.get(), &Command::moveCompleted,
+                            model.get(), &ModelWorld::protagonistMoveCompleted);
                     }
                 QObject::connect(
                     model.get(), &ModelWorld::changeCameraCenter,

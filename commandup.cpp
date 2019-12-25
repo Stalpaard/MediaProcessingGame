@@ -10,4 +10,5 @@ CommandUp::~CommandUp() = default;
 void CommandUp::operator() ()
 {
     emit movementKeyPressed(Direction::UP);
+    emit moveCompleted();
 }

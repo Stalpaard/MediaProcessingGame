@@ -42,7 +42,6 @@ public slots:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-
 };
 
 #endif // TEXTVIEW_H

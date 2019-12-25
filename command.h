@@ -22,6 +22,7 @@ protected:
 
 signals:
     void movementKeyPressed(Direction direction);
+    void moveCompleted();
 
 };
 

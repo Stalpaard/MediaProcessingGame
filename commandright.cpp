@@ -10,4 +10,5 @@ CommandRight::~CommandRight() = default;
 void CommandRight::operator() ()
 {
     emit movementKeyPressed(Direction::RIGHT);
+    emit moveCompleted();
 }

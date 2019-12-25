@@ -10,4 +10,5 @@ CommandLeft::~CommandLeft() = default;
 void CommandLeft::operator() ()
 {
     emit movementKeyPressed(Direction::LEFT);
+    emit moveCompleted();
 }

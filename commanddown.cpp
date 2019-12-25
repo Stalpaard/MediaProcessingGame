@@ -10,4 +10,5 @@ CommandDown::~CommandDown() = default;
 void CommandDown::operator() ()
 {
     emit movementKeyPressed(Direction::DOWN);
+    emit moveCompleted();
 }
