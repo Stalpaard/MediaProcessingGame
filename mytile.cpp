@@ -1,12 +1,11 @@
 #include "mytile.h"
 
-MyTile::MyTile(int xPosition, int yPosition, float tileWeight) : Tile(xPosition,yPosition,tileWeight)
+MyTile::MyTile(int xPosition, int yPosition, float tileWeight) : Tile(xPosition,yPosition,tileWeight), occupied{false}, poisonLevel{0}
 {
-    occupied = false;
-    poisonLevel = 0;
+    init_value = getValue();
 }
 
-void MyTile::setOccupant(std::shared_ptr<MyEnemy> newOccupant){
+void MyTile::setOccupant(std::shared_ptr<Entity> newOccupant){
     occupant = newOccupant;
     if(newOccupant) occupied = true;
     else occupied = false;

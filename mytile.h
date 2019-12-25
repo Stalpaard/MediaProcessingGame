@@ -9,15 +9,17 @@ class MyTile : public Tile
 public:
     MyTile(int xPosition, int yPosition, float tileWeight);
     bool isOccupied() const{return occupied;}
+    float getInitValue() const{return init_value;}
     void setOccupied(bool newvalue){occupied = newvalue;}
-    MyEnemy* getOccupant() const{return occupant.get();}
-    void setOccupant(std::shared_ptr<MyEnemy> newOccupant);
+    std::shared_ptr<Entity> getOccupant() const{return occupant;}
+    void setOccupant(std::shared_ptr<Entity> newOccupant);
     float getPoisonLevel() const{return poisonLevel;}
     void setPoisonLevel(float newvalue){poisonLevel = newvalue;}
 private:
     bool occupied;
+    float init_value;
     float poisonLevel;
-    std::shared_ptr<MyEnemy> occupant;
+    std::shared_ptr<Entity> occupant;
 };
 
 #endif // MYTILE_H

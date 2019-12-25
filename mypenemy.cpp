@@ -4,7 +4,8 @@
 #include <iostream>
 
 
-MyPEnemy::MyPEnemy(int xPosition, int yPosition, float strength, QImage* representation): MyEnemy(xPosition, yPosition, strength, representation), poisonLevel{strength}
+MyPEnemy::MyPEnemy(int xPosition, int yPosition, float strength, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations):
+    Entity(xPosition, yPosition, strength, idle_animations,death_animations,walking_animations), poisonLevel{strength}
 {
   qsrand(time(nullptr));
 }
@@ -14,7 +15,7 @@ bool MyPEnemy::poison()
   if (poisonLevel > 0.0f)
     {
       emit poisonLevelUpdated(poisonLevel, xPos,yPos);
-      int t = 2;
+      int t = qrand()%5;
       std::cout << "starting timer for " << t << " seconds" << " with poisonLevel = " << poisonLevel << std::endl;
       poisonLevel -= 10.0f;
       QTimer::singleShot(t*1000, this, SLOT(poison()));
@@ -37,4 +38,21 @@ float MyPEnemy::getPoisonLevel() const
 void PEnemy::setPoisonLevel(float newvalue)
 {
   poisonLevel = newvalue;
+}
+
+QString MyPEnemy::getTextRepresentation()
+{
+    if(state == EntityState::DEFEATED) return "<span style=\"color:black; font-family: monospace;  white-space: pre;\"> x </span>";
+    else
+    {
+        QString value;
+        if(int(this->getValue()) < 10) value.append("0");
+        value.append(QString::fromStdString(std::to_string(int(this->getValue()))));
+
+        QString text = "<span style=\"color:purple; font-family: monospace;  white-space: pre; font-weight: 900;\">P</span>";
+        text.append("<span style=\"color:black; font-family: monospace;  white-space: pre; font-weight: 100;\">");
+        text.append(value);
+        text.append("</span>");
+        return text;
+    }
 }
