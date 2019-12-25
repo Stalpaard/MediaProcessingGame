@@ -208,7 +208,7 @@ void ModelWorld::respawnEnemy(int x, int y){
 void ModelWorld::zoomRequested(bool in_out){
     if(in_out) setFieldOfView(fieldOfView-1);
     else setFieldOfView(fieldOfView+1);
-    //emit updateView();
+    emit updateView();
 }
 
 void ModelWorld::cameraCenterChangeRequested(int x, int y){

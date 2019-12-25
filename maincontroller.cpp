@@ -102,6 +102,13 @@ int MainController::startGameInstance(){
                             model.get(), &ModelWorld::protagonistMoveRequested
                         );
                     }
+                QObject::connect(
+                    model.get(), &ModelWorld::changeCameraCenter,
+                    textView, &TextView::updateCameraCenter);
+                QObject::connect(
+                    model.get(), &ModelWorld::updateView,
+                    textView, &TextView::printEntities);
+
                 w.setWindowTitle("The Most Epic Game Ever");
                 w.show();
 
