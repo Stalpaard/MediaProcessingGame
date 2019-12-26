@@ -60,7 +60,6 @@ HEADERS += \
     graphicalview.h \
     maincontroller.h \
     mainwindow.h \
-    Node.h \
     modelworld.h \
     myenemy.h \
     mygraphicsscene.h \
