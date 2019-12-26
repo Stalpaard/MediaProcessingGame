@@ -15,14 +15,13 @@ MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> 
 
 QImage MyGraphicsScene::calculateScaled(int centerX, int centerY, int range){
     QImage newImage = world_data->copy(QRect(QPoint(centerX-range,centerY-range),QPoint(centerX+range,centerY+range)));
-    return newImage.scaled(newImage.width()*32,newImage.height()*32, Qt::AspectRatioMode::KeepAspectRatio);
+    return newImage.scaled(newImage.width()*32,newImage.height()*32, Qt::AspectRatioMode::KeepAspectRatio,Qt::FastTransformation);
 }
 
 void MyGraphicsScene::animationLoop(){
     //change QImage data according to changed conditions and generate new pixmap item
     clear();
     int range = data_model->getFieldOfView();
-
     if(camera_center != target_camera_center && !(data_model->getMyProtagonist()->isWalking())) camera_center = target_camera_center;
 
     QImage scaled_copy = calculateScaled(std::get<0>(camera_center), std::get<1>(camera_center), range);
@@ -112,6 +111,8 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 }
 
 void MyGraphicsScene::updateCameraCenter(int dx, int dy){
+
+
     int currentcameraX = std::get<0>(camera_center);
     int currentcameraY = std::get<1>(camera_center);
     int newCameraX = currentcameraX+dx;
@@ -134,6 +135,7 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
         }
         else movingDirection = Direction::UP;
     }
+
 }
 
 void MyGraphicsScene::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result){

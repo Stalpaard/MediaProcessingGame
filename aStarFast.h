@@ -78,7 +78,7 @@ public :
       }
 
     bool passable(GridLocation id) const {
-        return map.at(id.x).at(id.y)->getValue() != std::numeric_limits<float>::infinity();
+        return map.at(id.y).at(id.x)->getValue() != std::numeric_limits<float>::infinity();
       }
 
     std::vector<GridLocation> neighbors(GridLocation id) const {
@@ -122,7 +122,7 @@ public :
         }
 
         for (GridLocation next : neighbors(current)) {
-          float new_cost = cost_so_far[current] + map.at(next.x).at(next.y)->getValue();
+          float new_cost = cost_so_far[current] + map.at(next.y).at(next.x)->getValue();
           if (cost_so_far.find(next) == cost_so_far.end()
               || new_cost < cost_so_far[next]) {
             cost_so_far[next] = new_cost;

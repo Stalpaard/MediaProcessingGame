@@ -132,7 +132,7 @@ void ModelWorld::initializeCollections(){
 
     // Initialize XEnemies
     while(myXEnemies.size() < nrOfXenemies){
-        std::tuple<int,int> position = generateNewEnemyPosition();
+        std::pair<int,int> position = generateNewEnemyPosition();
         int xPos = std::get<0>(position);
         int yPos = std::get<1>(position);
         std::shared_ptr<MyTile> tile = representation_2D.at(yPos).at(xPos);
@@ -166,7 +166,6 @@ std::pair<int,int> ModelWorld::generateNewEnemyPosition(){ //kan ook nog met oud
 
 std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentationAroundPointWithRange(int xPos, int yPos, int range){
     std::vector<std::vector<std::shared_ptr<MyTile>>> result;
-
     int firstYpos = yPos - range;
     int lastYpos = yPos + range;
     int firstXpos = xPos - range;
