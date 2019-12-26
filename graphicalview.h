@@ -14,6 +14,8 @@ private:
     bool gameEnded;
 public:
     GraphicalView(QGraphicsScene* scene);
+protected:
+    virtual void resizeEvent(QResizeEvent *event) override;
 signals:
     void movementKeyPressed(Direction direction);
     void zoom(bool in_out);

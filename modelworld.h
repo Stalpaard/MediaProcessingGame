@@ -7,6 +7,7 @@
 #include "direction.h"
 #include "mytile.h"
 #include "myenemy.h"
+#include "aStar.h"
 #include "myhealthpack.h"
 #include "myprotagonist.h"
 #include "mypenemy.h"
@@ -24,7 +25,7 @@ public:
     std::vector<std::shared_ptr<MyPEnemy>> getMyPEnemies() const{return myPEnemies;}
     std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
-    std::vector<std::vector<std::shared_ptr<MyTile>>> get2DRepresentation() const{return representation_2D;}
+    std::vector<std::vector<std::shared_ptr<MyTile>>> get2DRepresentation(){return representation_2D;}
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
@@ -78,6 +79,7 @@ private:
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_dying;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> healthpack_idle;
 
+    std::shared_ptr<aStar> pathfinding_algo;
 
     std::shared_ptr<MyProtagonist> myProtagonist;
 
@@ -88,6 +90,7 @@ public slots:
     void protagonistMoveCompleted();
     void zoomRequested(bool in_out);
     void cameraCenterChangeRequested(int x, int y);
+    void runPathfinding(int destX, int destY);
 
 private slots:
     void respawnEnemy(int x, int y);
@@ -99,11 +102,13 @@ signals:
     void updateView();
     void protagonistHealthChanged(int h);
     void protagonistEnergyChanged(int e);
+    void protagonistPositionChanged(int x, int y);
     void gameDefeat();
     void gameVictory();
     void endGame();
+    void showPathfinding(std::vector<std::pair<int,int>> result);
     void changeCameraCenter(int x, int y);
-    void poisonVisualChange(std::vector<std::tuple<int,int>>& area, float level);
+    void poisonVisualChange(std::vector<std::pair<int,int>>& area, float level);
 
 };
 

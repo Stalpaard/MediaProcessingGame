@@ -19,6 +19,7 @@ int MainController::startGameInstance(){
 
             if(ok){
                 std::shared_ptr<ModelWorld> model = std::make_shared<ModelWorld>(amountOfEnemies,amountOfHealthpacks,worldFileName);
+                //2D view part
                 MyGraphicsScene scene{worldFileName,model};
                 GraphicalView view{&scene};
 
@@ -36,11 +37,15 @@ int MainController::startGameInstance(){
                 commands->emplace_back(new CommandZoomOut);
                 TextView *textView = new TextView(nullptr, commands, model);
 
-                MainWindow w{nullptr, &view, textView,amountOfEnemies};
+                // a star part
+
+                MainWindow w{nullptr, &view, textView,amountOfEnemies,model->getColumns(),model->getRows()};
                 QObject::connect(
                     &view, &GraphicalView::movementKeyPressed,
                     model.get(), &ModelWorld::protagonistMoveRequested
                 );
+
+
                 QObject::connect(
                     &scene, &MyGraphicsScene::updateFitScene,
                     &view, &GraphicalView::fitScene
@@ -52,6 +57,10 @@ int MainController::startGameInstance(){
                 QObject::connect(
                     model.get(), &ModelWorld::changeCameraCenter,
                     &scene, &MyGraphicsScene::updateCameraCenter
+                );
+                QObject::connect(
+                    model.get(), &ModelWorld::protagonistPositionChanged,
+                    &w, &MainWindow::updateProtagonistPositionLabel
                 );
                 QObject::connect(
                     model.get(), &ModelWorld::poisonVisualChange,
@@ -96,6 +105,10 @@ int MainController::startGameInstance(){
                 QObject::connect(
                     &w, &MainWindow::actionQuit,
                     this, &MainController::quitApp
+                );
+                QObject::connect(
+                    &w, &MainWindow::runPathfinding,
+                    model.get(), &ModelWorld::runPathfinding
                 );
                 QObject::connect(
                     &w, &MainWindow::openNewWorld,

@@ -1,18 +1,20 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView, int amountOfEnemies)
+MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView, int amountOfEnemies, int mapCols, int mapRows)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), game_ended{false}
 {
     this->graphicalView = graphicalView;
     ui->setupUi(this);
-    ui->viewWidget->insertWidget(2,graphicalView);
-    ui->viewWidget->setCurrentIndex(2);
+    ui->viewWidget->insertWidget(3,graphicalView);
+    ui->viewWidget->setCurrentIndex(3);
     ui->animationSlider->setValue(15);
     ui->sliderLabel->setText("Animation speed (" + QString::number(15) + " ms/frame)");
-    ui->viewWidget->insertWidget(3, textView);
+    ui->viewWidget->insertWidget(4, textView);
     updateRemainingEnemies(amountOfEnemies);
+    ui->xSpinBox->setMaximum(mapCols-1);
+    ui->ySpinBox->setMaximum(mapRows-1);
 }
 
 
@@ -35,7 +37,7 @@ void MainWindow::on_actionQuit_triggered()
 void MainWindow::on_actiongraphicalView_triggered()
 {
     if(!(game_ended)){
-        ui->viewWidget->setCurrentIndex(2);
+        ui->viewWidget->setCurrentIndex(3);
         setEnabled2DViewWidgets(true);
     }
 }
@@ -43,7 +45,7 @@ void MainWindow::on_actiongraphicalView_triggered()
 void MainWindow::on_actiontextView_triggered()
 {
     if(!(game_ended)){
-        ui->viewWidget->setCurrentIndex(3);
+        ui->viewWidget->setCurrentIndex(4);
         setEnabled2DViewWidgets(false);
     }
 }
@@ -52,6 +54,14 @@ void MainWindow::on_animationSlider_valueChanged(int value)
 {
     ui->sliderLabel->setText("Animation speed (" + QString::number(value) + " ms/frame)");
     emit changeAnimationSpeed(value);
+}
+
+void MainWindow::on_actionPathFinding_triggered()
+{
+    if(!(game_ended)){
+        ui->viewWidget->setCurrentIndex(2);
+        setEnabled2DViewWidgets(false);
+    }
 }
 
 
@@ -109,4 +119,15 @@ void MainWindow::gameVictory(){
 
 void MainWindow::updateRemainingEnemies(int value) {
     ui->remainingEnemiesLabel->setText("Remaining enemies: " + QString::number(value));
+}
+
+void MainWindow::updateProtagonistPositionLabel(int x, int y){
+    ui->positionLabel->setText("Current position: (" + QString::number(x) + "," + QString::number(y) + ")");
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    emit runPathfinding(ui->xSpinBox->value(), ui->ySpinBox->value());
+    std::cout << "button clicked" << std::endl;
 }

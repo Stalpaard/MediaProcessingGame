@@ -6,6 +6,7 @@
 #include <memory>
 #include <QTimer>
 #include <QPainter>
+#include <math.h>
 #include "modelworld.h"
 #include "direction.h"
 
@@ -29,8 +30,8 @@ private:
     void startAnimationLoop();
     QImage calculateScaled(int centerX, int centerY, int range);
 
-    std::tuple<int,int> camera_center;
-    std::tuple<int,int> target_camera_center;
+    std::pair<int,int> camera_center;
+    std::pair<int,int> target_camera_center;
 
     int moveCounter;
     Direction movingDirection;
@@ -42,7 +43,7 @@ public slots:
     void updateCameraCenter(int dx, int dy);
     void animationLoop();
     void updateAnimationSpeed(int newvalue);
-    void poisonLevelChanged(std::vector<std::tuple<int,int>>& area, float level);
+    void poisonLevelChanged(std::vector<std::pair<int,int>>& area, float level);
 };
 
 #endif // MYGRAPHICSSCENE_H

@@ -8,7 +8,7 @@ MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> 
     *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
     original_world_data = *world_data;
     data_model = model;
-    camera_center = std::make_tuple(0,0);
+    camera_center = std::make_pair(0,0);
     animationLoop();
 }
 
@@ -87,6 +87,7 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
         for(std::shared_ptr<MyTile> column : row){
             xDistance = column->getXPos()-centerX;
             yDistance = column->getYPos()-centerY;
+            painter.setPen(Qt::white);
             if(column->isOccupied()){
                 std::shared_ptr<Entity> occupant = column->getOccupant();
                 float occupant_value = occupant->getValue();
@@ -118,7 +119,7 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
     else if(newCameraX < 0) newCameraX = 0;
     if(newCameraY > data_model->getRows()) newCameraY = data_model->getRows();
     else if(newCameraY < 0 ) newCameraY = 0;
-    target_camera_center = std::make_tuple(newCameraX,newCameraY);
+    target_camera_center = std::make_pair(newCameraX,newCameraY);
 
     if(newCameraX != currentcameraX){
         if(currentcameraX-newCameraX > 0){
@@ -134,13 +135,13 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
     }
 }
 
-void MyGraphicsScene::poisonLevelChanged(std::vector<std::tuple<int,int>>& tuples, float level){
-    for (auto &tuple : tuples){
+void MyGraphicsScene::poisonLevelChanged(std::vector<std::pair<int,int>>& pairs, float level){
+    for (auto &pair : pairs){
             int greenLevel = static_cast<int>(level);
             if(greenLevel > 255) greenLevel = 255;
             else if(greenLevel < 0) greenLevel = 0;
-            if(level > 0) world_data->setPixelColor(std::get<0>(tuple),std::get<1>(tuple),QColor(0,greenLevel,0));
-            else world_data->setPixelColor(std::get<0>(tuple),std::get<1>(tuple),original_world_data.pixelColor(std::get<0>(tuple),std::get<1>(tuple)));
+            if(level > 0) world_data->setPixelColor(std::get<0>(pair),std::get<1>(pair),QColor(0,greenLevel,0));
+            else world_data->setPixelColor(std::get<0>(pair),std::get<1>(pair),original_world_data.pixelColor(std::get<0>(pair),std::get<1>(pair)));
     }
 }
 

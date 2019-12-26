@@ -17,6 +17,9 @@ ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, Q
     rows = world.getRows();
     columns = world.getCols();
     fieldOfView = default_fieldOfView;
+
+    pathfinding_algo = std::make_shared<aStar>(representation_2D,columns,rows);
+
     initializeAnimations();
     initializeCollections();
 
@@ -187,6 +190,11 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 
 //SLOTS
 
+void ModelWorld::runPathfinding(int destX, int destY){
+    //doe pathfinding
+    //emit showPathfinding(result);
+}
+
 void ModelWorld::respawnEnemy(int x, int y){
     remainingEnemies++;
     emit remainingEnemiesChanged(remainingEnemies);
@@ -212,6 +220,7 @@ void ModelWorld::zoomRequested(bool in_out){
 }
 
 void ModelWorld::cameraCenterChangeRequested(int x, int y){
+    emit protagonistPositionChanged(myProtagonist->getXPos(), myProtagonist->getYPos());
     emit changeCameraCenter(x,y);
 }
 
@@ -326,20 +335,20 @@ void ModelWorld::poisonTile(float value, int x, int y){
     //Set poison levels and pass tuples of (int,int) to views
     unsigned long startY = y-poisonRange;
     unsigned long startX = x-poisonRange;
-    std::vector<std::tuple<int,int>> tuples;
+    std::vector<std::pair<int,int>> pairs;
 
     for(int i = 0; i <= 2*poisonRange; i++){
         for(int j = 0; j <= 2*poisonRange; j++){
             int tileX = startX+i;
             int tileY = startY+j;
             if(tileX >= 0 && tileY >= 0 && tileX < rows && tileY < columns){
-                tuples.push_back(std::make_tuple(tileX,tileY));
+                pairs.push_back(std::make_pair(tileX,tileY));
                 if(value < 0) representation_2D.at(tileY).at(tileX)->setPoisonLevel(0);
                 else representation_2D.at(tileY).at(tileX)->setPoisonLevel(value);
             }
         }
     }
-    emit poisonVisualChange(tuples, value);
+    emit poisonVisualChange(pairs, value);
 }
 
 

@@ -18,6 +18,7 @@
 #include "commandpanleft.h"
 #include "commandpanright.h"
 #include "commandpanup.h"
+#include "aStar.h"
 #include "textview.h"
 
 #include <QApplication>

@@ -51,6 +51,13 @@ void GraphicalView::fitScene(){
     fitInView(sceneRect(),Qt::KeepAspectRatio);
 }
 
+void GraphicalView::resizeEvent(QResizeEvent *event)
+{
+    (void)event; //to silence warining
+    fitScene();
+}
+
+
 void GraphicalView::gameEnd(){
     gameEnded = true;
 }
