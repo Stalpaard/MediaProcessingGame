@@ -40,8 +40,6 @@ public:
     int startGameInstance();
 private:
     QApplication& app;
-
-    bool newWorldRequested;
 public slots:
     void quitApp();
     void openNewWorld();

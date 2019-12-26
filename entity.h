@@ -21,14 +21,11 @@ public:
     void setWalkingAnimations(std::shared_ptr<std::vector<std::shared_ptr<QImage>>>  newvalue) {walking_animations = newvalue;}
     virtual void deathAction()=0;
     virtual QString getTextRepresentation()=0;
-
 protected:
     EntityState state;
-
 private:
     unsigned long representation_index;
     bool stopAnimation;
-    //EntityState state;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations;

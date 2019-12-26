@@ -7,6 +7,7 @@ MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> 
     world_data = std::make_shared<QImage>(location);
     *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
     original_world_data = *world_data;
+    pathfindingResult = nullptr;
     data_model = model;
     camera_center = std::make_pair(0,0);
     animationLoop();
@@ -132,6 +133,26 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
             movingDirection = Direction::DOWN;
         }
         else movingDirection = Direction::UP;
+    }
+}
+
+void MyGraphicsScene::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result){
+    pathfindingResult = result;
+    showPathfinding(true);
+}
+
+void MyGraphicsScene::showPathfinding(bool t_f){
+    if(pathfindingResult != nullptr){
+        if(t_f){
+            for(auto& pair : *pathfindingResult){
+                world_data->setPixelColor(std::get<0>(pair),std::get<1>(pair),QColor(255,0,0));
+            }
+        }
+        else{
+            for(auto& pair : *pathfindingResult){
+                world_data->setPixelColor(std::get<0>(pair),std::get<1>(pair),original_world_data.pixelColor(std::get<0>(pair),std::get<1>(pair)));
+            }
+        }
     }
 }
 

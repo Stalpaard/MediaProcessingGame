@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     updateRemainingEnemies(amountOfEnemies);
     ui->xSpinBox->setMaximum(mapCols-1);
     ui->ySpinBox->setMaximum(mapRows-1);
+    ui->pathfindingCheckBox->setEnabled(false);
+    ui->pathfindingCheckBox->setVisible(false);
 }
 
 
@@ -60,6 +62,8 @@ void MainWindow::on_actionPathFinding_triggered()
 {
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(2);
+        ui->pathfindingCheckBox->setEnabled(false);
+        ui->pathfindingCheckBox->setVisible(false);
         setEnabled2DViewWidgets(false);
     }
 }
@@ -103,6 +107,12 @@ void MainWindow::protagonistHealthUpdate(int h){
    ui->healthBar->setValue(h);
 }
 
+void MainWindow::pathfindingAvailable(){
+    ui->pathfindingCheckBox->setEnabled(true);
+    ui->pathfindingCheckBox->setVisible(true);
+    ui->pathfindingCheckBox->setCheckState(Qt::CheckState::Checked);
+}
+
 void MainWindow::protagonistEnergyUpdate(int e){
    ui->energyBar->setValue(e);
 }
@@ -129,5 +139,19 @@ void MainWindow::updateProtagonistPositionLabel(int x, int y){
 void MainWindow::on_pushButton_clicked()
 {
     emit runPathfinding(ui->xSpinBox->value(), ui->ySpinBox->value());
+    on_actiongraphicalView_triggered();
     std::cout << "button clicked" << std::endl;
+}
+
+void MainWindow::on_pathfindingCheckBox_stateChanged(int arg1)
+{
+    switch(arg1){
+        case Qt::CheckState::Checked :
+        emit showPathfinding(true);
+        break;
+        case Qt::CheckState::Unchecked :
+        emit showPathfinding(false);
+
+        break;
+    }
 }

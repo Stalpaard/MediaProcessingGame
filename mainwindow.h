@@ -9,6 +9,7 @@
 #include "direction.h"
 #include <QKeyEvent>
 #include <QTimer>
+#include <QCheckBox>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -37,11 +38,14 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pathfindingCheckBox_stateChanged(int arg1);
+
 public slots:
     void protagonistHealthUpdate(int h);
     void protagonistEnergyUpdate(int e);
     void gameDefeat();
     void gameVictory();
+    void pathfindingAvailable();
     void updateRemainingEnemies(int remainingAmount);
     void updateProtagonistPositionLabel(int x, int y);
 
@@ -51,6 +55,7 @@ signals:
     void actionQuit();
     void openNewWorld();
     void runPathfinding(int destX, int destY);
+    void showPathfinding(bool newvalue);
 
 private:
     void setEnabled2DViewWidgets(bool newvalue);

@@ -29,6 +29,7 @@ public:
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
+
     int getRows() const{return rows;}
     int getColumns() const{return columns;}
 
@@ -42,7 +43,7 @@ private:
     void moveProtagonist(Direction direction);
     void addOccupantToTile(std::shared_ptr<Tile> newEnemy);
 
-    std::tuple<int,int> generateNewEnemyPosition();
+    std::pair<int,int> generateNewEnemyPosition();
 
     World world;
     int rows;
@@ -50,7 +51,9 @@ private:
     int nrOfXenemies;
     int fieldOfView;
     int remainingEnemies;
-
+    std::shared_ptr<std::vector<std::pair<int,int>>> algoResult;
+    std::shared_ptr<MyProtagonist> myProtagonist;
+    std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
     std::vector<std::shared_ptr<MyEnemy>> myEnemies;
@@ -79,24 +82,17 @@ private:
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_dying;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> healthpack_idle;
 
-    //std::shared_ptr<aStar> pathfinding_algo;
-
-    std::shared_ptr<MyProtagonist> myProtagonist;
-
-    std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
-
 public slots:
     void protagonistMoveRequested(Direction direction);
     void protagonistMoveCompleted();
     void zoomRequested(bool in_out);
-    void cameraCenterChangeRequested(int x, int y);
     void runPathfinding(int destX, int destY);
-
 private slots:
     void respawnEnemy(int x, int y);
     void poisonTile(float value, int x, int y);
     void broadcastHealthChange(int h);
     void broadcastEnergyChange(int e);
+    void cameraCenterChangeRequested(int x, int y);
 signals:
     void remainingEnemiesChanged(int remainingAmount);
     void updateView();
@@ -106,7 +102,8 @@ signals:
     void gameDefeat();
     void gameVictory();
     void endGame();
-    void showPathfinding(std::vector<std::pair<int,int>> result);
+    void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
+    void pathfindingAvailable();
     void changeCameraCenter(int x, int y);
     void poisonVisualChange(std::vector<std::pair<int,int>>& area, float level);
 

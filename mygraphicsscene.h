@@ -32,6 +32,7 @@ private:
 
     std::pair<int,int> camera_center;
     std::pair<int,int> target_camera_center;
+    std::shared_ptr<std::vector<std::pair<int,int>>> pathfindingResult;
 
     int moveCounter;
     Direction movingDirection;
@@ -41,6 +42,8 @@ signals:
 
 public slots:
     void updateCameraCenter(int dx, int dy);
+    void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
+    void showPathfinding(bool newvalue);
     void animationLoop();
     void updateAnimationSpeed(int newvalue);
     void poisonLevelChanged(std::vector<std::pair<int,int>>& area, float level);

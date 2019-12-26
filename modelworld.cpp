@@ -14,12 +14,11 @@ ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, Q
     emit remainingEnemiesChanged(nrOfEnemies);
     nrOfXenemies = qrand() % (nrOfEnemies/2);
     nrOfEnemies = nrOfEnemies - nrOfXenemies;
+
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
     columns = world.getCols();
     fieldOfView = default_fieldOfView;
-
-    //pathfinding_algo = std::make_shared<aStar>(representation_2D,columns,rows);
 
     initializeAnimations();
     initializeCollections();
@@ -66,7 +65,7 @@ void ModelWorld::initializeAnimations(){
 }
 
 void ModelWorld::initializeCollections(){
-    //Initializing tiles and mytiles collections
+    //Initializing myTiles
     for(auto& tile : world.getTiles()){
         myTiles.push_back(std::make_shared<MyTile>(tile->getXPos(),tile->getYPos(),tile->getValue()));
     }
@@ -93,7 +92,7 @@ void ModelWorld::initializeCollections(){
         myHealthPacks.push_back(tempMyHealthPack);
     }
 
-    //Initializing enemies collections (Penemy/enemy/Xenemy)
+    //Initialize Enemies and PEnemies
 
     for(auto& enemy : world.getEnemies()){
         int xPos = enemy->getXPos();
@@ -115,6 +114,7 @@ void ModelWorld::initializeCollections(){
             myEnemies.push_back(tempMyEnemy);
         }
     }
+
     //Initializing protagonist
     myProtagonist = std::make_shared<MyProtagonist>(protagonist_idle,protagonist_dying,protagonist_walking);
     QObject::connect(
@@ -130,6 +130,7 @@ void ModelWorld::initializeCollections(){
         this, &ModelWorld::broadcastEnergyChange
     );
 
+    // Initialize XEnemies
     while(myXEnemies.size() < nrOfXenemies){
         std::tuple<int,int> position = generateNewEnemyPosition();
         int xPos = std::get<0>(position);
@@ -144,21 +145,22 @@ void ModelWorld::initializeCollections(){
         myXEnemies.push_back(tempMyXenemy);
     }
 
+
 }
 
-std::tuple<int,int> ModelWorld::generateNewEnemyPosition(){ //kan ook nog met oude collectie geïmplementeerd worden..
+std::pair<int,int> ModelWorld::generateNewEnemyPosition(){ //kan ook nog met oude collectie geïmplementeerd worden..
     bool valid = false;
     while(!valid){
         int newX = qrand()%columns;
         int newY = qrand()%rows;
         if(newX == myProtagonist->getXPos() && newY == myProtagonist->getYPos()) continue;
         std::shared_ptr<MyTile> tile = representation_2D.at(newY).at(newX);
-        if(!(tile->isOccupied()) && tile->getValue() != std::numeric_limits<float>::infinity()){
+        if(!(tile->isOccupied()) && tile->getValue() < std::numeric_limits<float>::infinity()){
             valid = true;
-            return std::make_tuple(newX,newY);
+            return std::make_pair(newX,newY);
         }
     }
-    return std::make_tuple(0,0);
+    return std::make_pair(0,0);
 }
 
 
@@ -192,8 +194,6 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 //SLOTS
 
 void ModelWorld::runPathfinding(int destX, int destY){
-    //doe pathfinding
-    //emit showPathfinding(result);
     std::cout<<"PATHFINDING INITIATED!!!"<<std::endl;
     aStarFast a(get2DRepresentation(),getColumns(),getRows());
     GridLocation start,finish;
@@ -203,11 +203,13 @@ void ModelWorld::runPathfinding(int destX, int destY){
     finish.y=destY;
     a.a_star_search(start,finish);
     std::vector<std::pair<int,int>> path = a.reconstruct_path(start, finish, a.came_from);
+    algoResult = std::make_shared<std::vector<std::pair<int,int>>>(path);
     for(std::pair<int,int> p : path)
     {
         std::cout<<p.first<<"--"<<p.second<<std::endl;
     }
-    emit showPathfinding(path);
+    emit newPathfindingResult(algoResult);
+    emit pathfindingAvailable();
 }
 
 void ModelWorld::respawnEnemy(int x, int y){
@@ -298,7 +300,6 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
             else if(Ychanged) myProtagonist->setYPos(newY);
             std::cout << "Protagonist has new position: x = " << myProtagonist->getXPos() << " / y = " << myProtagonist->getYPos() << std::endl;
 
-            //if occupied, check damage/heal, if not defeated, change special tile image, if defeated, end game
             if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->isDefeated())){
                 std::shared_ptr<Entity> occupant = destinationTile->getOccupant();
                 float occupantStrength = occupant->getValue();
@@ -308,9 +309,10 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                     else myProtagonist->setHealth(newHealth);
                     if(occupantStrength > 0){
                         destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
-                        //occupant->setAnimations(protagonist_dying);
+
                         myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
                         remainingEnemies--;
+
                         emit remainingEnemiesChanged(remainingEnemies);
                         if(remainingEnemies == 0){
                             emit gameVictory();
@@ -323,7 +325,6 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                 else myProtagonist->setHealth(0);
             }
             std::cout << "Current health: " << myProtagonist->getHealth() << " Current energy: " << myProtagonist->getEnergy() << "\n" << std::endl;
-            //emit updateView();
         }
         else {
             std::cout << "Insufficient energy for requested movement\n" << std::endl;
@@ -347,7 +348,7 @@ void ModelWorld::poisonTile(float value, int x, int y){
         else myProtagonist->setHealth(0);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
-    //Set poison levels and pass tuples of (int,int) to views
+    //Set poison levels and pass pairs of (int,int) to views
     unsigned long startY = y-poisonRange;
     unsigned long startX = x-poisonRange;
     std::vector<std::pair<int,int>> pairs;

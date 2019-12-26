@@ -97,6 +97,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="pathfindingCheckBox">
+          <property name="text">
+           <string>Show Pathfinding</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="sliderLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
