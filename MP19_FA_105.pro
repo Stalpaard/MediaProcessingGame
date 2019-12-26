@@ -47,7 +47,7 @@ SOURCES += \
 
 
 HEADERS += \
-    Node.h \
+    aStarFast.h \
     commandpandown.h \
     commandpanleft.h \
     commandpanright.h \
