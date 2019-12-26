@@ -79,7 +79,7 @@ private:
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> zombie_dying;
     std::shared_ptr<std::vector<std::shared_ptr<QImage>>> healthpack_idle;
 
-    std::shared_ptr<aStar> pathfinding_algo;
+    //std::shared_ptr<aStar> pathfinding_algo;
 
     std::shared_ptr<MyProtagonist> myProtagonist;
 

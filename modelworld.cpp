@@ -1,5 +1,6 @@
 #include "modelworld.h"
 #include "iostream"
+#include "aStarFast.h"
 
 const int poisonRange {1};
 const int default_fieldOfView = 5;
@@ -18,7 +19,7 @@ ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, Q
     columns = world.getCols();
     fieldOfView = default_fieldOfView;
 
-    pathfinding_algo = std::make_shared<aStar>(representation_2D,columns,rows);
+    //pathfinding_algo = std::make_shared<aStar>(representation_2D,columns,rows);
 
     initializeAnimations();
     initializeCollections();
@@ -193,6 +194,20 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 void ModelWorld::runPathfinding(int destX, int destY){
     //doe pathfinding
     //emit showPathfinding(result);
+    std::cout<<"PATHFINDING INITIATED!!!"<<std::endl;
+    aStarFast a(get2DRepresentation(),getColumns(),getRows());
+    GridLocation start,finish;
+    start.x=getMyProtagonist()->getXPos();
+    start.y=getMyProtagonist()->getYPos();
+    finish.x=destX;
+    finish.y=destY;
+    a.a_star_search(start,finish);
+    std::vector<std::pair<int,int>> path = a.reconstruct_path(start, finish, a.came_from);
+    for(std::pair<int,int> p : path)
+    {
+        std::cout<<p.first<<"--"<<p.second<<std::endl;
+    }
+    emit showPathfinding(path);
 }
 
 void ModelWorld::respawnEnemy(int x, int y){

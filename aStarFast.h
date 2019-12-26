@@ -65,10 +65,12 @@ bool operator < (GridLocation a, GridLocation b) {
 
 class aStarFast{
 public :
-    aStarFast(std::vector<std::vector<std::shared_ptr<MyTile>>> &tiles, int cols , int rows) : map(tiles),cols(cols),rows(rows){}
+    aStarFast(std::vector<std::vector<std::shared_ptr<MyTile>>> tiles, int cols , int rows) : map(tiles),cols(cols),rows(rows){}
 
     std::vector<std::vector<std::shared_ptr<MyTile>>> map;
     int cols,rows;
+    std::unordered_map<GridLocation, GridLocation> came_from;
+    std::unordered_map<GridLocation, double> cost_so_far;
 
     bool in_bounds(GridLocation id) const {
         return 0 <= id.x && id.x < cols
@@ -103,9 +105,8 @@ public :
     void a_star_search
       (
        GridLocation start,
-       GridLocation goal,
-       std::unordered_map<GridLocation, GridLocation>& came_from,
-       std::unordered_map<GridLocation, float>& cost_so_far)
+       GridLocation goal
+      )
     {
       PriorityQueue<GridLocation, double> frontier;
       frontier.put(start, 0);
@@ -134,17 +135,17 @@ public :
     }
 
 
-    std::vector<GridLocation> reconstruct_path(
+    std::vector<std::pair<int,int>> reconstruct_path(
        GridLocation start, GridLocation goal,
        std::unordered_map<GridLocation, GridLocation> came_from
     ) {
-      std::vector<GridLocation> path;
+      std::vector<std::pair<int,int>> path;
       GridLocation current = goal;
       while (current != start) {
-        path.push_back(current);
+        path.push_back(std::make_pair(current.x,current.y));
         current = came_from[current];
       }
-      path.push_back(start); // optional
+      path.push_back(std::make_pair(start.x,start.y)); // optional
       std::reverse(path.begin(), path.end());
       return path;
     }
