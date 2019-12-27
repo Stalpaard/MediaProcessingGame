@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include "modelworld.h"
+#include "strategy.h"
 #include "graphicalview.h"
 #include "mygraphicsscene.h"
 #include "commandup.h"

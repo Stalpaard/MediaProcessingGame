@@ -35,6 +35,7 @@ SOURCES += \
     myprotagonist.cpp \
     mytile.cpp \
     myxenemy.cpp \
+    strategy.cpp \
     textedit.cpp \
     textview.cpp \
     command.cpp \
@@ -68,6 +69,7 @@ HEADERS += \
     myprotagonist.h \
     mytile.h \
     myxenemy.h \
+    strategy.h \
     world.h \
     world_global.h \
     textedit.h \

@@ -469,6 +469,10 @@
    <addaction name="actiontextView"/>
    <addaction name="separator"/>
    <addaction name="actionPathFinding"/>
+   <addaction name="separator"/>
+   <addaction name="actionrunStrategy"/>
+   <addaction name="separator"/>
+   <addaction name="actionabortStrategy"/>
   </widget>
   <action name="actionOpen_world">
    <property name="text">
@@ -493,6 +497,16 @@
   <action name="actionPathFinding">
    <property name="text">
     <string>pathfinding</string>
+   </property>
+  </action>
+  <action name="actionrunStrategy">
+   <property name="text">
+    <string>runStrategy</string>
+   </property>
+  </action>
+  <action name="actionabortStrategy">
+   <property name="text">
+    <string>abortStrategy</string>
    </property>
   </action>
  </widget>

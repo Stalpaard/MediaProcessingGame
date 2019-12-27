@@ -144,3 +144,13 @@ void MainWindow::updateProtagonistPositionLabel(int x, int y){
 }
 
 
+
+void MainWindow::on_actionrunStrategy_triggered()
+{
+    emit enableStrategy(true);
+}
+
+void MainWindow::on_actionabortStrategy_triggered()
+{
+    emit enableStrategy(false);
+}

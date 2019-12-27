@@ -89,6 +89,7 @@ void ModelWorld::initializeCollections(){
         tempMyHealthPack->setWalking(true);//TEMP
         representation_2D.at(yPos).at(xPos)->setOccupant(tempMyHealthPack);
         myHealthPacks.push_back(tempMyHealthPack);
+        myEntities.push_back(tempMyHealthPack);
     }
 
     //Initialize Enemies and PEnemies
@@ -106,11 +107,13 @@ void ModelWorld::initializeCollections(){
             );
             representation_2D.at(yPos).at(xPos)->setOccupant(newMyPEnemy);
             myPEnemies.push_back(newMyPEnemy);
+            myEntities.push_back(newMyPEnemy);
         }
         else{
             std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,enemy->getValue(),enemy_idle,enemy_dying,protagonist_walking);
             representation_2D.at(yPos).at(xPos)->setOccupant(tempMyEnemy);
             myEnemies.push_back(tempMyEnemy);
+            myEntities.push_back(tempMyEnemy);
         }
     }
 
@@ -142,6 +145,7 @@ void ModelWorld::initializeCollections(){
         );
         tile->setOccupant(tempMyXenemy);
         myXEnemies.push_back(tempMyXenemy);
+        myEntities.push_back(tempMyXenemy);
     }
 
 
@@ -190,19 +194,22 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
     return result;
 }
 
+std::vector<std::pair<int,int>> ModelWorld::runPathfinding(GridLocation start, GridLocation finish){
+    pathfindingAlgorithm->a_star_search(start, finish);
+    return pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from);
+}
+
 
 //SLOTS
 
-void ModelWorld::runPathfinding(int destX, int destY){
+void ModelWorld::pathfindingViewRequest(int destX, int destY){
     std::cout<<"PATHFINDING INITIATED!!!"<<std::endl;
-    aStarFast a(get2DRepresentation(),getColumns(),getRows());
     GridLocation start,finish;
     start.x=getMyProtagonist()->getXPos();
     start.y=getMyProtagonist()->getYPos();
     finish.x=destX;
     finish.y=destY;
-    a.a_star_search(start,finish);
-    std::vector<std::pair<int,int>> path = a.reconstruct_path(start, finish, a.came_from);
+    std::vector<std::pair<int,int>> path = runPathfinding(start, finish);
     algoResult = std::make_shared<std::vector<std::pair<int,int>>>(path);
     for(std::pair<int,int> p : path)
     {
@@ -260,6 +267,7 @@ void ModelWorld::broadcastEnergyChange(int e){
 }
 
 void ModelWorld::protagonistMoveRequested(Direction direction){
+    std::cout << "let's move!" << std::endl;
     if(!(myProtagonist->isWalking())){
         int currentX = myProtagonist->getXPos();
         int currentY = myProtagonist->getYPos();

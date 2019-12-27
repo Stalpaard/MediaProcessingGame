@@ -18,10 +18,14 @@ int MainController::startGameInstance(){
 
             if(ok){
                 std::shared_ptr<ModelWorld> model = std::make_shared<ModelWorld>(amountOfEnemies,amountOfHealthpacks,worldFileName);
+                Strategy strategy(model);
 
                 //2D View part
                 MyGraphicsScene scene{worldFileName,model};
                 GraphicalView view{&scene};
+
+                //Pathfinding part
+                model->setPathfindingAlgorithm(std::make_shared<aStarFast>(*(model->get2DRepresentation()),model->getColumns(),model->getRows()));
 
                 //Text view part
                 std::vector<std::shared_ptr<Command>> commands;
@@ -43,6 +47,10 @@ int MainController::startGameInstance(){
                     //Input
                 QObject::connect(
                     &view, &GraphicalView::movementKeyPressed, //Send arrow key input to ModelWorld
+                    model.get(), &ModelWorld::protagonistMoveRequested
+                );
+                QObject::connect(
+                    &strategy, &Strategy::requestMove, //Send arrow key input to ModelWorld
                     model.get(), &ModelWorld::protagonistMoveRequested
                 );
 
@@ -86,7 +94,7 @@ int MainController::startGameInstance(){
                 );
                 QObject::connect(
                     &w, &MainWindow::runPathfinding, //Run pathfinding by pressing 'Run Algorithm' button
-                    model.get(), &ModelWorld::runPathfinding
+                    model.get(), &ModelWorld::pathfindingViewRequest
                 );
                     //GraphicalView updates
                 QObject::connect(
@@ -132,7 +140,19 @@ int MainController::startGameInstance(){
                     this, &MainController::openNewWorld
                 );
 
-
+                //Connects for Strategy
+                QObject::connect(
+                    model.get(), &ModelWorld::endGame,
+                    &strategy, &Strategy::gameEnd
+                );
+                QObject::connect(
+                    &scene, &MyGraphicsScene::moveCompleted,
+                    &strategy, &Strategy::nextMove
+                );
+                QObject::connect(
+                    &w, &MainWindow::enableStrategy,
+                    &strategy, &Strategy::enableStrategy
+                );
                 // Connects for the text view part
                 for (auto &c : commands)
                 {

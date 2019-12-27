@@ -40,6 +40,10 @@ private slots:
 
     void on_runAlgoButton_clicked();
 
+    void on_actionrunStrategy_triggered();
+
+    void on_actionabortStrategy_triggered();
+
 public slots:
     void protagonistHealthUpdate(int h);
     void protagonistEnergyUpdate(int e);
@@ -56,6 +60,7 @@ signals:
     void openNewWorld();
     void runPathfinding(int destX, int destY);
     void showPathfinding(bool newvalue);
+    void enableStrategy(bool newvalue);
 
 private:
     void setEnabled2DViewWidgets(bool newvalue);

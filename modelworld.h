@@ -21,9 +21,14 @@ public:
     ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location);
     std::vector<std::shared_ptr<MyEnemy>> getMyEnemies() const{return myEnemies;}
     std::vector<std::shared_ptr<MyPEnemy>> getMyPEnemies() const{return myPEnemies;}
+    std::vector<std::shared_ptr<MyXEnemy>> getMyXEnemies() const{return myXEnemies;}
+    std::vector<std::shared_ptr<Entity>> getMyEntities() const{return myEntities;}
     std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
-    std::vector<std::vector<std::shared_ptr<MyTile>>> get2DRepresentation(){return representation_2D;}
+    std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
+
+    std::vector<std::pair<int,int>> runPathfinding(GridLocation start, GridLocation finish);
+    void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
@@ -46,6 +51,8 @@ private:
     World world;
     int rows, columns, fieldOfView, nrOfXenemies, remainingEnemies;
 
+    std::shared_ptr<aStarFast> pathfindingAlgorithm;
+
     std::shared_ptr<std::vector<std::pair<int,int>>> algoResult;
     std::shared_ptr<MyProtagonist> myProtagonist;
     std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
@@ -55,6 +62,8 @@ private:
     std::vector<std::shared_ptr<MyPEnemy>> myPEnemies;
     std::vector<std::shared_ptr<MyXEnemy>> myXEnemies;
     std::vector<std::shared_ptr<MyHealthpack>> myHealthPacks;
+    std::vector<std::shared_ptr<Entity>> myEntities;
+
 
     std::shared_ptr<QImage> protagonist_image, enemy_image, penemy_image, xenemy_image, healthpack_image, gravestone_image, zombie_image;
 
@@ -66,7 +75,7 @@ public slots:
     void protagonistMoveCompleted();
 
     void zoomRequested(bool in_out);
-    void runPathfinding(int destX, int destY);
+    void pathfindingViewRequest(int destX, int destY);
 private slots:
     void respawnEnemy(int x, int y);
     void poisonTile(float value, int x, int y);
