@@ -98,7 +98,7 @@ void TextView::fitLabel()
     if (factor < float(0.95) || factor > float(1.05))
     {
         float fontSize = float(font.pointSizeF())*factor;
-        if(fontSize < 6) fontSize = 6;
+        if(fontSize < 3) fontSize = 3;
         font.setPointSize(int(fontSize));
         label->setFont(font);
     }
@@ -116,7 +116,7 @@ void TextView::updateCameraCenter(int dx, int dy)
     if(newCameraY > data_model->getRows()) newCameraY = data_model->getRows();
     else if(newCameraY < 0 ) newCameraY = 0;
 
-    camera_center = std::make_tuple(newCameraX,newCameraY);
+    camera_center = std::make_pair(newCameraX,newCameraY);
     printEntities();
 }
 

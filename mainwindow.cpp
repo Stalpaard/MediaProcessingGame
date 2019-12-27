@@ -62,8 +62,6 @@ void MainWindow::on_actionPathFinding_triggered()
 {
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(2);
-        ui->pathfindingCheckBox->setEnabled(false);
-        ui->pathfindingCheckBox->setVisible(false);
         setEnabled2DViewWidgets(false);
     }
 }
@@ -98,30 +96,16 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 }
 
 void MainWindow::setEnabled2DViewWidgets(bool newvalue){
-    if(newvalue){
-        ui->animationSlider->setEnabled(true);
-        ui->animationSlider->setVisible(true);
-        ui->sliderLabel->setVisible(true);
-        ui->helpLabel->setVisible(true);
-        ui->zoomHelpLabel->setVisible(true);
-        ui->panHelpLabel->setVisible(true);
-        ui->moveHelpLabel->setVisible(true);
-    }
-    else{
-        ui->animationSlider->setEnabled(false);
-        ui->animationSlider->setVisible(false);
-        ui->sliderLabel->setVisible(false);
-        ui->helpLabel->setVisible(false);
-        ui->zoomHelpLabel->setVisible(false);
-        ui->panHelpLabel->setVisible(false);
-        ui->moveHelpLabel->setVisible(false);
-    }
+    ui->animationSlider->setEnabled(newvalue);
+    ui->animationSlider->setVisible(newvalue);
+    ui->sliderLabel->setVisible(newvalue);
+    ui->helpLabel->setVisible(newvalue);
+    ui->zoomHelpLabel->setVisible(newvalue);
+    ui->panHelpLabel->setVisible(newvalue);
+    ui->moveHelpLabel->setVisible(newvalue);
+    ui->pathfindingCheckBox->setEnabled(newvalue);
+    ui->pathfindingCheckBox->setVisible(newvalue);
 }
-
-
-
-
-
 
 //PUBLIC SLOTS
 
