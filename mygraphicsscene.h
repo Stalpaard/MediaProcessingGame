@@ -31,7 +31,6 @@ private:
     QImage calculateScaled(int centerX, int centerY, int range);
 
     std::pair<int,int> camera_center;
-    std::pair<int,int> target_camera_center;
     std::shared_ptr<std::vector<std::pair<int,int>>> pathfindingResult;
 
     int moveCounter;
@@ -41,6 +40,7 @@ signals:
     void moveCompleted();
 
 public slots:
+    void updateMovingDirection(Direction d);
     void updateCameraCenter(int dx, int dy);
     void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
     void showPathfinding(bool newvalue);

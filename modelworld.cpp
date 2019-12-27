@@ -236,8 +236,12 @@ void ModelWorld::zoomRequested(bool in_out){
 }
 
 void ModelWorld::cameraCenterChangeRequested(int x, int y){
+    if(x > 0) emit protagonistMovingDirection(Direction::RIGHT);
+    else if(x < 0) emit protagonistMovingDirection(Direction::LEFT);
+    if(y > 0) emit protagonistMovingDirection(Direction::UP);
+    else if(y < 0) emit protagonistMovingDirection(Direction::DOWN);
     emit protagonistPositionChanged(myProtagonist->getXPos(), myProtagonist->getYPos());
-    emit changeCameraCenter(x,y);
+    //emit changeCameraCenter(x,y);
 }
 
 void ModelWorld::broadcastHealthChange(int h){

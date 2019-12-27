@@ -99,6 +99,7 @@ signals:
     void protagonistHealthChanged(int h);
     void protagonistEnergyChanged(int e);
     void protagonistPositionChanged(int x, int y);
+    void protagonistMovingDirection(Direction d);
     void gameDefeat();
     void gameVictory();
     void endGame();

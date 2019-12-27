@@ -36,9 +36,9 @@ private slots:
 
     void on_actionPathFinding_triggered();
 
-    void on_pushButton_clicked();
-
     void on_pathfindingCheckBox_stateChanged(int arg1);
+
+    void on_runAlgoButton_clicked();
 
 public slots:
     void protagonistHealthUpdate(int h);

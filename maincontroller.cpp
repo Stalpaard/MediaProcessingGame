@@ -119,6 +119,10 @@ int MainController::startGameInstance(){
                     &w, &MainWindow::showPathfinding,
                     &scene, &MyGraphicsScene::showPathfinding //Enable/Disable pathfinding in view using CheckBox
                 );
+                QObject::connect(
+                    model.get(), &ModelWorld::protagonistMovingDirection, //Update camera center when protagonist moves
+                    &scene, &MyGraphicsScene::updateMovingDirection
+                );
                 //MainController updates
                 QObject::connect(
                     &w, &MainWindow::actionQuit,

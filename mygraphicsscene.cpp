@@ -22,7 +22,6 @@ void MyGraphicsScene::animationLoop(){
     //change QImage data according to changed conditions and generate new pixmap item
     clear();
     int range = data_model->getFieldOfView();
-    if(camera_center != target_camera_center && !(data_model->getMyProtagonist()->isWalking())) camera_center = target_camera_center;
 
     QImage scaled_copy = calculateScaled(std::get<0>(camera_center), std::get<1>(camera_center), range);
     if(sceneRect() != scaled_copy.rect()){
@@ -50,34 +49,57 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     font.setFamily("Courier");
     painter.setFont(font);
 
-    xDistance = protagonist->getXPos()-std::get<0>(target_camera_center);
-    yDistance = protagonist->getYPos()-std::get<1>(target_camera_center);
+    xDistance = protagonist->getXPos()-std::get<0>(camera_center);
+    yDistance = protagonist->getYPos()-std::get<1>(camera_center);
     if(!(xDistance > range || yDistance > range)){
         if(protagonist->isWalking()){
                 moveCounter++;
                 if(moveCounter >= 32){
                     moveCounter=0;
-                    camera_center = target_camera_center;
                     emit moveCompleted();
                 }
                 else{
                     switch(movingDirection){
                     case Direction::UP :
-                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+moveCounter+(32*yDistance),*(protagonist->getRepresentation()));
+                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+moveCounter+(32*(yDistance-1)),*(protagonist->getRepresentation()));
                         break;
                     case Direction::DOWN :
-                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1-moveCounter+(32*yDistance),*(protagonist->getRepresentation()));
+                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1-moveCounter+(32*(yDistance+1)),*(protagonist->getRepresentation()));
                         break;
                     case Direction::LEFT :
-                        painter.drawImage((range*32)+6-moveCounter+(32*xDistance),(range*32)+1+(32*yDistance),*(protagonist->getRepresentation()));
+                        painter.drawImage((range*32)+6-moveCounter+(32*(xDistance+1)),(range*32)+1+(32*yDistance),(*(protagonist->getRepresentation())).mirrored(true,false));
                         break;
                     case Direction::RIGHT :
-                        painter.drawImage((range*32)+6+moveCounter+(32*xDistance),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
+                        painter.drawImage((range*32)+6+moveCounter+(32*(xDistance-1)),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
                         break;
                     }
                 }
         }
         else painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
+    }
+    else if(xDistance > range){
+        switch(movingDirection){
+        case Direction::LEFT :
+            updateCameraCenter(-range,0);
+            break;
+        case Direction::RIGHT :
+            updateCameraCenter(range,0);
+            break;
+        default:
+            break;
+        }
+    }
+    else if(yDistance > range){
+        switch(movingDirection){
+        case Direction::UP :
+            updateCameraCenter(0,range);
+            break;
+        case Direction::DOWN :
+            updateCameraCenter(0,-range);
+            break;
+        default:
+            break;
+        }
     }
 
 
@@ -111,8 +133,6 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 }
 
 void MyGraphicsScene::updateCameraCenter(int dx, int dy){
-
-
     int currentcameraX = std::get<0>(camera_center);
     int currentcameraY = std::get<1>(camera_center);
     int newCameraX = currentcameraX+dx;
@@ -121,21 +141,7 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
     else if(newCameraX < 0) newCameraX = 0;
     if(newCameraY > data_model->getRows()) newCameraY = data_model->getRows();
     else if(newCameraY < 0 ) newCameraY = 0;
-    target_camera_center = std::make_pair(newCameraX,newCameraY);
-
-    if(newCameraX != currentcameraX){
-        if(currentcameraX-newCameraX > 0){
-            movingDirection = Direction::LEFT;
-        }
-        else movingDirection = Direction::RIGHT;
-    }
-    else if(newCameraY != currentcameraY){
-        if(currentcameraY-newCameraY > 0){
-            movingDirection = Direction::DOWN;
-        }
-        else movingDirection = Direction::UP;
-    }
-
+    camera_center = std::make_pair(newCameraX,newCameraY);
 }
 
 void MyGraphicsScene::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result){
@@ -170,4 +176,8 @@ void MyGraphicsScene::poisonLevelChanged(std::vector<std::pair<int,int>>& pairs,
 
 void MyGraphicsScene::updateAnimationSpeed(int newvalue){
     animationMilliSec = newvalue;
+}
+
+void MyGraphicsScene::updateMovingDirection(Direction d){
+    movingDirection = d;
 }

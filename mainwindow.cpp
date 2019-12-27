@@ -68,6 +68,29 @@ void MainWindow::on_actionPathFinding_triggered()
     }
 }
 
+void MainWindow::on_pathfindingCheckBox_stateChanged(int arg1)
+{
+    switch(arg1){
+        case Qt::CheckState::Checked :
+        emit showPathfinding(true);
+        break;
+        case Qt::CheckState::Unchecked :
+        emit showPathfinding(false);
+
+        break;
+    }
+}
+
+void MainWindow::on_runAlgoButton_clicked()
+{
+    ui->runAlgoButton->setText("Running..");
+    ui->runAlgoButton->setDisabled(true);
+    emit runPathfinding(ui->xSpinBox->value(), ui->ySpinBox->value());
+    ui->viewWidget->setCurrentIndex(3);
+    setEnabled2DViewWidgets(true);
+    std::cout << "button clicked" << std::endl;
+}
+
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
@@ -101,6 +124,8 @@ void MainWindow::setEnabled2DViewWidgets(bool newvalue){
 
 
 
+
+
 //PUBLIC SLOTS
 
 void MainWindow::protagonistHealthUpdate(int h){
@@ -111,6 +136,8 @@ void MainWindow::pathfindingAvailable(){
     ui->pathfindingCheckBox->setEnabled(true);
     ui->pathfindingCheckBox->setVisible(true);
     ui->pathfindingCheckBox->setCheckState(Qt::CheckState::Checked);
+    ui->runAlgoButton->setText("Run Algorithm");
+    ui->runAlgoButton->setDisabled(false);
 }
 
 void MainWindow::protagonistEnergyUpdate(int e){
@@ -136,22 +163,3 @@ void MainWindow::updateProtagonistPositionLabel(int x, int y){
 }
 
 
-void MainWindow::on_pushButton_clicked()
-{
-    emit runPathfinding(ui->xSpinBox->value(), ui->ySpinBox->value());
-    on_actiongraphicalView_triggered();
-    std::cout << "button clicked" << std::endl;
-}
-
-void MainWindow::on_pathfindingCheckBox_stateChanged(int arg1)
-{
-    switch(arg1){
-        case Qt::CheckState::Checked :
-        emit showPathfinding(true);
-        break;
-        case Qt::CheckState::Unchecked :
-        emit showPathfinding(false);
-
-        break;
-    }
-}
