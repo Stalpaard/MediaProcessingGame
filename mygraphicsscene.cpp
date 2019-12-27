@@ -1,4 +1,5 @@
 #include "mygraphicsscene.h"
+#include <iostream>
 
 const int defaultAnimationMillisec = 15;
 
@@ -36,7 +37,7 @@ void MyGraphicsScene::animationLoop(){
 void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int range){
     QPainter painter;
 
-    int xDistance, yDistance;
+    int xDistance, yDistance, xRangeCheck, yRangeCheck;
     MyProtagonist* protagonist = data_model->getMyProtagonist();
 
     //Get 2D representation of the world in range of the protagonist ('window' into the data)
@@ -51,7 +52,9 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
     xDistance = protagonist->getXPos()-std::get<0>(camera_center);
     yDistance = protagonist->getYPos()-std::get<1>(camera_center);
-    if(!(xDistance > range || yDistance > range)){
+    xRangeCheck = std::abs(xDistance)+1;
+    yRangeCheck = std::abs(yDistance)+1;
+    if(!(xRangeCheck > range || yRangeCheck > range)){
         if(protagonist->isWalking()){
                 moveCounter++;
                 if(moveCounter >= 31){
@@ -77,7 +80,8 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
         }
         else painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
     }
-    else if(xDistance > range){
+    else if(xRangeCheck > range){
+        std::cout << "moving camera" << std::endl;
         switch(movingDirection){
         case Direction::LEFT :
             updateCameraCenter(-range,0);
@@ -89,7 +93,8 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
             break;
         }
     }
-    else if(yDistance > range){
+    else if(yRangeCheck > range){
+        std::cout << "moving camera" << std::endl;
         switch(movingDirection){
         case Direction::UP :
             updateCameraCenter(0,range);
