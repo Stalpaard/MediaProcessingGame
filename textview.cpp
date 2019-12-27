@@ -2,7 +2,7 @@
 #include <QtWidgets>
 
 TextView::TextView(QWidget *parent, std::vector<std::shared_ptr<Command>> *commands, std::shared_ptr<ModelWorld> model)
-    : QWidget(parent), completer(nullptr), data_model(model), camera_center(std::make_tuple(0,0)), printSize(std::make_tuple(0,0))
+    : QWidget(parent), completer(nullptr), displayPathfinding(false), data_model(model), camera_center(std::make_tuple(0,0)), printSize(std::make_tuple(0,0))
 {  
     // Textedit:
     completingTextEdit = new TextEdit(parent, commands);
@@ -66,6 +66,8 @@ void TextView::printEntities()
                 print.append("<span style=\"color:blue; font-family: monospace;  white-space: pre; font-weight: bold;\">YOU</span>");
             else if(column->isOccupied())
                 print.append(column->getOccupant()->getTextRepresentation());
+            else if(checkIfPath(column->getXPos(), column->getYPos()))
+                print.append("<span style=\"color:firebrick; font-family: monospace;  white-space: pre;\">[|]</span>");
             else if(column->getPoisonLevel() > 0)
                 print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; font-weight: bold;\">:::</span>");
             else
@@ -126,3 +128,25 @@ void TextView::resizeEvent(QResizeEvent *event)
     printEntities();
 }
 
+void TextView::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result)
+{
+    path = result;
+    printEntities();
+}
+
+void TextView::showPathfinding(bool newvalue)
+{
+    displayPathfinding = newvalue;
+}
+
+bool TextView::checkIfPath(int Xpos, int Ypos)
+{
+    if(displayPathfinding)
+    {
+        for(auto& pair : *path)
+        {
+            if(std::get<0>(pair) == Xpos && std::get<1>(pair) == Ypos) return true;
+        }
+    }
+    return false;
+}

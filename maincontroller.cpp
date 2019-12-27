@@ -155,7 +155,7 @@ int MainController::startGameInstance(){
                 {
                     QObject::connect(
                         c.get(), &Command::movementKeyPressed,
-                        model.get(), &ModelWorld::protagonistMoveRequested);
+                        model.get(), &ModelWorld::protagonistMoveRequested); //movement commands to
                     QObject::connect(
                         c.get(), &Command::moveCompleted,
                         model.get(), &ModelWorld::protagonistMoveCompleted);
@@ -178,6 +178,12 @@ int MainController::startGameInstance(){
                 QObject::connect(
                     model.get(), &ModelWorld::poisonVisualChange,
                     &textView, &TextView::printEntities);
+                QObject::connect(
+                    model.get(), &ModelWorld::newPathfindingResult, //Update pathfinding result pointer in textView
+                    &textView, &TextView::newPathfindingResult);
+                QObject::connect(
+                    &w, &MainWindow::showPathfinding,
+                    &textView, &TextView::showPathfinding);
 
                 w.setWindowTitle("The Most Epic Game Ever");
                 w.show();
