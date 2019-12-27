@@ -131,8 +131,11 @@ void MainWindow::protagonistEnergyUpdate(int e){
     ui->energyBar->setValue(e);
 }
 
-void MainWindow::gameDefeat(){
+void MainWindow::gameDefeat(QString reason){
     game_ended = true;
+    ui->defeatReasonLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    ui->defeatReasonLabel->setWordWrap(true);
+    ui->defeatReasonLabel->setText("Reason: " + reason);
     ui->viewWidget->setCurrentIndex(0);
 }
 

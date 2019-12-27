@@ -257,9 +257,14 @@ void ModelWorld::broadcastPositionChange(int x, int y){
 void ModelWorld::broadcastHealthChange(int h){
     emit protagonistHealthChanged(h);
     if(h <= 0){
-        emit gameDefeat();
+        emit gameDefeat("Protagonist dead");
         emit endGame();
     }
+}
+
+void ModelWorld::noPossibleSolution(){
+    emit gameDefeat("No possible solution");
+    emit endGame();
 }
 
 void ModelWorld::broadcastEnergyChange(int e){

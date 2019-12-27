@@ -47,7 +47,7 @@ private slots:
 public slots:
     void protagonistHealthUpdate(int h);
     void protagonistEnergyUpdate(int e);
-    void gameDefeat();
+    void gameDefeat(QString reason);
     void gameVictory();
     void pathfindingAvailable();
     void updateRemainingEnemies(int remainingAmount);

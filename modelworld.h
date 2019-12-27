@@ -74,6 +74,8 @@ public slots:
     void protagonistMoveRequested(Direction direction);
     void protagonistMoveCompleted();
 
+    void noPossibleSolution();
+
     void zoomRequested(bool in_out);
     void pathfindingViewRequest(int destX, int destY);
 private slots:
@@ -89,7 +91,7 @@ signals:
     void protagonistEnergyChanged(int e);
     void protagonistPositionChanged(int x, int y);
     void protagonistMovingDirection(Direction d);
-    void gameDefeat();
+    void gameDefeat(QString reason);
     void gameVictory();
     void endGame();
 

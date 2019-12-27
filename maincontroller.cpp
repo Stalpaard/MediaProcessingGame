@@ -94,6 +94,10 @@ int MainController::startGameInstance(){
                     model.get(), &ModelWorld::zoomRequested
                 );
                 QObject::connect(
+                    &strategy, &Strategy::noPossibleSolution, //Update field-of-view in ModelWorld
+                    model.get(), &ModelWorld::noPossibleSolution
+                );
+                QObject::connect(
                     &w, &MainWindow::runPathfinding, //Run pathfinding by pressing 'Run Algorithm' button
                     model.get(), &ModelWorld::pathfindingViewRequest
                 );

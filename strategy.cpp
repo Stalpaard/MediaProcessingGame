@@ -11,6 +11,7 @@ void Strategy::enableStrategy(bool newvalue){
 
     strategyEnabled = newvalue;
     if(strategyEnabled) calculateBestPath();
+    else pathToBeFollowed = nullptr;
 }
 
 void Strategy::calculateBestPath(){
@@ -72,12 +73,13 @@ void Strategy::calculateBestPath(){
                             std::pair<int,int> pair = currentPath->at(i);
                             required_energy = required_energy + representation_2D->at(std::get<1>(pair)).at(std::get<0>(pair))->getValue();
                         }
-                        if((required_energy < minimum_energy) || minimum_energy == 0 && healing >= healthNeeded){
+                        if(((required_energy < minimum_energy) || minimum_energy == 0) && (healing >= healthNeeded)){
                             minimum_energy = required_energy;
                             bestPath = currentPath;
                             nearestEntity = healthpack;
                         }
-                        else if(required_energy < alt_minimum_energy || alt_minimum_energy == 0){
+                        else if(required_energy < alt_minimum_energy || alt_minimum_energy <= 0){
+                            std::cout << "new alt_minimum_energy " << required_energy << std::endl;
                             alt_minimum_energy = required_energy;
                             altBestPath = currentPath;
                             altNearestEntity = healthpack;
@@ -85,17 +87,19 @@ void Strategy::calculateBestPath(){
                     }
                 }
             }
-            if(minimum_energy != 0 && (protagonist->getEnergy() - minimum_energy) > 0){
+            if(bestPath != nullptr && (protagonist->getEnergy() - minimum_energy) > 0){
                 std::cout << "set path to nearest suitable healthpack" << std::endl;
                 followPath(bestPath);
             }
-            else if(total_healing >= healthNeeded && (protagonist->getEnergy() - alt_minimum_energy) > 0 && alt_minimum_energy != 0) {
+            else if(total_healing >= healthNeeded && (protagonist->getEnergy() - alt_minimum_energy) > 0 && altBestPath != nullptr) {
                 std::cout << "set path to nearest healthpack, total healing available still sufficient" << std::endl;
                 followPath(altBestPath);
 
             }
             else{
+                std::cout << "alt minimum energy: " << alt_minimum_energy << std::endl;
                 strategyEnabled = false;
+                emit noPossibleSolution();
                 std::cout << "no possible solution, total healing: " << total_healing << ", health needed: " << healthNeeded << std::endl;
             }
         }
@@ -103,6 +107,7 @@ void Strategy::calculateBestPath(){
     }
     else{
         strategyEnabled = false;
+        emit noPossibleSolution();
         std::cout << "no possible path to enemy (insufficient energy)" << std::endl;
     }
 }
