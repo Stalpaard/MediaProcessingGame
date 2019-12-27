@@ -145,6 +145,7 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
 }
 
 void MyGraphicsScene::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result){
+    showPathfinding(false);
     pathfindingResult = result;
     showPathfinding(true);
 }
