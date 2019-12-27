@@ -219,5 +219,65 @@
         <file>Animations/Healthpack/Idle/7.png</file>
         <file>Animations/Healthpack/Idle/8.png</file>
         <file>Animations/Healthpack/Idle/9.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/0.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/1.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/10.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/11.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/12.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/13.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/14.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/2.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/3.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/4.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/5.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/6.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/7.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/8.png</file>
+        <file>Animations_Dying_Update/MyEnemy/Dying/9.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/0.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/1.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/10.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/11.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/12.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/13.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/14.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/2.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/3.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/4.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/5.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/6.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/7.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/8.png</file>
+        <file>Animations_Dying_Update/MyPEnemy/Dying/9.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/0.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/1.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/10.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/11.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/12.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/13.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/14.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/2.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/3.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/4.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/5.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/6.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/7.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/8.png</file>
+        <file>Animations_Dying_Update/MyXEnemy/Dying/9.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/0.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/1.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/10.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/11.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/12.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/13.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/14.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/2.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/3.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/4.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/5.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/6.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/7.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/8.png</file>
+        <file>Animations_Dying_Update/MyXEnemyZombie/Dying/9.png</file>
     </qresource>
 </RCC>

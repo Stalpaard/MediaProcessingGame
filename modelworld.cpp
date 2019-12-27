@@ -340,6 +340,7 @@ void ModelWorld::protagonistMoveCompleted(){
 }
 
 void ModelWorld::poisonTile(float value, int x, int y){
+
     //Protagonist operation first because first time no poison after defeating enemy
     float protagonistPoison = representation_2D.at(myProtagonist->getYPos()).at(myProtagonist->getXPos())->getPoisonLevel();
     if(protagonistPoison > 0){
@@ -349,6 +350,7 @@ void ModelWorld::poisonTile(float value, int x, int y){
         else myProtagonist->setHealth(0);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
+
     //Set poison levels and pass pairs of (int,int) to views
     int startY = y-poisonRange;
     int startX = x-poisonRange;

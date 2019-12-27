@@ -44,8 +44,7 @@ private:
     std::pair<int,int> generateNewEnemyPosition();
 
     World world;
-    int rows, columns, fieldOfView;
-    int nrOfXenemies, remainingEnemies;
+    int rows, columns, fieldOfView, nrOfXenemies, remainingEnemies;
 
     std::shared_ptr<std::vector<std::pair<int,int>>> algoResult;
     std::shared_ptr<MyProtagonist> myProtagonist;

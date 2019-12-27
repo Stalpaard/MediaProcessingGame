@@ -26,13 +26,12 @@ public:
 
 private:
     QImage* representation;
+    float health; //100.0f by construction
+    float energy; //100.0f by construction
 signals:
     void posChanged(int x, int y);
     void healthChanged(int h);
     void energyChanged(int e);
-private:
-    float health; //100.0f by construction
-    float energy; //100.0f by construction
 };
 
 #endif // MYPROTAGONIST_H

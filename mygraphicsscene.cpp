@@ -37,8 +37,9 @@ void MyGraphicsScene::animationLoop(){
 void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int range){
     QPainter painter;
 
-    int xDistance, yDistance, xRangeCheck, yRangeCheck;
+    int xDistance, yDistance, xRangeCheck, yRangeCheck, xDraw, yDraw;
     MyProtagonist* protagonist = data_model->getMyProtagonist();
+    QImage protagonist_representation = *(protagonist->getRepresentation());
 
     //Get 2D representation of the world in range of the protagonist ('window' into the data)
     std::vector<std::vector<std::shared_ptr<MyTile>>> areaOfInterest = data_model->make2DRepresentationAroundPointWithRange(centerX,centerY,range+1);
@@ -52,62 +53,46 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
     xDistance = protagonist->getXPos()-std::get<0>(camera_center);
     yDistance = protagonist->getYPos()-std::get<1>(camera_center);
-    xRangeCheck = std::abs(xDistance)+1;
-    yRangeCheck = std::abs(yDistance)+1;
-    if(!(xRangeCheck > range || yRangeCheck > range)){
-        if(protagonist->isWalking()){
-                moveCounter++;
-                if(moveCounter >= 31){
-                    moveCounter=0;
-                    emit moveCompleted();
-                }
-                else{
-                    switch(movingDirection){
-                    case Direction::UP :
-                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+moveCounter+(32*(yDistance-1)),*(protagonist->getRepresentation()));
-                        break;
-                    case Direction::DOWN :
-                        painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1-moveCounter+(32*(yDistance+1)),*(protagonist->getRepresentation()));
-                        break;
-                    case Direction::LEFT :
-                        painter.drawImage((range*32)+6-moveCounter+(32*(xDistance+1)),(range*32)+1+(32*yDistance),(*(protagonist->getRepresentation())).mirrored(true,false));
-                        break;
-                    case Direction::RIGHT :
-                        painter.drawImage((range*32)+6+moveCounter+(32*(xDistance-1)),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
-                        break;
-                    }
-                }
-        }
-        else painter.drawImage((range*32)+6+(32*xDistance),(range*32)+1+(32*yDistance),*(data_model->getMyProtagonist()->getRepresentation()));
-    }
-    else if(xRangeCheck > range){
-        std::cout << "moving camera" << std::endl;
-        switch(movingDirection){
-        case Direction::LEFT :
-            updateCameraCenter(-range,0);
-            break;
-        case Direction::RIGHT :
-            updateCameraCenter(range,0);
-            break;
-        default:
-            break;
-        }
-    }
-    else if(yRangeCheck > range){
-        std::cout << "moving camera" << std::endl;
-        switch(movingDirection){
-        case Direction::UP :
-            updateCameraCenter(0,range);
-            break;
-        case Direction::DOWN :
-            updateCameraCenter(0,-range);
-            break;
-        default:
-            break;
-        }
-    }
+    xDraw = (range*32)+6+(32*xDistance);
+    yDraw = (range*32)+1+(32*yDistance);
+    xRangeCheck = std::abs(xDistance); //Move camera when the protagonist is at the edge of the screen to see nearby enemies
+    yRangeCheck = std::abs(yDistance);
 
 
+    if(protagonist->isWalking()){
+        moveCounter++;
+        if(moveCounter >= 31){
+            moveCounter=0;
+            emit moveCompleted();
+        }
+        else{
+            switch(movingDirection){
+            case Direction::UP :
+                yDraw = yDraw + moveCounter-32;
+                break;
+            case Direction::DOWN :
+                yDraw = yDraw - moveCounter+32;
+                break;
+            case Direction::LEFT :
+                xDraw = xDraw - moveCounter+32;
+                protagonist_representation = protagonist_representation.mirrored(true,false);
+                break;
+            case Direction::RIGHT :
+                xDraw = xDraw + moveCounter-32;
+                break;
+
+            }
+        }
+        if(xRangeCheck == range || xRangeCheck == range+1){
+            if(xDistance > 0) updateCameraCenter(range,0);
+            else updateCameraCenter(-range,0);
+        }
+        else if(yRangeCheck == range || yRangeCheck == range+1){
+            if(yDistance > 0) updateCameraCenter(0,range);
+            else updateCameraCenter(0,-range);
+        }
+    }
+    painter.drawImage(xDraw,yDraw,protagonist_representation);
 
 
     for(std::vector<std::shared_ptr<MyTile>> row : areaOfInterest){
