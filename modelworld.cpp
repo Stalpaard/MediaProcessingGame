@@ -13,6 +13,7 @@ ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location)
     emit remainingEnemiesChanged(nrOfEnemies);
     nrOfXenemies = qrand() % (nrOfEnemies/2);
     nrOfEnemies = nrOfEnemies - nrOfXenemies;
+    remainingEnemies = remainingEnemies + nrOfXenemies;
 
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
@@ -195,6 +196,7 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 }
 
 std::vector<std::pair<int,int>> ModelWorld::runPathfinding(GridLocation start, GridLocation finish){
+    pathfindingAlgorithm = std::make_shared<aStarFast>(*(get2DRepresentation()),columns,rows); //needed for reset
     pathfindingAlgorithm->a_star_search(start, finish);
     return pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from);
 }
@@ -220,8 +222,6 @@ void ModelWorld::pathfindingViewRequest(int destX, int destY){
 }
 
 void ModelWorld::respawnEnemy(int x, int y){
-    remainingEnemies++;
-    emit remainingEnemiesChanged(remainingEnemies);
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
     std::shared_ptr<Entity> enemy = tile->getOccupant();
@@ -267,7 +267,6 @@ void ModelWorld::broadcastEnergyChange(int e){
 }
 
 void ModelWorld::protagonistMoveRequested(Direction direction){
-    std::cout << "let's move!" << std::endl;
     if(!(myProtagonist->isWalking())){
         int currentX = myProtagonist->getXPos();
         int currentY = myProtagonist->getYPos();
@@ -348,7 +347,6 @@ void ModelWorld::protagonistMoveCompleted(){
 }
 
 void ModelWorld::poisonTile(float value, int x, int y){
-
     //Protagonist operation first because first time no poison after defeating enemy
     float protagonistPoison = representation_2D.at(myProtagonist->getYPos()).at(myProtagonist->getXPos())->getPoisonLevel();
     if(protagonistPoison > 0){
@@ -356,7 +354,7 @@ void ModelWorld::poisonTile(float value, int x, int y){
 
         if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
         else myProtagonist->setHealth(0);
-        std::cout << "Protagonist took poison damage!" << std::endl;
+        std::cout << "Protagonist took " << protagonistPoison << " poison damage!" << std::endl;
     }
 
     //Set poison levels and pass pairs of (int,int) to views

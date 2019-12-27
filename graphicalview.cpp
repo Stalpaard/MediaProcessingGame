@@ -7,7 +7,7 @@ GraphicalView::GraphicalView(QGraphicsScene* scene)
 {
     setScene(scene);
     setViewportUpdateMode(ViewportUpdateMode::SmartViewportUpdate);
-    gameEnded = false;
+    keyevents_enabled = true;
 }
 
 void GraphicalView::wheelEvent(QWheelEvent *event){
@@ -16,7 +16,7 @@ void GraphicalView::wheelEvent(QWheelEvent *event){
 }
 
 void GraphicalView::keyPressEvent(QKeyEvent* keyEvent){
-    if(!(gameEnded)){
+    if(keyevents_enabled){
         switch(keyEvent->key()){
             case Qt::Key_Up:
                 emit movementKeyPressed(Direction::UP);
@@ -58,7 +58,7 @@ void GraphicalView::resizeEvent(QResizeEvent *event)
 }
 
 
-void GraphicalView::gameEnd(){
-    gameEnded = true;
+void GraphicalView::toggleKeyEvents(){
+    keyevents_enabled = !keyevents_enabled;
 }
 

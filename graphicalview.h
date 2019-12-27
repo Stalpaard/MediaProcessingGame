@@ -11,7 +11,7 @@ class GraphicalView : public QGraphicsView
 private:
     virtual void keyPressEvent(QKeyEvent *event) override;
     virtual void wheelEvent(QWheelEvent *event) override;
-    bool gameEnded;
+    bool keyevents_enabled;
 public:
     GraphicalView(QGraphicsScene* scene);
 protected:
@@ -23,7 +23,7 @@ signals:
 
 public slots:
     void fitScene();
-    void gameEnd();
+    void toggleKeyEvents();
 };
 
 #endif // GRAPHICALVIEW_H

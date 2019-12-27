@@ -24,9 +24,6 @@ int MainController::startGameInstance(){
                 MyGraphicsScene scene{worldFileName,model};
                 GraphicalView view{&scene};
 
-                //Pathfinding part
-                model->setPathfindingAlgorithm(std::make_shared<aStarFast>(*(model->get2DRepresentation()),model->getColumns(),model->getRows()));
-
                 //Text view part
                 std::vector<std::shared_ptr<Command>> commands;
                 commands.emplace_back(new CommandDown);
@@ -103,7 +100,7 @@ int MainController::startGameInstance(){
                 );
                 QObject::connect(
                     model.get(), &ModelWorld::endGame, //Disable input in GraphicalView
-                    &view, &GraphicalView::gameEnd
+                    &view, &GraphicalView::toggleKeyEvents
                 );
                     //MyGraphicsScene updates
                 QObject::connect(

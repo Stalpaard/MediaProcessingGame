@@ -14,7 +14,7 @@ bool MyPEnemy::poison()
     {
       emit poisonLevelUpdated(poisonLevel, xPos,yPos);
       int t = qrand()%5;
-      std::cout << "starting timer for " << t << " seconds" << " with poisonLevel = " << poisonLevel << std::endl;
+      //std::cout << "starting timer for " << t << " seconds" << " with poisonLevel = " << poisonLevel << std::endl;
       poisonLevel -= 10.0f;
       QTimer::singleShot(t*1000, this, SLOT(poison()));
       return true;
