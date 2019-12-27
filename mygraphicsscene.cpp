@@ -54,7 +54,7 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     if(!(xDistance > range || yDistance > range)){
         if(protagonist->isWalking()){
                 moveCounter++;
-                if(moveCounter >= 32){
+                if(moveCounter >= 31){
                     moveCounter=0;
                     emit moveCompleted();
                 }

@@ -49,11 +49,11 @@ void ModelWorld::initializeAnimations(){
 
     for(int i = 0; i <= deathMaxIndex; i++){
 
-        protagonist_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyProtagonist/Dying/" + QString::number(i) + ".png")));
-        enemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyEnemy/Dying/" + QString::number(i) + ".png")));
-        penemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyPEnemy/Dying/" + QString::number(i) + ".png")));
-        xenemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemy/Dying/" + QString::number(i) + ".png")));
-        zombie_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations/MyXEnemyZombie/Dying/" + QString::number(i) + ".png")));
+        protagonist_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations_Dying_Update/MyProtagonist/Dying/" + QString::number(i) + ".png")));
+        enemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations_Dying_Update/MyEnemy/Dying/" + QString::number(i) + ".png")));
+        penemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations_Dying_Update/MyPEnemy/Dying/" + QString::number(i) + ".png")));
+        xenemy_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations_Dying_Update/MyXEnemy/Dying/" + QString::number(i) + ".png")));
+        zombie_dying->push_back(std::make_shared<QImage>(QImage(":img/Animations_Dying_Update/MyXEnemyZombie/Dying/" + QString::number(i) + ".png")));
     }
 
     protagonist_walking = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
