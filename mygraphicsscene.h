@@ -23,6 +23,8 @@ private:
     QImage original_world_data;
     std::shared_ptr<ModelWorld> data_model;
 
+    bool pathfinding_on;
+
     int animationMilliSec;
 
     void drawEntities(QImage& source, int centerX, int centerY, int range);

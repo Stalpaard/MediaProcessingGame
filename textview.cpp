@@ -137,6 +137,7 @@ void TextView::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,in
 void TextView::showPathfinding(bool newvalue)
 {
     displayPathfinding = newvalue;
+    printEntities(); //toegevoegd door Elias
 }
 
 bool TextView::checkIfPath(int Xpos, int Ypos)

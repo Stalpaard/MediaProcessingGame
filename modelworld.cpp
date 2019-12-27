@@ -195,10 +195,15 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
     return result;
 }
 
-std::vector<std::pair<int,int>> ModelWorld::runPathfinding(GridLocation start, GridLocation finish){
+std::shared_ptr<std::vector<std::pair<int,int>>> ModelWorld::runPathfinding(GridLocation start, GridLocation finish){
     pathfindingAlgorithm = std::make_shared<aStarFast>(*(get2DRepresentation()),columns,rows); //needed for reset
     pathfindingAlgorithm->a_star_search(start, finish);
-    return pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from);
+    algoResult = std::make_shared<std::vector<std::pair<int,int>>>(pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from));
+    for(std::pair<int,int> p : *algoResult)
+    {
+        std::cout<<p.first<<"--"<<p.second<<std::endl;
+    }
+    return algoResult;
 }
 
 
@@ -211,13 +216,8 @@ void ModelWorld::pathfindingViewRequest(int destX, int destY){
     start.y=getMyProtagonist()->getYPos();
     finish.x=destX;
     finish.y=destY;
-    std::vector<std::pair<int,int>> path = runPathfinding(start, finish);
-    algoResult = std::make_shared<std::vector<std::pair<int,int>>>(path);
-    for(std::pair<int,int> p : path)
-    {
-        std::cout<<p.first<<"--"<<p.second<<std::endl;
-    }
-    emit newPathfindingResult(algoResult);
+    std::shared_ptr<std::vector<std::pair<int,int>>> path = runPathfinding(start,finish);
+    emit newPathfindingResult(path);
     emit pathfindingAvailable();
 }
 

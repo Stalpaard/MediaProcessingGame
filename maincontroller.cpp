@@ -69,6 +69,10 @@ int MainController::startGameInstance(){
                     &w, &MainWindow::pathfindingAvailable
                 );
                 QObject::connect(
+                    &strategy, &Strategy::pathfindingAvailable, //Show pathfinding checkbox
+                    &w, &MainWindow::pathfindingAvailable
+                );
+                QObject::connect(
                     model.get(), &ModelWorld::gameDefeat, //Show defeat screen
                     &w, &MainWindow::gameDefeat
                 );
@@ -113,6 +117,10 @@ int MainController::startGameInstance(){
                 );
                 QObject::connect(
                     model.get(), &ModelWorld::newPathfindingResult, //Update pathfinding result pointer in MyGraphicsScene
+                    &scene, &MyGraphicsScene::newPathfindingResult
+                );
+                QObject::connect(
+                    &strategy, &Strategy::newPathfindingResult, //Update pathfinding result pointer in MyGraphicsScene
                     &scene, &MyGraphicsScene::newPathfindingResult
                 );
                 QObject::connect(
@@ -180,6 +188,9 @@ int MainController::startGameInstance(){
                     &textView, &TextView::printEntities);
                 QObject::connect(
                     model.get(), &ModelWorld::newPathfindingResult, //Update pathfinding result pointer in textView
+                    &textView, &TextView::newPathfindingResult);
+                QObject::connect(
+                    &strategy, &Strategy::newPathfindingResult, //Update pathfinding result pointer in textView
                     &textView, &TextView::newPathfindingResult);
                 QObject::connect(
                     &w, &MainWindow::showPathfinding,

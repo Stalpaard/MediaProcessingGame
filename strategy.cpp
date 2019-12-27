@@ -32,15 +32,15 @@ void Strategy::calculateBestPath(){
                 destination_loc.x = entity->getXPos();
                 destination_loc.y = entity->getYPos();
                 currentPath = model->runPathfinding(protagonist_loc,destination_loc);
-                for(int i = 1; i < currentPath.size(); i++){
-                    std::pair<int,int> pair = currentPath.at(i);
+                for(int i = 1; i < currentPath->size(); i++){
+                    std::pair<int,int> pair = currentPath->at(i);
 
                     float newvalue = representation_2D->at(pair.second).at(pair.first)->getValue();
                     required_energy = required_energy + newvalue;
                 }
                 if((required_energy < minimum_energy) || minimum_energy == 0){
                     minimum_energy = required_energy;
-                    bestPath = std::make_shared<std::vector<std::pair<int,int>>>(currentPath);
+                    bestPath = currentPath;
                     nearestEntity = entity;
                 }
             }
@@ -68,18 +68,18 @@ void Strategy::calculateBestPath(){
                         destination_loc.x = healthpack->getXPos();
                         destination_loc.y = healthpack->getYPos();
                         currentPath = model->runPathfinding(protagonist_loc,destination_loc);
-                        for(int i = 1; i < currentPath.size(); i++){
-                            std::pair<int,int> pair = currentPath.at(i);
+                        for(int i = 1; i < currentPath->size(); i++){
+                            std::pair<int,int> pair = currentPath->at(i);
                             required_energy = required_energy + representation_2D->at(std::get<1>(pair)).at(std::get<0>(pair))->getValue();
                         }
                         if((required_energy < minimum_energy) || minimum_energy == 0 && healing >= healthNeeded){
                             minimum_energy = required_energy;
-                            bestPath = std::make_shared<std::vector<std::pair<int,int>>>(currentPath);
+                            bestPath = currentPath;
                             nearestEntity = healthpack;
                         }
                         else if(required_energy < alt_minimum_energy || alt_minimum_energy == 0){
                             alt_minimum_energy = required_energy;
-                            altBestPath = std::make_shared<std::vector<std::pair<int,int>>>(currentPath);
+                            altBestPath = currentPath;
                             altNearestEntity = healthpack;
                         }
                     }
@@ -109,6 +109,8 @@ void Strategy::calculateBestPath(){
 
 void Strategy::followPath(std::shared_ptr<std::vector<std::pair<int, int>>> path){
     pathToBeFollowed = path;
+    emit pathfindingAvailable();
+    emit newPathfindingResult(pathToBeFollowed);
     if(!(protagonist->isWalking())) nextMove();
 }
 

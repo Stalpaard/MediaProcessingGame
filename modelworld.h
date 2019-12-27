@@ -27,7 +27,7 @@ public:
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
 
-    std::vector<std::pair<int,int>> runPathfinding(GridLocation start, GridLocation finish);
+    std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(GridLocation start, GridLocation finish);
     void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
 
     int getFieldOfView() const{return fieldOfView;}

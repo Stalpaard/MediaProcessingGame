@@ -41,6 +41,8 @@ void MainWindow::on_actiongraphicalView_triggered()
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(3);
         setEnabled2DViewWidgets(true);
+        ui->pathfindingCheckBox->setEnabled(true);
+        ui->pathfindingCheckBox->setVisible(true);
     }
 }
 
@@ -49,6 +51,8 @@ void MainWindow::on_actiontextView_triggered()
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(4);
         setEnabled2DViewWidgets(false);
+        ui->pathfindingCheckBox->setEnabled(true);
+        ui->pathfindingCheckBox->setVisible(true);
     }
 }
 
@@ -63,6 +67,8 @@ void MainWindow::on_actionPathFinding_triggered()
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(2);
         setEnabled2DViewWidgets(false);
+        ui->pathfindingCheckBox->setEnabled(false);
+        ui->pathfindingCheckBox->setVisible(false);
     }
 }
 
@@ -103,8 +109,6 @@ void MainWindow::setEnabled2DViewWidgets(bool newvalue){
     ui->zoomHelpLabel->setVisible(newvalue);
     ui->panHelpLabel->setVisible(newvalue);
     ui->moveHelpLabel->setVisible(newvalue);
-    ui->pathfindingCheckBox->setEnabled(newvalue);
-    ui->pathfindingCheckBox->setVisible(newvalue);
 }
 
 //PUBLIC SLOTS
@@ -114,11 +118,13 @@ void MainWindow::protagonistHealthUpdate(int h){
 }
 
 void MainWindow::pathfindingAvailable(){
-    ui->pathfindingCheckBox->setEnabled(true);
-    ui->pathfindingCheckBox->setVisible(true);
-    ui->pathfindingCheckBox->setCheckState(Qt::CheckState::Checked);
-    ui->runAlgoButton->setText("Run Algorithm");
-    ui->runAlgoButton->setDisabled(false);
+    if(!(ui->pathfindingCheckBox->isEnabled())){
+        ui->pathfindingCheckBox->setEnabled(true);
+        ui->pathfindingCheckBox->setVisible(true);
+        ui->pathfindingCheckBox->setCheckState(Qt::CheckState::Checked);
+        ui->runAlgoButton->setText("Run Algorithm");
+        ui->runAlgoButton->setDisabled(false);
+    }
 }
 
 void MainWindow::protagonistEnergyUpdate(int e){
