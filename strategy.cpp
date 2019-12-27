@@ -1,17 +1,18 @@
 #include "strategy.h"
 #include <iostream>
 
-Strategy::Strategy(std::shared_ptr<ModelWorld> model) : model{model}, strategyEnabled{false}, moveIndex{0}, pathToBeFollowed{nullptr}
+Strategy::Strategy(std::shared_ptr<ModelWorld> model) : model{model}, strategyEnabled{false}, moveIndex{0}, pathToBeFollowed{nullptr}, gameEnded{false}
 {
     protagonist = model->getMyProtagonist();
     representation_2D = model->get2DRepresentation();
 }
 
 void Strategy::enableStrategy(bool newvalue){
-
-    strategyEnabled = newvalue;
-    if(strategyEnabled) calculateBestPath();
-    else pathToBeFollowed = nullptr;
+    if(!(gameEnded)){
+        strategyEnabled = newvalue;
+        if(strategyEnabled) calculateBestPath();
+        else pathToBeFollowed = nullptr;
+    }
 }
 
 void Strategy::calculateBestPath(){
@@ -143,5 +144,6 @@ void Strategy::nextMove(){
 }
 
 void Strategy::gameEnd(){
+    gameEnded = true;
     strategyEnabled = false;
 }

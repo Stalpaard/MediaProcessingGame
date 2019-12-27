@@ -20,7 +20,7 @@ private:
     std::shared_ptr<std::vector<std::pair<int,int>>> currentPath, bestPath, altBestPath, pathToBeFollowed;
 
     int moveIndex;
-    bool strategyEnabled;
+    bool strategyEnabled, gameEnded;
 public slots:
     void gameEnd();
     void enableStrategy(bool enabled);
