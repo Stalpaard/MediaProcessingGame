@@ -2,7 +2,6 @@
 
 MyTile::MyTile(int xPosition, int yPosition, float tileWeight) : Tile(xPosition,yPosition,tileWeight), occupied{false}, poisonLevel{0}
 {
-    init_value = getValue();
 }
 
 void MyTile::setOccupant(std::shared_ptr<Entity> newOccupant){

@@ -2,8 +2,6 @@
 #define MAINCONTROLLER_H
 
 #include "mainwindow.h"
-#include "world.h"
-#include "world_global.h"
 #include "modelworld.h"
 #include "graphicalview.h"
 #include "mygraphicsscene.h"
@@ -18,19 +16,12 @@
 #include "commandpanleft.h"
 #include "commandpanright.h"
 #include "commandpanup.h"
-#include "aStar.h"
 #include "textview.h"
 
 #include <QApplication>
-#include <QGraphicsView>
 #include <QProcess>
-#include <QGraphicsScene>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QObject>
-#include <QPixmap>
-#include <QGraphicsItem>
-#include <iostream>
 
 
 class MainController : public QObject

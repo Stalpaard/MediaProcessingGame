@@ -2,7 +2,7 @@
 #define MYPENEMY_H
 
 #include "entity.h"
-#include <iostream>
+#include <QTimer>
 
 class MyPEnemy : public Entity
 {

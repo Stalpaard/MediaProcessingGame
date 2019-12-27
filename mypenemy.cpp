@@ -1,6 +1,4 @@
 #include "mypenemy.h"
-#include <ctime>
-#include <QTimer>
 #include <iostream>
 
 

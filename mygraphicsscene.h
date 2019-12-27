@@ -2,11 +2,10 @@
 #define MYGRAPHICSSCENE_H
 
 #include <QGraphicsScene>
-#include "QGraphicsPixmapItem"
+#include <QGraphicsPixmapItem>
 #include <memory>
 #include <QTimer>
 #include <QPainter>
-#include <math.h>
 #include "modelworld.h"
 #include "direction.h"
 

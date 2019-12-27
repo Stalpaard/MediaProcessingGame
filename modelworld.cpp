@@ -1,6 +1,5 @@
 #include "modelworld.h"
-#include "iostream"
-#include "aStarFast.h"
+#include <iostream>
 
 const int poisonRange {1};
 const int default_fieldOfView = 5;
@@ -8,7 +7,7 @@ const int deathMaxIndex = 14;
 const int idleMaxIndex = 17;
 const int walkingMaxIndex = 23;
 
-ModelWorld::ModelWorld(unsigned int nrOfEnemies, unsigned int nrOfHealthpacks, QString location)
+ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location)
 { 
     remainingEnemies = nrOfEnemies;
     emit remainingEnemiesChanged(nrOfEnemies);
@@ -97,7 +96,7 @@ void ModelWorld::initializeCollections(){
     for(auto& enemy : world.getEnemies()){
         int xPos = enemy->getXPos();
         int yPos = enemy->getYPos();
-        QString type = typeid(*(enemy.get())).name();
+        QString type = typeid(*enemy).name();
 
         if(type.contains("PEnemy")){
             std::shared_ptr<MyPEnemy> newMyPEnemy = std::make_shared<MyPEnemy>(xPos,yPos,enemy->getValue(),penemy_idle,penemy_dying,protagonist_walking);
@@ -119,7 +118,7 @@ void ModelWorld::initializeCollections(){
     myProtagonist = std::make_shared<MyProtagonist>(protagonist_idle,protagonist_dying,protagonist_walking);
     QObject::connect(
         myProtagonist.get(), &MyProtagonist::posChanged,
-        this, &ModelWorld::cameraCenterChangeRequested
+        this, &ModelWorld::broadcastPositionChange
     );
     QObject::connect(
         myProtagonist.get(), &MyProtagonist::healthChanged,
@@ -148,19 +147,21 @@ void ModelWorld::initializeCollections(){
 
 }
 
-std::pair<int,int> ModelWorld::generateNewEnemyPosition(){ //kan ook nog met oude collectie geïmplementeerd worden..
-    bool valid = false;
-    while(!valid){
+std::pair<int,int> ModelWorld::generateNewEnemyPosition(){
+    int limit = rows*columns;
+    int count = 0;
+    while(count <= limit){
         int newX = qrand()%columns;
         int newY = qrand()%rows;
         if(newX == myProtagonist->getXPos() && newY == myProtagonist->getYPos()) continue;
         std::shared_ptr<MyTile> tile = representation_2D.at(newY).at(newX);
         if(!(tile->isOccupied()) && tile->getValue() < std::numeric_limits<float>::infinity()){
-            valid = true;
             return std::make_pair(newX,newY);
         }
+        count++;
     }
-    return std::make_pair(0,0);
+    std::cout << "No more tiles available" << std::endl;
+    return std::make_pair(rows+1,columns+1);
 }
 
 
@@ -216,7 +217,6 @@ void ModelWorld::respawnEnemy(int x, int y){
     emit remainingEnemiesChanged(remainingEnemies);
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
-    tile->setValue(tile->getInitValue());
     std::shared_ptr<Entity> enemy = tile->getOccupant();
     enemy->setIdleAnimations(zombie_idle);
     enemy->setDeathAnimations(zombie_dying);
@@ -224,9 +224,12 @@ void ModelWorld::respawnEnemy(int x, int y){
     std::tuple<int,int> newPosition = generateNewEnemyPosition();
     int newX = std::get<0>(newPosition);
     int newY = std::get<1>(newPosition);
-    enemy->setXPos(newX);
-    enemy->setYPos(newY);
-    representation_2D.at(newY).at(newX)->setOccupant(enemy);
+    if(newX < columns && newY < rows){
+        enemy->setXPos(newX);
+        enemy->setYPos(newY);
+        representation_2D.at(newY).at(newX)->setOccupant(enemy);
+    }
+    else std::cout << "Not possible to respawn enemy" << std::endl;
 }
 
 void ModelWorld::zoomRequested(bool in_out){
@@ -235,13 +238,13 @@ void ModelWorld::zoomRequested(bool in_out){
     emit updateView();
 }
 
-void ModelWorld::cameraCenterChangeRequested(int x, int y){
+void ModelWorld::broadcastPositionChange(int x, int y){
     if(x > 0) emit protagonistMovingDirection(Direction::RIGHT);
     else if(x < 0) emit protagonistMovingDirection(Direction::LEFT);
     if(y > 0) emit protagonistMovingDirection(Direction::UP);
     else if(y < 0) emit protagonistMovingDirection(Direction::DOWN);
     emit protagonistPositionChanged(myProtagonist->getXPos(), myProtagonist->getYPos());
-    //emit changeCameraCenter(x,y);
+    emit changeCameraCenter(x,y);
 }
 
 void ModelWorld::broadcastHealthChange(int h){
@@ -266,76 +269,70 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
         bool Ychanged = false;
 
         switch(direction){
-          case Direction::DOWN : //Down and up flipped due to flipped y-axis
-           if(currentY + 1 < rows){
-               newY = currentY + 1;
-               Ychanged = true;
-           }
-           break;
-      case Direction::UP :
-            if(currentY - 1 >= 0){
-              newY = currentY - 1;
-               Ychanged = true;
-           }
-           break;
-     case Direction::LEFT :
-         if(currentX - 1 >= 0){
-               newX = currentX - 1;
-               Xchanged = true;
-          }
-           break;
-        case Direction::RIGHT :
-          if(currentX + 1 < columns){
-               newX = currentX + 1;
-               Xchanged = true;
-           }
-            break;
-       }
+            case Direction::DOWN : //Down and up flipped due to flipped y-axis
+                if(currentY + 1 < rows){
+                    newY = currentY + 1;
+                    Ychanged = true;
+                }
+                break;
+            case Direction::UP :
+                if(currentY - 1 >= 0){
+                    newY = currentY - 1;
+                    Ychanged = true;
+                }
+                break;
+            case Direction::LEFT :
+                if(currentX - 1 >= 0){
+                    newX = currentX - 1;
+                    Xchanged = true;
+                }
+                break;
+            case Direction::RIGHT :
+                if(currentX + 1 < columns){
+                    newX = currentX + 1;
+                    Xchanged = true;
+                }
+                break;
+        }
 
         if(Xchanged || Ychanged){
             float currentEnergy = myProtagonist->getEnergy();
-        std::shared_ptr<MyTile> destinationTile = representation_2D.at(newY).at(newX);
-        float costOfMovement = destinationTile->getValue();
-        if(currentEnergy > costOfMovement){
-            myProtagonist->setWalking(true);
-            myProtagonist->setEnergy(currentEnergy-costOfMovement);
-            if(Xchanged) myProtagonist->setXPos(newX);
-            else if(Ychanged) myProtagonist->setYPos(newY);
-            std::cout << "Protagonist has new position: x = " << myProtagonist->getXPos() << " / y = " << myProtagonist->getYPos() << std::endl;
+            std::shared_ptr<MyTile> destinationTile = representation_2D.at(newY).at(newX);
+            float costOfMovement = destinationTile->getValue();
+            if(currentEnergy > costOfMovement){
+                myProtagonist->setWalking(true);
+                myProtagonist->setEnergy(currentEnergy-costOfMovement);
+                if(Xchanged) myProtagonist->setXPos(newX);
+                else if(Ychanged) myProtagonist->setYPos(newY);
+                std::cout << "Protagonist has new position: x = " << myProtagonist->getXPos() << " / y = " << myProtagonist->getYPos() << std::endl;
 
-            if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->isDefeated())){
-                std::shared_ptr<Entity> occupant = destinationTile->getOccupant();
-                float occupantStrength = occupant->getValue();
-                float newHealth = myProtagonist->getHealth() - occupantStrength;
-                if(newHealth > 0){
-                    if(newHealth > 100) myProtagonist->setHealth(100);
-                    else myProtagonist->setHealth(newHealth);
-                    if(occupantStrength > 0){
-                        destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
-
-                        myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
-                        remainingEnemies--;
-
-                        emit remainingEnemiesChanged(remainingEnemies);
-                        if(remainingEnemies == 0){
-                            emit gameVictory();
-                            emit endGame();
+                if(destinationTile->isOccupied() && !(destinationTile->getOccupant()->isDefeated())){
+                    std::shared_ptr<Entity> occupant = destinationTile->getOccupant();
+                    float occupantStrength = occupant->getValue();
+                    float newHealth = myProtagonist->getHealth() - occupantStrength;
+                    if(newHealth > 0){
+                        if(newHealth > 100) myProtagonist->setHealth(100);
+                        else myProtagonist->setHealth(newHealth);
+                        if(occupantStrength > 0){
+                            destinationTile->setValue(std::numeric_limits<float>::infinity()); //defeated enemy creates impassable tile, healthpacks not however
+                            myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
+                            remainingEnemies--;
+                            emit remainingEnemiesChanged(remainingEnemies);
+                            if(remainingEnemies == 0){
+                                emit gameVictory();
+                                emit endGame();
+                            }
                         }
+                        else destinationTile->setOccupied(false); //remove visualization
+                        occupant->setDefeated(true);
                     }
-                    else destinationTile->setOccupied(false);
-                    occupant->setDefeated(true);
+                    else myProtagonist->setHealth(0);
                 }
-                else myProtagonist->setHealth(0);
+                std::cout << "Current health: " << myProtagonist->getHealth() << " Current energy: " << myProtagonist->getEnergy() << "\n" << std::endl;
             }
-            std::cout << "Current health: " << myProtagonist->getHealth() << " Current energy: " << myProtagonist->getEnergy() << "\n" << std::endl;
+            else std::cout << "Insufficient energy for requested movement\n" << std::endl;
         }
-        else {
-            std::cout << "Insufficient energy for requested movement\n" << std::endl;
-        }
-
     }
-    }
-
 }
 
 void ModelWorld::protagonistMoveCompleted(){
@@ -347,13 +344,14 @@ void ModelWorld::poisonTile(float value, int x, int y){
     float protagonistPoison = representation_2D.at(myProtagonist->getYPos()).at(myProtagonist->getXPos())->getPoisonLevel();
     if(protagonistPoison > 0){
         float newHealth = myProtagonist->getHealth()-protagonistPoison;
+
         if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
         else myProtagonist->setHealth(0);
         std::cout << "Protagonist took poison damage!" << std::endl;
     }
     //Set poison levels and pass pairs of (int,int) to views
-    unsigned long startY = y-poisonRange;
-    unsigned long startX = x-poisonRange;
+    int startY = y-poisonRange;
+    int startX = x-poisonRange;
     std::vector<std::pair<int,int>> pairs;
 
     for(int i = 0; i <= 2*poisonRange; i++){

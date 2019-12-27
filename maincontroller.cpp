@@ -6,23 +6,24 @@ MainController::MainController(QApplication& a) : app{a}
 
 int MainController::startGameInstance(){
     std::cout << "start" << std::endl;
-    QString worldFileName = QFileDialog::getOpenFileName(0,"Select world file",QDir::currentPath(),"World Images (*.png)");
+    QString worldFileName = QFileDialog::getOpenFileName(nullptr,"Select world file",QDir::currentPath(),"World Images (*.png)");
 
     if(worldFileName!=nullptr){
         QInputDialog amountOfEnemyPrompt;
         bool ok;
-        int amountOfEnemies = QInputDialog::getInt(0, "Input Enemies","Enter the desired amount of enemies:", 10, 2, 1000,1,&ok);
+        int amountOfEnemies = QInputDialog::getInt(nullptr, "Input Enemies","Enter the desired amount of enemies:", 10, 2, 1000,1,&ok);
         if(ok){
             QInputDialog amountOfHealthpackPrompt;
-            int amountOfHealthpacks = QInputDialog::getInt(0, "Input Healthpacks","Enter the desired amount of healthpacks:", 10, 2, 1000,1,&ok);
+            int amountOfHealthpacks = QInputDialog::getInt(nullptr, "Input Healthpacks","Enter the desired amount of healthpacks:", 10, 2, 1000,1,&ok);
 
             if(ok){
                 std::shared_ptr<ModelWorld> model = std::make_shared<ModelWorld>(amountOfEnemies,amountOfHealthpacks,worldFileName);
-                //2D view part
+
+                //2D View part
                 MyGraphicsScene scene{worldFileName,model};
                 GraphicalView view{&scene};
 
-                // text view part
+                //Text view part
                 std::vector<std::shared_ptr<Command>> commands;
                 commands.emplace_back(new CommandDown);
                 commands.emplace_back(new CommandLeft);
@@ -37,13 +38,15 @@ int MainController::startGameInstance(){
                 TextView textView(nullptr, &commands, model);
 
                 MainWindow w{nullptr, &view, &textView,amountOfEnemies,model->getColumns(),model->getRows()};
-                //Input
+
+                //Connects for 2D View part
+                    //Input
                 QObject::connect(
                     &view, &GraphicalView::movementKeyPressed, //Send arrow key input to ModelWorld
                     model.get(), &ModelWorld::protagonistMoveRequested
                 );
 
-                // MainWindow Updates
+                    // MainWindow Updates
                 QObject::connect(
                     model.get(), &ModelWorld::protagonistPositionChanged, //Update current position in Pathfinding page of StackedWidget
                     &w, &MainWindow::updateProtagonistPositionLabel
@@ -72,7 +75,7 @@ int MainController::startGameInstance(){
                     model.get(), &ModelWorld::remainingEnemiesChanged, //Update enemies counter in MainWindow
                     &w, &MainWindow::updateRemainingEnemies
                 );
-                //ModelWorld updates
+                    //ModelWorld updates
                 QObject::connect(
                     &scene, &MyGraphicsScene::moveCompleted, //Re-enable protagonist arrow key input after walking animation has ended
                     model.get(), &ModelWorld::protagonistMoveCompleted
@@ -85,7 +88,7 @@ int MainController::startGameInstance(){
                     &w, &MainWindow::runPathfinding, //Run pathfinding by pressing 'Run Algorithm' button
                     model.get(), &ModelWorld::runPathfinding
                 );
-                //GraphicalView updates
+                    //GraphicalView updates
                 QObject::connect(
                     &scene, &MyGraphicsScene::updateFitScene, //Update view so whole scene fits in it
                     &view, &GraphicalView::fitScene
@@ -94,11 +97,7 @@ int MainController::startGameInstance(){
                     model.get(), &ModelWorld::endGame, //Disable input in GraphicalView
                     &view, &GraphicalView::gameEnd
                 );
-                //MyGraphicsScene updates
-                QObject::connect(
-                    model.get(), &ModelWorld::changeCameraCenter, //Update camera center when protagonist moves
-                    &scene, &MyGraphicsScene::updateCameraCenter
-                );
+                    //MyGraphicsScene updates
                 QObject::connect(
                     &view, &GraphicalView::pan,
                     &scene, &MyGraphicsScene::updateCameraCenter //Update camera center when ZSQD input
@@ -123,7 +122,7 @@ int MainController::startGameInstance(){
                     model.get(), &ModelWorld::protagonistMovingDirection, //Update camera center when protagonist moves
                     &scene, &MyGraphicsScene::updateMovingDirection
                 );
-                //MainController updates
+                    //MainController updates
                 QObject::connect(
                     &w, &MainWindow::actionQuit,
                     this, &MainController::quitApp
@@ -136,23 +135,23 @@ int MainController::startGameInstance(){
 
                 // Connects for the text view part
                 for (auto &c : commands)
-                    {
-                        QObject::connect(
-                            c.get(), &Command::movementKeyPressed,
-                            model.get(), &ModelWorld::protagonistMoveRequested);
-                        QObject::connect(
-                            c.get(), &Command::moveCompleted,
-                            model.get(), &ModelWorld::protagonistMoveCompleted);
-                        QObject::connect(
-                            c.get(), &Command::zoom,
-                            model.get(), &ModelWorld::zoomRequested);
-                        QObject::connect(
-                            c.get(), &Command::zoom,
-                            &textView, &TextView::printEntities);
-                        QObject::connect(
-                            c.get(), &Command::updateCameraCenter,
-                            &textView, &TextView::updateCameraCenter);
-                    }
+                {
+                    QObject::connect(
+                        c.get(), &Command::movementKeyPressed,
+                        model.get(), &ModelWorld::protagonistMoveRequested);
+                    QObject::connect(
+                        c.get(), &Command::moveCompleted,
+                        model.get(), &ModelWorld::protagonistMoveCompleted);
+                    QObject::connect(
+                        c.get(), &Command::zoom,
+                        model.get(), &ModelWorld::zoomRequested);
+                    QObject::connect(
+                        c.get(), &Command::zoom,
+                        &textView, &TextView::printEntities);
+                    QObject::connect(
+                        c.get(), &Command::updateCameraCenter,
+                        &textView, &TextView::updateCameraCenter);
+                }
                 QObject::connect(
                     model.get(), &ModelWorld::changeCameraCenter,
                     &textView, &TextView::updateCameraCenter);

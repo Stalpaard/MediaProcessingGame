@@ -11,8 +11,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <math.h>
-#include "modelworld.h"
-
+#include "mytile.h"
 
 struct GridLocation {
   int x, y;
@@ -23,7 +22,7 @@ namespace std {
 template <> struct hash<GridLocation> {
   typedef GridLocation argument_type;
   typedef std::size_t result_type;
-  std::size_t operator()(const GridLocation& id) const noexcept {
+  inline std::size_t operator()(const GridLocation& id) const noexcept {
     return std::hash<int>()(id.x ^ (id.y << 4));
   }
 };
@@ -43,7 +42,7 @@ struct PriorityQueue {
     elements.emplace(priority, item);
   }
 
-  T get() {
+  inline T get() {
     T best_item = elements.top().second;
     elements.pop();
     return best_item;
@@ -51,15 +50,15 @@ struct PriorityQueue {
 };
 
 
-bool operator == (GridLocation a, GridLocation b) {
+inline bool operator == (GridLocation a, GridLocation b) {
   return a.x == b.x && a.y == b.y;
 }
 
-bool operator != (GridLocation a, GridLocation b) {
+inline bool operator != (GridLocation a, GridLocation b) {
   return !(a == b);
 }
 
-bool operator < (GridLocation a, GridLocation b) {
+inline bool operator < (GridLocation a, GridLocation b) {
   return std::tie(a.x, a.y) < std::tie(b.x, b.y);
 }
 
@@ -72,16 +71,16 @@ public :
     std::unordered_map<GridLocation, GridLocation> came_from;
     std::unordered_map<GridLocation, double> cost_so_far;
 
-    bool in_bounds(GridLocation id) const {
+    inline bool in_bounds(GridLocation id) const {
         return 0 <= id.x && id.x < cols
             && 0 <= id.y && id.y < rows;
       }
 
-    bool passable(GridLocation id) const {
-        return map.at(id.y).at(id.x)->getValue() != std::numeric_limits<float>::infinity();
+    inline bool passable(GridLocation id) const {
+        return map.at(id.y).at(id.x)->getValue() < std::numeric_limits<float>::infinity();
       }
 
-    std::vector<GridLocation> neighbors(GridLocation id) const {
+    inline std::vector<GridLocation> neighbors(GridLocation id) const {
         std::vector<GridLocation> results;
 
         for (GridLocation dir : DIRS) {
@@ -102,7 +101,7 @@ public :
 
 
 
-    void a_star_search
+    inline void a_star_search
       (
        GridLocation start,
        GridLocation goal
@@ -135,7 +134,7 @@ public :
     }
 
 
-    std::vector<std::pair<int,int>> reconstruct_path(
+    inline std::vector<std::pair<int,int>> reconstruct_path(
        GridLocation start, GridLocation goal,
        std::unordered_map<GridLocation, GridLocation> came_from
     ) {

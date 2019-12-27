@@ -1,15 +1,13 @@
 #ifndef MYTILE_H
 #define MYTILE_H
 
-#include "world.h"
-#include "myenemy.h"
-
+#include "entity.h"
 class MyTile : public Tile
 {
 public:
     MyTile(int xPosition, int yPosition, float tileWeight);
     bool isOccupied() const{return occupied;}
-    float getInitValue() const{return init_value;}
+    //float getInitValue() const{return init_value;}
     void setOccupied(bool newvalue){occupied = newvalue;}
     std::shared_ptr<Entity> getOccupant() const{return occupant;}
     void setOccupant(std::shared_ptr<Entity> newOccupant);
@@ -17,7 +15,7 @@ public:
     void setPoisonLevel(float newvalue){poisonLevel = newvalue;}
 private:
     bool occupied;
-    float init_value;
+    //float init_value;
     float poisonLevel;
     std::shared_ptr<Entity> occupant;
 };

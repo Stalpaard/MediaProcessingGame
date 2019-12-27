@@ -72,12 +72,11 @@ void MainWindow::on_pathfindingCheckBox_stateChanged(int arg1)
 {
     switch(arg1){
         case Qt::CheckState::Checked :
-        emit showPathfinding(true);
-        break;
+            emit showPathfinding(true);
+            break;
         case Qt::CheckState::Unchecked :
-        emit showPathfinding(false);
-
-        break;
+            emit showPathfinding(false);
+            break;
     }
 }
 
@@ -95,9 +94,7 @@ void MainWindow::on_runAlgoButton_clicked()
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
    QMainWindow::resizeEvent(event);
-   if(ui->viewWidget->currentIndex() == 2){
-       graphicalView->fitInView(graphicalView->sceneRect(), Qt::KeepAspectRatio);
-   }
+   if(ui->viewWidget->currentIndex() == 2) graphicalView->fitInView(graphicalView->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::setEnabled2DViewWidgets(bool newvalue){
@@ -129,7 +126,7 @@ void MainWindow::setEnabled2DViewWidgets(bool newvalue){
 //PUBLIC SLOTS
 
 void MainWindow::protagonistHealthUpdate(int h){
-   ui->healthBar->setValue(h);
+    ui->healthBar->setValue(h);
 }
 
 void MainWindow::pathfindingAvailable(){
@@ -141,7 +138,7 @@ void MainWindow::pathfindingAvailable(){
 }
 
 void MainWindow::protagonistEnergyUpdate(int e){
-   ui->energyBar->setValue(e);
+    ui->energyBar->setValue(e);
 }
 
 void MainWindow::gameDefeat(){
