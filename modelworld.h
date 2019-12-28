@@ -25,7 +25,6 @@ public:
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
     std::vector<std::vector<float>>* getOriginal2DRepresentationValues(){return &original_representation_2D;}
-    std::vector<float>* getTilesValues(){return &tiles_values;}
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
@@ -60,7 +59,6 @@ private:
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
     std::vector<std::shared_ptr<Entity>> myEntities;
-    std::vector<float> tiles_values;
 
 
     std::shared_ptr<QImage> protagonist_image, enemy_image, penemy_image, xenemy_image, healthpack_image, gravestone_image, zombie_image;

@@ -198,12 +198,6 @@ std::shared_ptr<std::vector<std::pair<int,int>>> ModelWorld::runPathfinding(int 
     pathfindingAlgorithm = std::make_shared<aStarFast>(&myTiles,columns,rows,pathfindingStepCost,pathfindingHWeight); //needed for reset
     pathfindingAlgorithm->a_star_search(start, finish);
     algoResult = std::make_shared<std::vector<std::pair<int,int>>>(pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from));
-    /*
-    for(std::pair<int,int> p : *algoResult)
-    {
-        std::cout<<p.first<<"--"<<p.second<<std::endl;
-    }
-    */
     return algoResult;
 }
 
