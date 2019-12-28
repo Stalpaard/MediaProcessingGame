@@ -121,3 +121,4 @@ DEPENDPATH += $$PWD/../Media_Processing_Final/world_v3
 
 RESOURCES += \
     worldmap.qrc
+QMAKE_LFLAGS_RELEASE -= -O2
