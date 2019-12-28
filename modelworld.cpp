@@ -6,8 +6,8 @@ const int deathMaxIndex = 14;
 const int idleMaxIndex = 17;
 const int walkingMaxIndex = 23;
 
-ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) : game_ended{false}, fieldOfView{default_fieldOfView}, pathfindingHWeight{1.0f}, pathfindingStepCost{0.5f}
-{ 
+ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) : game_ended{false}, fieldOfView{default_fieldOfView}, pathfindingHWeight{1.0f}, pathfindingStepCost{1.0f}
+{
     remainingEnemies = nrOfEnemies;
     emit remainingEnemiesChanged(nrOfEnemies);
     nrOfXenemies = qrand() % (nrOfEnemies/2);
@@ -66,7 +66,6 @@ void ModelWorld::initializeCollections(){
     //Initializing myTiles collection
     for(auto& tile : world.getTiles()){
         myTiles.push_back(std::make_shared<MyTile>(tile->getXPos(),tile->getYPos(),tile->getValue()));
-        tiles_values.push_back(tile->getValue());
     }
 
     //creating 2D representation and original 2D representation
@@ -196,7 +195,7 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 }
 
 std::shared_ptr<std::vector<std::pair<int,int>>> ModelWorld::runPathfinding(int start, int finish){
-    pathfindingAlgorithm = std::make_shared<aStarFast>(&myTiles,columns,rows,pathfindingHWeight,pathfindingStepCost); //needed for reset
+    pathfindingAlgorithm = std::make_shared<aStarFast>(&myTiles,columns,rows,pathfindingStepCost,pathfindingHWeight); //needed for reset
     pathfindingAlgorithm->a_star_search(start, finish);
     algoResult = std::make_shared<std::vector<std::pair<int,int>>>(pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from));
     /*

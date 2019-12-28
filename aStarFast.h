@@ -106,6 +106,13 @@ public :
     {
       QElapsedTimer timer;
       timer.start();
+      std::vector<bool> seen(size);
+
+          for(int i = 0; i < size; i++)
+          {
+              seen[i]=false;
+          }
+
 
       int goalx = goal%cols;
       int goaly = (goal-goalx)/cols;
@@ -124,10 +131,11 @@ public :
         }
 
         for (int next : neighbors(current)) {
-          float new_cost = cost_so_far[current] + std::abs(cost_so_far[current]-map->at(next)->getValue()) + stepCost;
-          if (cost_so_far.find(next)==cost_so_far.end()
+          float new_cost = cost_so_far[current] + std::abs(map->at(current)->getValue() - map->at(next)->getValue()) + stepCost;
+          if (seen[next]==false
               || new_cost < cost_so_far[next]) {
             cost_so_far[next] = new_cost;
+            seen[next]=true;
             float priority = new_cost + hWeight*heuristic(next, goalx,goaly);
             frontier.put(priority, next);
             came_from[next] = current;
