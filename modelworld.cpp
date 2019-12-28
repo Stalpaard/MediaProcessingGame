@@ -262,8 +262,8 @@ void ModelWorld::broadcastHealthChange(int h){
     }
 }
 
-void ModelWorld::noPossibleSolution(){
-    emit gameDefeat("No possible solution");
+void ModelWorld::noPossibleSolution(QString reason){
+    emit gameDefeat(reason);
     emit endGame();
 }
 

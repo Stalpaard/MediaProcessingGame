@@ -74,7 +74,7 @@ public slots:
     void protagonistMoveRequested(Direction direction);
     void protagonistMoveCompleted();
 
-    void noPossibleSolution();
+    void noPossibleSolution(QString reason);
 
     void zoomRequested(bool in_out);
     void pathfindingViewRequest(int destX, int destY);

@@ -40,7 +40,7 @@ void Strategy::calculateBestPath(){
                     float newvalue = representation_2D->at(pair.second).at(pair.first)->getValue();
                     required_energy = required_energy + newvalue;
                 }
-                if((required_energy < minimum_energy) || minimum_energy == 0){
+                if((required_energy < minimum_energy) || bestPath == nullptr){
                     minimum_energy = required_energy;
                     bestPath = currentPath;
                     nearestEntity = entity;
@@ -48,7 +48,7 @@ void Strategy::calculateBestPath(){
             }
         }
     }
-    if((protagonist->getEnergy()-minimum_energy) > 0 && minimum_energy != 0){
+    if((protagonist->getEnergy()-minimum_energy) > 0 && bestPath != nullptr){
         int healthNeeded = nearestEntity->getValue() - protagonist->getHealth();
         if(healthNeeded < 0){
             std::cout << "set path to nearest enemy at: " << nearestEntity->getXPos() << "," << nearestEntity->getYPos() << std::endl;
@@ -66,25 +66,23 @@ void Strategy::calculateBestPath(){
                 if(!(healthpack->isDefeated())){
                     int healing = std::abs(healthpack->getValue());
                     total_healing += healing;
-                    if(healing >= healthNeeded){
-                        destination_loc.x = healthpack->getXPos();
-                        destination_loc.y = healthpack->getYPos();
-                        currentPath = model->runPathfinding(protagonist_loc,destination_loc);
-                        for(int i = 1; i < currentPath->size(); i++){
-                            std::pair<int,int> pair = currentPath->at(i);
-                            required_energy = required_energy + representation_2D->at(std::get<1>(pair)).at(std::get<0>(pair))->getValue();
-                        }
-                        if(((required_energy < minimum_energy) || minimum_energy == 0) && (healing >= healthNeeded)){
-                            minimum_energy = required_energy;
-                            bestPath = currentPath;
-                            nearestEntity = healthpack;
-                        }
-                        else if(required_energy < alt_minimum_energy || alt_minimum_energy <= 0){
-                            std::cout << "new alt_minimum_energy " << required_energy << std::endl;
-                            alt_minimum_energy = required_energy;
-                            altBestPath = currentPath;
-                            altNearestEntity = healthpack;
-                        }
+                    destination_loc.x = healthpack->getXPos();
+                    destination_loc.y = healthpack->getYPos();
+                    currentPath = model->runPathfinding(protagonist_loc,destination_loc);
+                    for(int i = 1; i < currentPath->size(); i++){
+                        std::pair<int,int> pair = currentPath->at(i);
+                        required_energy = required_energy + representation_2D->at(std::get<1>(pair)).at(std::get<0>(pair))->getValue();
+                    }
+                    if(((required_energy < minimum_energy) || bestPath == nullptr) && (healing >= healthNeeded)){
+                        minimum_energy = required_energy;
+                        bestPath = currentPath;
+                        nearestEntity = healthpack;
+                    }
+                    else if(required_energy < alt_minimum_energy || altBestPath == nullptr){
+                        std::cout << "new alt_minimum_energy " << required_energy << std::endl;
+                        alt_minimum_energy = required_energy;
+                        altBestPath = currentPath;
+                        altNearestEntity = healthpack;
                     }
                 }
             }
@@ -100,16 +98,14 @@ void Strategy::calculateBestPath(){
             else{
                 std::cout << "alt minimum energy: " << alt_minimum_energy << std::endl;
                 strategyEnabled = false;
-                emit noPossibleSolution();
-                std::cout << "no possible solution, total healing: " << total_healing << ", health needed: " << healthNeeded << std::endl;
+                emit noPossibleSolution("no possible solution, available healing: " + QString::number(total_healing) + ", health needed to kill nearest enemy: " + QString::number(healthNeeded));
             }
         }
 
     }
     else{
         strategyEnabled = false;
-        emit noPossibleSolution();
-        std::cout << "no possible path to enemy (insufficient energy)" << std::endl;
+        emit noPossibleSolution("no possible path to nearest enemy (insufficient energy)");
     }
 }
 

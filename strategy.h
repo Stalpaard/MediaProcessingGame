@@ -27,7 +27,7 @@ public slots:
     void nextMove();
 signals:
     void requestMove(Direction d);
-    void noPossibleSolution();
+    void noPossibleSolution(QString reason);
     void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
     void pathfindingAvailable();
 };
