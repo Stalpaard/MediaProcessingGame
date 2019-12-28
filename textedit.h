@@ -3,8 +3,7 @@
 
 #include <QTextEdit>
 #include <memory>
-#include "commandup.h"
-#include "commanddown.h"
+
 #include "command.h"
 
 QT_BEGIN_NAMESPACE
@@ -17,7 +16,7 @@ class TextEdit : public QTextEdit
 
 public:
     TextEdit(QWidget *parent = nullptr, std::vector<std::shared_ptr<Command>> *commands = nullptr);
-    ~TextEdit();
+    ~TextEdit() override;
 
     void setCompleter(QCompleter *c);
     QCompleter *completer() const;
