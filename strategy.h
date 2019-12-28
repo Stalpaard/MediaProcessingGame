@@ -13,7 +13,7 @@ private:
     std::shared_ptr<std::vector<std::pair<int,int>>> currentPath, bestPath, altBestPath, pathToBeFollowed;
 
     std::vector<std::vector<std::shared_ptr<MyTile>>>* representation_2D;
-    std::vector<std::vector<MyTile>>* original_representation_2D;
+    std::vector<std::vector<float>>* original_representation_2D;
 
     MyProtagonist* protagonist;
     int protagonist_loc, destination_loc;

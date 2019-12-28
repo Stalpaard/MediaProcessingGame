@@ -91,7 +91,6 @@ void MainWindow::on_runAlgoButton_clicked()
     emit runPathfinding(ui->xSpinBox->value(), ui->ySpinBox->value());
     ui->viewWidget->setCurrentIndex(3);
     setEnabled2DViewWidgets(true);
-    std::cout << "button clicked" << std::endl;
 }
 
 

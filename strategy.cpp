@@ -4,7 +4,7 @@ Strategy::Strategy(std::shared_ptr<ModelWorld> model) : model{model}, pathToBeFo
 {
     protagonist = model->getMyProtagonist();
     representation_2D = model->get2DRepresentation();
-    original_representation_2D = model->getOriginal2DRepresentation();
+    original_representation_2D = model->getOriginal2DRepresentationValues();
 }
 
 void Strategy::enableStrategy(bool newvalue){
@@ -112,7 +112,7 @@ float Strategy::calculateRequiredEnergyToEntity(int protagonist_loc, std::shared
         std::pair<int,int> pair = currentPath->at(i);
         std::pair<int,int> secondPair = currentPath->at(i+1);
         float pairValue;
-        if(i <= 0) pairValue = original_representation_2D->at(pair.second).at(pair.first).getValue();
+        if(i <= 0) pairValue = original_representation_2D->at(pair.second).at(pair.first);
         else pairValue = representation_2D->at(pair.second).at(pair.first)->getValue();
         float energy_difference = std::abs(pairValue-representation_2D->at(secondPair.second).at(secondPair.first)->getValue());
         required_energy = required_energy + energy_difference;

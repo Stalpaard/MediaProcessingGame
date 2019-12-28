@@ -17,7 +17,7 @@ ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) :
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
     columns = world.getCols();
-
+    std::cout<<"initializing random shit"<<std::endl;
     initializeAnimations();
     initializeCollections();
 }
@@ -70,14 +70,15 @@ void ModelWorld::initializeCollections(){
 
     //creating 2D representation and original 2D representation
     std::vector<std::shared_ptr<MyTile>> row;
-    std::vector<MyTile> original_row;
+    std::vector<float> original_row;
 
     for(int i = 0; i < rows ; i++){
         row.clear();
+        original_row.clear();
         for(int j = 0; j < columns; j++){
             int index = i*columns+j;
+            original_row.push_back(myTiles.at(index)->getValue());
             row.push_back(myTiles.at(index));
-            original_row.push_back(*(myTiles.at(index)));
         }
         representation_2D.push_back(row);
         original_representation_2D.push_back(original_row);
@@ -247,7 +248,7 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
         if(Xchanged || Ychanged){
             float currentEnergy = myProtagonist->getEnergy();
             std::shared_ptr<MyTile> destinationTile = representation_2D.at(newY).at(newX);
-            float costOfMovement = std::abs(destinationTile->getValue()-original_representation_2D.at(currentY).at(currentX).getValue());
+            float costOfMovement = std::abs(destinationTile->getValue()-original_representation_2D.at(currentY).at(currentX));
             if(currentEnergy > costOfMovement){
                 myProtagonist->setWalking(true);
                 myProtagonist->setEnergy(currentEnergy-costOfMovement);
@@ -318,7 +319,7 @@ void ModelWorld::pathfindingViewRequest(int destX, int destY){
 void ModelWorld::respawnEnemy(int x, int y){
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
-    tile->setValue(original_representation_2D.at(y).at(x).getValue()); //Reset old value (otherwise infinity)
+    tile->setValue(original_representation_2D.at(y).at(x)); //Reset old value (otherwise infinity)
     std::shared_ptr<Entity> enemy = tile->getOccupant();
     enemy->setIdleAnimations(zombie_idle);
     enemy->setDeathAnimations(zombie_dying); //Set zombie animations

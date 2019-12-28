@@ -24,7 +24,7 @@ public:
     std::vector<std::shared_ptr<Entity>>* getMyEntities(){return &myEntities;}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
-    std::vector<std::vector<MyTile>>* getOriginal2DRepresentation(){return &original_representation_2D;}
+    std::vector<std::vector<float>>* getOriginal2DRepresentationValues(){return &original_representation_2D;}
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
@@ -55,7 +55,7 @@ private:
     std::shared_ptr<std::vector<std::pair<int,int>>> algoResult;
     std::shared_ptr<MyProtagonist> myProtagonist;
     std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
-    std::vector<std::vector<MyTile>> original_representation_2D;
+    std::vector<std::vector<float>> original_representation_2D;
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
     std::vector<std::shared_ptr<Entity>> myEntities;
