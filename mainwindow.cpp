@@ -133,16 +133,20 @@ void MainWindow::protagonistEnergyUpdate(int e){
 }
 
 void MainWindow::gameDefeat(QString reason){
-    game_ended = true;
-    ui->defeatReasonLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-    ui->defeatReasonLabel->setWordWrap(true);
-    ui->defeatReasonLabel->setText("Reason: " + reason);
-    ui->viewWidget->setCurrentIndex(0);
+    if(!(game_ended)){
+        game_ended = true;
+        ui->defeatReasonLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+        ui->defeatReasonLabel->setWordWrap(true);
+        ui->defeatReasonLabel->setText("Reason: " + reason);
+        ui->viewWidget->setCurrentIndex(0);
+    }
 }
 
 void MainWindow::gameVictory(){
-    game_ended = true;
-    ui->viewWidget->setCurrentIndex(1);
+    if(!game_ended){
+        game_ended = true;
+        ui->viewWidget->setCurrentIndex(1);
+    }
 }
 
 void MainWindow::updateRemainingEnemies(int value) {
