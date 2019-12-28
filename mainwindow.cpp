@@ -3,7 +3,7 @@
 
 MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView, int amountOfEnemies, int mapCols, int mapRows)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), game_ended{false}
+    , ui(new Ui::MainWindow), game_ended{false}, pathfinding_available{false}
 {
     this->graphicalView = graphicalView;
     ui->setupUi(this);
@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     updateRemainingEnemies(amountOfEnemies);
     ui->xSpinBox->setMaximum(mapCols-1);
     ui->ySpinBox->setMaximum(mapRows-1);
-    ui->pathfindingCheckBox->setEnabled(false);
-    ui->pathfindingCheckBox->setVisible(false);
+    ui->pathfindingCheckBox->setEnabled(pathfinding_available);
+    ui->pathfindingCheckBox->setVisible(pathfinding_available);
 }
 
 
@@ -41,8 +41,8 @@ void MainWindow::on_actiongraphicalView_triggered()
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(3);
         setEnabled2DViewWidgets(true);
-        ui->pathfindingCheckBox->setEnabled(true);
-        ui->pathfindingCheckBox->setVisible(true);
+        ui->pathfindingCheckBox->setEnabled(pathfinding_available);
+        ui->pathfindingCheckBox->setVisible(pathfinding_available);
     }
 }
 
@@ -51,8 +51,8 @@ void MainWindow::on_actiontextView_triggered()
     if(!(game_ended)){
         ui->viewWidget->setCurrentIndex(4);
         setEnabled2DViewWidgets(false);
-        ui->pathfindingCheckBox->setEnabled(true);
-        ui->pathfindingCheckBox->setVisible(true);
+        ui->pathfindingCheckBox->setEnabled(pathfinding_available);
+        ui->pathfindingCheckBox->setVisible(pathfinding_available);
     }
 }
 
@@ -119,6 +119,7 @@ void MainWindow::protagonistHealthUpdate(int h){
 
 void MainWindow::pathfindingAvailable(){
     if(!(ui->pathfindingCheckBox->isEnabled())){
+        pathfinding_available = true;
         ui->pathfindingCheckBox->setEnabled(true);
         ui->pathfindingCheckBox->setVisible(true);
         ui->pathfindingCheckBox->setCheckState(Qt::CheckState::Checked);
@@ -166,6 +167,8 @@ void MainWindow::on_actionabortStrategy_triggered()
 
 void MainWindow::togglePathfindingCheckbox()
 {
-    if(ui->pathfindingCheckBox->isChecked()) ui->pathfindingCheckBox->setChecked(false);
-    else ui->pathfindingCheckBox->setChecked(true);
+    if(pathfinding_available){ //Toegevoegd door Elias, anders state change zonder results => null pointer
+        if(ui->pathfindingCheckBox->isChecked()) ui->pathfindingCheckBox->setChecked(false);
+        else ui->pathfindingCheckBox->setChecked(true);
+    }
 }

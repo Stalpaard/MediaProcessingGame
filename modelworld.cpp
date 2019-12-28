@@ -227,6 +227,7 @@ void ModelWorld::pathfindingViewRequest(int destX, int destY){
 void ModelWorld::respawnEnemy(int x, int y){
     std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
     tile->setOccupied(false);
+    tile->setValue(original_representation_2D.at(y).at(x).getValue());
     std::shared_ptr<Entity> enemy = tile->getOccupant();
     enemy->setIdleAnimations(zombie_idle);
     enemy->setDeathAnimations(zombie_dying);

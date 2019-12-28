@@ -2,7 +2,7 @@
 #include <QtWidgets>
 
 TextView::TextView(QWidget *parent, std::vector<std::shared_ptr<Command>> *commands, std::shared_ptr<ModelWorld> model)
-    : QWidget(parent), completer(nullptr), displayPathfinding(false), data_model(model), camera_center(std::make_tuple(0,0)), printSize(std::make_tuple(0,0))
+    : QWidget(parent), completer(nullptr), displayPathfinding(false), data_model(model), camera_center(std::make_tuple(0,0)), printSize(std::make_tuple(0,0)), path{nullptr}
 {  
     // Textedit:
     completingTextEdit = new TextEdit(parent, commands);
@@ -153,8 +153,10 @@ void TextView::showPathfinding(bool newvalue)
 
 void TextView::togglePathfinding()
 {
-    displayPathfinding = !displayPathfinding;
-    printEntities();
+    if(path != nullptr){ //toegevoegd door Elias, anders null pointer exception bij toggle zonder results
+        displayPathfinding = !displayPathfinding;
+        printEntities();
+    }
 }
 
 bool TextView::checkIfPath(int Xpos, int Ypos)

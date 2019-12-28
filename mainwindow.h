@@ -68,7 +68,7 @@ private:
     virtual void resizeEvent(QResizeEvent*) override;
 
     Ui::MainWindow *ui;
-    bool game_ended;
+    bool game_ended, pathfinding_available;
 
     GraphicalView* graphicalView;
     TextView* textView;
