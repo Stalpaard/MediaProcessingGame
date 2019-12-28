@@ -12,13 +12,13 @@
 #include <cstdlib>
 #include <math.h>
 #include "mytile.h"
+#include <iostream>
 
 struct GridLocation {
   int x, y;
 };
 
-namespace std {
-/* implement hash function so we can put GridLocation into an unordered_set */
+/*namespace std {
 template <> struct hash<GridLocation> {
   typedef GridLocation argument_type;
   typedef std::size_t result_type;
@@ -26,11 +26,11 @@ template <> struct hash<GridLocation> {
     return std::hash<int>()(id.x ^ (id.y << 4));
   }
 };
-}
+}*/
 
 template<typename T, typename priority_t>
 struct PriorityQueue {
-  typedef std::pair<priority_t, T> PQElement;
+  typedef std::pair<T, priority_t> PQElement;
   std::priority_queue<PQElement, std::vector<PQElement>,
                  std::greater<PQElement>> elements;
 
@@ -39,7 +39,7 @@ struct PriorityQueue {
   }
 
   inline void put(T item, priority_t priority) {
-    elements.emplace(priority, item);
+    elements.emplace(item, priority);
   }
 
   inline T get() {
@@ -64,23 +64,30 @@ inline bool operator < (GridLocation a, GridLocation b) {
 
 class aStarFast{
 public :
-    aStarFast(std::vector<std::vector<std::shared_ptr<MyTile>>> tiles, int cols , int rows) : map(tiles),cols(cols),rows(rows){}
+    aStarFast(std::vector<std::shared_ptr<MyTile>> *tiles, int cols , int rows, float stepCost, float hWeight) : map(tiles),cols(cols),rows(rows),stepCost(stepCost),hWeight(hWeight){}
 
-    std::vector<std::vector<std::shared_ptr<MyTile>>> map;
+    std::vector<std::shared_ptr<MyTile>> * map;
     int cols,rows;
-    std::unordered_map<GridLocation, GridLocation> came_from;
-    std::unordered_map<GridLocation, double> cost_so_far;
+    int size = cols*rows;
+    float stepCost,hWeight;
+    /*std::map<GridLocation, GridLocation> came_from;
+    std::map<GridLocation, float> cost_so_far;*/
+    std::unordered_map<int,int> came_from;
+    std::unordered_map<int,float> cost_so_far;
 
-    inline bool in_bounds(GridLocation id) const {
+    /*inline bool in_bounds(GridLocation id) const {
         return 0 <= id.x && id.x < cols
             && 0 <= id.y && id.y < rows;
       }
 
     inline bool passable(GridLocation id) const {
-        return map.at(id.y).at(id.x)->getValue() < std::numeric_limits<float>::infinity();
-      }
+        if(map.at(id.y*cols+id.x)->getValue() == std::numeric_limits<float>::infinity())
+        {return false;}
+        else{return true;}
+      }*/
 
-    inline std::vector<GridLocation> neighbors(GridLocation id) const {
+
+    /*inline std::vector<GridLocation> neighbors(GridLocation id) const {
         std::vector<GridLocation> results;
 
         for (GridLocation dir : DIRS) {
@@ -90,64 +97,112 @@ public :
           }
         }
         return results;
-      }
+      }*/
+    inline std::vector<int> neighbors(int id) const {
+        std::vector<int> results;
 
-    std::array<GridLocation, 4> DIRS =
-      {GridLocation{1, 0}, GridLocation{0, -1}, GridLocation{-1, 0}, GridLocation{0, 1}};
+        //UP
+        if(id>=cols)//in Bounds
+            if(map->at(id-cols)->getValue() != std::numeric_limits<float>::infinity())//passable
+                results.push_back(id-cols);
+        //DOWN
+        if(id<size-(cols+1))
+            if(map->at(id+cols)->getValue() != std::numeric_limits<float>::infinity())
+                results.push_back(id+cols);
+        //LEFT
+        if(id%cols!=0)
+            if(map->at(id-1)->getValue() != std::numeric_limits<float>::infinity())
+                results.push_back(id-1);
+        //RIGHT
+        if(id%cols!=cols-1)
+            if(map->at(id+1)->getValue() != std::numeric_limits<float>::infinity())
+                results.push_back(id+1);
 
-    inline double heuristic(GridLocation a, GridLocation b) {
+        return results;
+    }
+
+
+
+    /*std::array<GridLocation, 4> DIRS =
+      {GridLocation{1, 0}, GridLocation{0, -1}, GridLocation{-1, 0}, GridLocation{0, 1}};*/
+   /* std::array<int, 4> DIRS =
+      {-1, 1, -cols, cols};*/
+
+    /*inline float heuristic(GridLocation a, GridLocation b) {
       return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+    }*/
+    inline float heuristic(int s,int ex, int ey) {
+        int sx = s%cols;
+        int sy = (s-sx)/cols;
+      return std::abs(sx - ex) + std::abs(sy - ey);
     }
 
 
 
     inline void a_star_search
       (
-       GridLocation start,
-       GridLocation goal
+       int start,
+       int goal
       )
     {
-      PriorityQueue<GridLocation, double> frontier;
-      frontier.put(start, 0);
+      int goalx = goal%cols;
+      int goaly = (goal-goalx)/cols;
+      PriorityQueue<float, int> frontier;
+      frontier.put(0, start);
 
-      came_from[start] = start;
+      came_from[start]=start;
       cost_so_far[start] = 0;
 
       while (!frontier.empty()) {
-        GridLocation current = frontier.get();
+        int current = frontier.get();
 
         if (current == goal) {
           break;
         }
 
-        for (GridLocation next : neighbors(current)) {
-          float new_cost = cost_so_far[current] + map.at(next.y).at(next.x)->getValue();
-          if (cost_so_far.find(next) == cost_so_far.end()
+        for (int next : neighbors(current)) {
+          float new_cost = cost_so_far[current] + std::abs(cost_so_far[current]-map->at(next)->getValue()) + stepCost;
+          if (cost_so_far.find(next)==cost_so_far.end()
               || new_cost < cost_so_far[next]) {
             cost_so_far[next] = new_cost;
-            float priority = new_cost + heuristic(next, goal);
-            frontier.put(next, priority);
+            float priority = new_cost + hWeight*heuristic(next, goalx,goaly);
+            frontier.put(priority, next);
             came_from[next] = current;
           }
         }
       }
     }
 
+    inline GridLocation convertIntToGrid (int i)
+    {
+        GridLocation g;
+        g.x = i%cols;
+        g.y = (i-g.x)/cols;
+        return g;
+    }
 
     inline std::vector<std::pair<int,int>> reconstruct_path(
-       GridLocation start, GridLocation goal,
-       std::unordered_map<GridLocation, GridLocation> came_from
+       int start, int goal,
+       std::unordered_map<int, int> came_from
     ) {
       std::vector<std::pair<int,int>> path;
-      GridLocation current = goal;
+      GridLocation gl,strt;
+      gl.x = goal%cols;
+      gl.y = (goal-gl.x)/cols;
+      strt.x = start%cols;
+      strt.y = (start-strt.x)/cols;
+      int current = goal;
       while (current != start) {
-        path.push_back(std::make_pair(current.x,current.y));
+        GridLocation currentg = convertIntToGrid(current);
+        path.push_back(std::make_pair(currentg.x,currentg.y));
         current = came_from[current];
       }
-      path.push_back(std::make_pair(start.x,start.y)); // optional
+      path.push_back(std::make_pair(strt.x,strt.y)); // optional
       std::reverse(path.begin(), path.end());
       return path;
     }
+
+
 
 };
 
