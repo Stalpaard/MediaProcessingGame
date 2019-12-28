@@ -13,20 +13,13 @@
 #include <math.h>
 #include "mytile.h"
 #include <iostream>
+#include <QElapsedTimer>
 
 struct GridLocation {
   int x, y;
 };
 
-/*namespace std {
-template <> struct hash<GridLocation> {
-  typedef GridLocation argument_type;
-  typedef std::size_t result_type;
-  inline std::size_t operator()(const GridLocation& id) const noexcept {
-    return std::hash<int>()(id.x ^ (id.y << 4));
-  }
-};
-}*/
+
 
 template<typename T, typename priority_t>
 struct PriorityQueue {
@@ -70,34 +63,10 @@ public :
     int cols,rows;
     int size = cols*rows;
     float stepCost,hWeight;
-    /*std::map<GridLocation, GridLocation> came_from;
-    std::map<GridLocation, float> cost_so_far;*/
+
     std::unordered_map<int,int> came_from;
     std::unordered_map<int,float> cost_so_far;
 
-    /*inline bool in_bounds(GridLocation id) const {
-        return 0 <= id.x && id.x < cols
-            && 0 <= id.y && id.y < rows;
-      }
-
-    inline bool passable(GridLocation id) const {
-        if(map.at(id.y*cols+id.x)->getValue() == std::numeric_limits<float>::infinity())
-        {return false;}
-        else{return true;}
-      }*/
-
-
-    /*inline std::vector<GridLocation> neighbors(GridLocation id) const {
-        std::vector<GridLocation> results;
-
-        for (GridLocation dir : DIRS) {
-          GridLocation next{id.x + dir.x, id.y + dir.y};
-          if (in_bounds(next) && passable(next)) {
-            results.push_back(next);
-          }
-        }
-        return results;
-      }*/
     inline std::vector<int> neighbors(int id) const {
         std::vector<int> results;
 
@@ -121,16 +90,6 @@ public :
         return results;
     }
 
-
-
-    /*std::array<GridLocation, 4> DIRS =
-      {GridLocation{1, 0}, GridLocation{0, -1}, GridLocation{-1, 0}, GridLocation{0, 1}};*/
-   /* std::array<int, 4> DIRS =
-      {-1, 1, -cols, cols};*/
-
-    /*inline float heuristic(GridLocation a, GridLocation b) {
-      return std::abs(a.x - b.x) + std::abs(a.y - b.y);
-    }*/
     inline float heuristic(int s,int ex, int ey) {
         int sx = s%cols;
         int sy = (s-sx)/cols;
@@ -145,6 +104,9 @@ public :
        int goal
       )
     {
+      QElapsedTimer timer;
+      timer.start();
+
       int goalx = goal%cols;
       int goaly = (goal-goalx)/cols;
       PriorityQueue<float, int> frontier;
@@ -157,7 +119,8 @@ public :
         int current = frontier.get();
 
         if (current == goal) {
-          break;
+            std::cout<<"The search operation took :"<< timer.elapsed()<< "milliseconds"<<std::endl;
+            break;
         }
 
         for (int next : neighbors(current)) {
@@ -185,6 +148,9 @@ public :
        int start, int goal,
        std::unordered_map<int, int> came_from
     ) {
+      QElapsedTimer timer;
+      timer.start();
+
       std::vector<std::pair<int,int>> path;
       GridLocation gl,strt;
       gl.x = goal%cols;
@@ -199,11 +165,9 @@ public :
       }
       path.push_back(std::make_pair(strt.x,strt.y)); // optional
       std::reverse(path.begin(), path.end());
+      std::cout<<"The path reconstruction operation took :"<< timer.elapsed()<< "milliseconds"<<std::endl;
       return path;
     }
-
-
-
 };
 
 
