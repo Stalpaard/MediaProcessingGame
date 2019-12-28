@@ -16,13 +16,13 @@ private:
     std::vector<std::vector<MyTile>>* original_representation_2D;
 
     MyProtagonist* protagonist;
-    GridLocation protagonist_loc, destination_loc;
+    int protagonist_loc, destination_loc;
     int moveIndex;
     bool strategyEnabled, gameEnded;
 
     void followPath(std::shared_ptr<std::vector<std::pair<int, int>>> path);
     void calculateBestPath();
-    float calculateRequiredEnergyToEntity(GridLocation protagonist_loc, std::shared_ptr<Entity> entity);
+    float calculateRequiredEnergyToEntity(int protagonist_loc, std::shared_ptr<Entity> entity);
 
 public slots:
     void gameEnd();

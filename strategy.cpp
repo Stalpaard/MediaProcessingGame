@@ -23,8 +23,7 @@ void Strategy::calculateBestPath(){
     std::shared_ptr<Entity> nearestEntity = nullptr;
     std::shared_ptr<Entity> altNearestEntity = nullptr;
 
-    protagonist_loc.x = protagonist->getXPos();
-    protagonist_loc.y = protagonist->getYPos();
+    protagonist_loc = protagonist->getYPos()*model->getColumns()+protagonist->getXPos();
     //Check for path to nearest enemy
     for(auto& entity : *model->getMyEntities()){
         if(!(entity->isDefeated())){
@@ -95,12 +94,13 @@ void Strategy::calculateBestPath(){
     }
 }
 
-float Strategy::calculateRequiredEnergyToEntity(GridLocation protagonist_loc, std::shared_ptr<Entity> entity){
+float Strategy::calculateRequiredEnergyToEntity(int protagonist_loc, std::shared_ptr<Entity> entity){
     //Run pathfinding algorithm and make a sum of the required energies
-    GridLocation destination_loc;
+    int destination_loc;
     float required_energy = 0;
-    destination_loc.x = entity->getXPos();
-    destination_loc.y = entity->getYPos();
+    /*destination_loc.x = entity->getXPos();
+    destination_loc.y = entity->getYPos();*/
+    destination_loc = entity->getYPos()*model->getColumns()+entity->getXPos();
     currentPath = model->runPathfinding(protagonist_loc,destination_loc);
     for(int i = 0; i < currentPath->size()-1; i++){
         std::pair<int,int> pair = currentPath->at(i);

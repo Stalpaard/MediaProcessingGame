@@ -33,7 +33,7 @@ public:
     int getColumns() const{return columns;}
 
     std::vector<std::vector<std::shared_ptr<MyTile>>>make2DRepresentationAroundPointWithRange(int x, int y, int range);
-    std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(GridLocation start, GridLocation finish);
+    std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(int start, int finish);
     void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
 
 private:
