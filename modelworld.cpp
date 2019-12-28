@@ -66,6 +66,7 @@ void ModelWorld::initializeCollections(){
     //Initializing myTiles collection
     for(auto& tile : world.getTiles()){
         myTiles.push_back(std::make_shared<MyTile>(tile->getXPos(),tile->getYPos(),tile->getValue()));
+        tiles_values.push_back(tile->getValue());
     }
 
     //creating 2D representation and original 2D representation
