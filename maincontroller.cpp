@@ -6,7 +6,7 @@ MainController::MainController(QApplication& a) : app{a}
 
 int MainController::startGameInstance(){
     std::cout << "start" << std::endl;
-    QString worldFileName = QFileDialog::getOpenFileName(nullptr,"Select world file",QDir::currentPath(),"World Images (*.png)");
+    QString worldFileName = QFileDialog::getOpenFileName(nullptr,"Select World File",QDir::currentPath(),"World Images (*.png)");
 
     if(worldFileName!=nullptr){
         QInputDialog amountOfEnemyPrompt;

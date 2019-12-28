@@ -499,27 +499,27 @@
   </action>
   <action name="actiongraphicalView">
    <property name="text">
-    <string>graphicalView</string>
+    <string>Graphical View</string>
    </property>
   </action>
   <action name="actiontextView">
    <property name="text">
-    <string>textView</string>
+    <string>Text View</string>
    </property>
   </action>
   <action name="actionPathFinding">
    <property name="text">
-    <string>pathfinding</string>
+    <string>Pathfinding</string>
    </property>
   </action>
   <action name="actionrunStrategy">
    <property name="text">
-    <string>runStrategy</string>
+    <string>Run Strategy</string>
    </property>
   </action>
   <action name="actionabortStrategy">
    <property name="text">
-    <string>abortStrategy</string>
+    <string>Abort Strategy</string>
    </property>
   </action>
  </widget>
