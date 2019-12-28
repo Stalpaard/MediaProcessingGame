@@ -37,9 +37,9 @@ signals:
 public slots:
     void updateMovingDirection(Direction d);
     void updateCameraCenter(int dx, int dy);
+    void updateAnimationSpeed(int newvalue);
     void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
     void showPathfinding(bool newvalue);
-    void updateAnimationSpeed(int newvalue);
     void poisonLevelChanged(std::vector<std::pair<int,int>>& area, float level);
 
 private slots:

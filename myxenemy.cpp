@@ -7,6 +7,7 @@ MyXEnemy::MyXEnemy(int xPosition, int yPosition, float strength, std::shared_ptr
 }
 
 void MyXEnemy::deathAction(){
+    //Respawn enemy
     if(!respawned){
         respawned = true;
         setDefeated(false);

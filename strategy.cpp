@@ -1,6 +1,6 @@
 #include "strategy.h"
 
-Strategy::Strategy(std::shared_ptr<ModelWorld> model) : model{model}, strategyEnabled{false}, moveIndex{0}, pathToBeFollowed{nullptr}, gameEnded{false}
+Strategy::Strategy(std::shared_ptr<ModelWorld> model) : model{model}, pathToBeFollowed{nullptr}, moveIndex{0}, strategyEnabled{false}, gameEnded{false}
 {
     protagonist = model->getMyProtagonist();
     representation_2D = model->get2DRepresentation();
@@ -25,8 +25,8 @@ void Strategy::calculateBestPath(){
 
     protagonist_loc.x = protagonist->getXPos();
     protagonist_loc.y = protagonist->getYPos();
-
-    for(auto& entity : model->getMyEntities()){
+    //Check for path to nearest enemy
+    for(auto& entity : *model->getMyEntities()){
         if(!(entity->isDefeated())){
             if(entity->getValue() > 0){
                 required_energy = calculateRequiredEnergyToEntity(protagonist_loc,entity);
@@ -39,6 +39,7 @@ void Strategy::calculateBestPath(){
         }
     }
     if((protagonist->getEnergy()-minimum_energy) > 0 && bestPath != nullptr){
+        //Check if the protagonist can defeat the nearest enemy
         int healthNeeded = nearestEntity->getValue() - protagonist->getHealth();
         if(healthNeeded < 0){
             //std::cout << "set path to nearest enemy at: " << nearestEntity->getXPos() << "," << nearestEntity->getYPos() << std::endl;
@@ -46,12 +47,13 @@ void Strategy::calculateBestPath(){
         }
 
         else{
+            //Search nearest suitable healthpack or go to the nearest healthpack if total available healing is sufficient, else no possible solution
             bestPath = nullptr;
             altBestPath = nullptr;
             minimum_energy = 0;
             int alt_minimum_energy = 0;
             int total_healing = 0;
-            for(auto& entity : model->getMyEntities()){
+            for(auto& entity : *model->getMyEntities()){
                 if(!(entity->isDefeated()) && entity->getValue() < 0){
                     required_energy = calculateRequiredEnergyToEntity(protagonist_loc, entity);
                     int healing = std::abs(entity->getValue());
@@ -87,12 +89,14 @@ void Strategy::calculateBestPath(){
 
     }
     else{
+        //Not enough energy to go to nearest enemy => no possible solution
         strategyEnabled = false;
         emit noPossibleSolution("no possible path to nearest enemy (insufficient energy)");
     }
 }
 
 float Strategy::calculateRequiredEnergyToEntity(GridLocation protagonist_loc, std::shared_ptr<Entity> entity){
+    //Run pathfinding algorithm and make a sum of the required energies
     GridLocation destination_loc;
     float required_energy = 0;
     destination_loc.x = entity->getXPos();
@@ -111,17 +115,20 @@ float Strategy::calculateRequiredEnergyToEntity(GridLocation protagonist_loc, st
 }
 
 void Strategy::followPath(std::shared_ptr<std::vector<std::pair<int, int>>> path){
+    //Assign pathToBeFollowed and let the views know that a path calculated by pathfinding is available
     pathToBeFollowed = path;
     emit pathfindingAvailable();
-    emit newPathfindingResult(pathToBeFollowed);
+    emit newPathfindingResult(pathToBeFollowed); //needed to reimplement signals, otherwise every calculated path would be shown
+    //If protagonist is idle, do next move
     if(!(protagonist->isWalking())) nextMove();
 }
 
 void Strategy::nextMove(){
+    //Do the next move pointed to by moveIndex, if path complete, calculate next path
     if(strategyEnabled && pathToBeFollowed != nullptr){ //If strategy is enabled and there's a new path available/old path not yet completed, do a move
         //std::cout << "sending new move" << std::endl;
         if(moveIndex >= pathToBeFollowed->size()){
-            //std::cout << "path complete, calculating new path" << std::endl;
+            //std::cout << "path complete, calculating next path" << std::endl;
             pathToBeFollowed = nullptr;
             moveIndex = 0;
             if(strategyEnabled) calculateBestPath();
@@ -130,7 +137,6 @@ void Strategy::nextMove(){
             std::pair<int,int> nextTile = pathToBeFollowed->at(moveIndex++);
             int dx = std::get<0>(nextTile)-protagonist->getXPos();
             int dy = std::get<1>(nextTile)-protagonist->getYPos();
-            //std::cout << "dx: " << dx << " dy: " << dy << std::endl;
             if(dx > 0) requestMove(Direction::RIGHT);
             else if(dx < 0) requestMove(Direction::LEFT);
             if(dy > 0) requestMove(Direction::DOWN);

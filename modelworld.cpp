@@ -6,7 +6,7 @@ const int deathMaxIndex = 14;
 const int idleMaxIndex = 17;
 const int walkingMaxIndex = 23;
 
-ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) : game_ended{false}
+ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) : game_ended{false}, fieldOfView{default_fieldOfView}, pathfindingHWeight{1.0f}, pathfindingStepCost{0.5f}
 { 
     remainingEnemies = nrOfEnemies;
     emit remainingEnemiesChanged(nrOfEnemies);
@@ -17,13 +17,13 @@ ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) :
     world.createWorld(location,nrOfEnemies,nrOfHealthpacks);
     rows = world.getRows();
     columns = world.getCols();
-    fieldOfView = default_fieldOfView;
 
     initializeAnimations();
     initializeCollections();
 }
 
 void ModelWorld::initializeAnimations(){
+    //Initializing all animations according to max index
     protagonist_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
     enemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
     penemy_idle = std::make_shared<std::vector<std::shared_ptr<QImage>>>();
@@ -63,12 +63,12 @@ void ModelWorld::initializeAnimations(){
 }
 
 void ModelWorld::initializeCollections(){
-    //Initializing myTiles
+    //Initializing myTiles collection
     for(auto& tile : world.getTiles()){
         myTiles.push_back(std::make_shared<MyTile>(tile->getXPos(),tile->getYPos(),tile->getValue()));
     }
 
-    //creating 2D representation
+    //creating 2D representation and original 2D representation
     std::vector<std::shared_ptr<MyTile>> row;
     std::vector<MyTile> original_row;
 
@@ -83,7 +83,7 @@ void ModelWorld::initializeCollections(){
         original_representation_2D.push_back(original_row);
     }
 
-    //Initializing healthpacks collections
+    //Initializing healthpacks
     for(auto& healthPack : world.getHealthPacks()){
         int xPos = healthPack->getXPos();
         int yPos = healthPack->getYPos();
@@ -94,7 +94,6 @@ void ModelWorld::initializeCollections(){
     }
 
     //Initialize Enemies and PEnemies
-
     for(auto& enemy : world.getEnemies()){
         int xPos = enemy->getXPos();
         int yPos = enemy->getYPos();
@@ -131,7 +130,7 @@ void ModelWorld::initializeCollections(){
         this, &ModelWorld::broadcastEnergyChange
     );
 
-    // Initialize XEnemies
+    // Initializing XEnemies
     int currentXEnemies = 0;
     while(currentXEnemies < nrOfXenemies){
         std::pair<int,int> position = generateNewEnemyPosition();
@@ -159,13 +158,13 @@ std::pair<int,int> ModelWorld::generateNewEnemyPosition(){
         int newY = qrand()%rows;
         if(newX == myProtagonist->getXPos() && newY == myProtagonist->getYPos()) continue;
         std::shared_ptr<MyTile> tile = representation_2D.at(newY).at(newX);
-        if(!(tile->isOccupied()) && tile->getValue() < std::numeric_limits<float>::infinity()){
+        if(!(tile->isOccupied()) && tile->getValue() < std::numeric_limits<float>::infinity()){ //Search for inoccupied tile and tile with finite value
             return std::make_pair(newX,newY);
         }
         count++;
     }
-    std::cout << "No more tiles available" << std::endl;
-    return std::make_pair(rows+1,columns+1);
+    //std::cout << "No more tiles available" << std::endl;
+    return std::make_pair(rows+1,columns+1); //returning invalid pair
 }
 
 
@@ -195,86 +194,19 @@ std::vector<std::vector<std::shared_ptr<MyTile>>> ModelWorld::make2DRepresentati
 }
 
 std::shared_ptr<std::vector<std::pair<int,int>>> ModelWorld::runPathfinding(GridLocation start, GridLocation finish){
-    pathfindingAlgorithm = std::make_shared<aStarFast>(*(get2DRepresentation()),columns,rows); //needed for reset
+    pathfindingAlgorithm = std::make_shared<aStarFast>(&myTiles,columns,rows,pathfindingHWeight,pathfindingStepCost); //needed for reset
     pathfindingAlgorithm->a_star_search(start, finish);
     algoResult = std::make_shared<std::vector<std::pair<int,int>>>(pathfindingAlgorithm->reconstruct_path(start,finish,pathfindingAlgorithm->came_from));
+    /*
     for(std::pair<int,int> p : *algoResult)
     {
         std::cout<<p.first<<"--"<<p.second<<std::endl;
     }
+    */
     return algoResult;
 }
 
-//SLOTS
-
-void ModelWorld::pathfindingViewRequest(int destX, int destY){
-    std::cout<<"PATHFINDING INITIATED!!!"<<std::endl;
-    GridLocation start,finish;
-    start.x=getMyProtagonist()->getXPos();
-    start.y=getMyProtagonist()->getYPos();
-    finish.x=destX;
-    finish.y=destY;
-    std::shared_ptr<std::vector<std::pair<int,int>>> path = runPathfinding(start,finish);
-    emit newPathfindingResult(path);
-    emit pathfindingAvailable();
-}
-
-void ModelWorld::respawnEnemy(int x, int y){
-    std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
-    tile->setOccupied(false);
-    tile->setValue(original_representation_2D.at(y).at(x).getValue());
-    std::shared_ptr<Entity> enemy = tile->getOccupant();
-    enemy->setIdleAnimations(zombie_idle);
-    enemy->setDeathAnimations(zombie_dying);
-    enemy->setDefeated(false);
-    std::tuple<int,int> newPosition = generateNewEnemyPosition();
-    int newX = std::get<0>(newPosition);
-    int newY = std::get<1>(newPosition);
-    if(newX < columns && newY < rows){
-        enemy->setXPos(newX);
-        enemy->setYPos(newY);
-        representation_2D.at(newY).at(newX)->setOccupant(enemy);
-    }
-    else std::cout << "Not possible to respawn enemy" << std::endl;
-}
-
-void ModelWorld::zoomRequested(bool in_out){
-    if(in_out) setFieldOfView(fieldOfView-1);
-    else setFieldOfView(fieldOfView+1);
-    emit updateView();
-}
-
-void ModelWorld::broadcastPositionChange(int x, int y){
-    if(x > 0) emit protagonistMovingDirection(Direction::RIGHT);
-    else if(x < 0) emit protagonistMovingDirection(Direction::LEFT);
-    if(y > 0) emit protagonistMovingDirection(Direction::UP);
-    else if(y < 0) emit protagonistMovingDirection(Direction::DOWN);
-    emit protagonistPositionChanged(myProtagonist->getXPos(), myProtagonist->getYPos());
-    emit changeCameraCenter(x,y);
-}
-
-void ModelWorld::broadcastHealthChange(int h){
-    emit protagonistHealthChanged(h);
-    if(h <= 0){
-        if(!game_ended){
-            emit gameDefeat("Protagonist dead");
-            game_ended = true;
-            emit endGame();
-        }
-    }
-}
-
-void ModelWorld::noPossibleSolution(QString reason){
-    if(!game_ended){
-        emit gameDefeat(reason);
-        game_ended = true;
-        emit endGame();
-    }
-}
-
-void ModelWorld::broadcastEnergyChange(int e){
-    emit protagonistEnergyChanged(e);
-}
+//PUBLIC SLOTS
 
 void ModelWorld::protagonistMoveRequested(Direction direction){
     if(!(myProtagonist->isWalking()) && !game_ended){
@@ -357,6 +289,53 @@ void ModelWorld::protagonistMoveCompleted(){
     myProtagonist->setWalking(false);
 }
 
+void ModelWorld::noPossibleSolution(QString reason){
+    if(!game_ended){
+        emit gameDefeat(reason);
+        game_ended = true;
+        emit endGame();
+    }
+}
+
+void ModelWorld::zoomRequested(bool in_out){
+    if(in_out) setFieldOfView(fieldOfView-1);
+    else setFieldOfView(fieldOfView+1);
+    emit updateView();
+}
+
+void ModelWorld::pathfindingViewRequest(int destX, int destY){
+    //std::cout<<"PATHFINDING INITIATED!!!"<<std::endl;
+    GridLocation start,finish;
+    start.x=getMyProtagonist()->getXPos();
+    start.y=getMyProtagonist()->getYPos();
+    finish.x=destX;
+    finish.y=destY;
+    std::shared_ptr<std::vector<std::pair<int,int>>> path = runPathfinding(start,finish);
+    emit newPathfindingResult(path);
+    emit pathfindingAvailable();
+}
+
+//PRIVATE SLOTS
+
+void ModelWorld::respawnEnemy(int x, int y){
+    std::shared_ptr<MyTile> tile = representation_2D.at(y).at(x);
+    tile->setOccupied(false);
+    tile->setValue(original_representation_2D.at(y).at(x).getValue()); //Reset old value (otherwise infinity)
+    std::shared_ptr<Entity> enemy = tile->getOccupant();
+    enemy->setIdleAnimations(zombie_idle);
+    enemy->setDeathAnimations(zombie_dying); //Set zombie animations
+    enemy->setDefeated(false); //Set to alive, otherwise no drawing on view
+    std::tuple<int,int> newPosition = generateNewEnemyPosition();
+    int newX = std::get<0>(newPosition);
+    int newY = std::get<1>(newPosition);
+    if(newX < columns && newY < rows){
+        enemy->setXPos(newX);
+        enemy->setYPos(newY);
+        representation_2D.at(newY).at(newX)->setOccupant(enemy);
+    }
+    else std::cout << "Not possible to respawn enemy" << std::endl; //Invalid newPosition pair means there are no tiles availables
+}
+
 void ModelWorld::poisonTile(float value, int x, int y){
     if(!game_ended){
         //Protagonist operation first because first time no poison after defeating enemy
@@ -388,5 +367,41 @@ void ModelWorld::poisonTile(float value, int x, int y){
         emit poisonVisualChange(pairs, value);
     }
 }
+
+void ModelWorld::broadcastHealthChange(int h){
+    emit protagonistHealthChanged(h);
+    if(h <= 0){
+        if(!game_ended){
+            emit gameDefeat("Protagonist dead");
+            game_ended = true;
+            emit endGame();
+        }
+    }
+}
+
+
+void ModelWorld::broadcastEnergyChange(int e){
+    emit protagonistEnergyChanged(e);
+}
+
+void ModelWorld::broadcastPositionChange(int x, int y){
+    if(x > 0) emit protagonistMovingDirection(Direction::RIGHT);
+    else if(x < 0) emit protagonistMovingDirection(Direction::LEFT);
+    if(y > 0) emit protagonistMovingDirection(Direction::UP);
+    else if(y < 0) emit protagonistMovingDirection(Direction::DOWN);
+
+    emit protagonistPositionChanged(myProtagonist->getXPos(), myProtagonist->getYPos()); //For updating current position in MainWindow
+    emit changeCameraCenter(x,y); //Changing camera center of the views
+}
+
+
+
+
+
+
+
+
+
+
 
 

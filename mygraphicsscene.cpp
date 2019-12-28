@@ -12,26 +12,6 @@ MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> 
     animationLoop();
 }
 
-QImage MyGraphicsScene::calculateScaled(int centerX, int centerY, int range){
-    QImage newImage = world_data->copy(QRect(QPoint(centerX-range,centerY-range),QPoint(centerX+range,centerY+range)));
-    return newImage.scaled(newImage.width()*32,newImage.height()*32, Qt::AspectRatioMode::KeepAspectRatio,Qt::FastTransformation);
-}
-
-void MyGraphicsScene::animationLoop(){
-    //change QImage data according to changed conditions and generate new pixmap item
-    clear();
-    int range = data_model->getFieldOfView();
-
-    QImage scaled_copy = calculateScaled(std::get<0>(camera_center), std::get<1>(camera_center), range);
-    if(sceneRect() != scaled_copy.rect()){
-        setSceneRect(scaled_copy.rect());
-        emit updateFitScene();
-    }
-    drawEntities(scaled_copy, std::get<0>(camera_center), std::get<1>(camera_center), range);
-    addItem(new QGraphicsPixmapItem(QPixmap::fromImage(scaled_copy)));
-    QTimer::singleShot(animationMilliSec, this, SLOT(animationLoop()));
-}
-
 void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int range){
     QPainter painter;
 
@@ -120,6 +100,34 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     painter.end();
 }
 
+QImage MyGraphicsScene::calculateScaled(int centerX, int centerY, int range){
+    QImage newImage = world_data->copy(QRect(QPoint(centerX-range,centerY-range),QPoint(centerX+range,centerY+range)));
+    return newImage.scaled(newImage.width()*32,newImage.height()*32, Qt::AspectRatioMode::KeepAspectRatio,Qt::FastTransformation);
+}
+
+//PRIVATE SLOTS
+
+void MyGraphicsScene::animationLoop(){
+    //change QImage data according to changed conditions and generate new pixmap item
+    clear();
+    int range = data_model->getFieldOfView();
+
+    QImage scaled_copy = calculateScaled(std::get<0>(camera_center), std::get<1>(camera_center), range);
+    if(sceneRect() != scaled_copy.rect()){
+        setSceneRect(scaled_copy.rect());
+        emit updateFitScene();
+    }
+    drawEntities(scaled_copy, std::get<0>(camera_center), std::get<1>(camera_center), range);
+    addItem(new QGraphicsPixmapItem(QPixmap::fromImage(scaled_copy)));
+    QTimer::singleShot(animationMilliSec, this, SLOT(animationLoop()));
+}
+
+//PUBLIC SLOTS
+
+void MyGraphicsScene::updateMovingDirection(Direction d){
+    movingDirection = d;
+}
+
 void MyGraphicsScene::updateCameraCenter(int dx, int dy){
     int currentcameraX = std::get<0>(camera_center);
     int currentcameraY = std::get<1>(camera_center);
@@ -131,6 +139,11 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
     else if(newCameraY < 0 ) newCameraY = 0;
     camera_center = std::make_pair(newCameraX,newCameraY);
 }
+
+void MyGraphicsScene::updateAnimationSpeed(int newvalue){
+    animationMilliSec = newvalue;
+}
+
 
 void MyGraphicsScene::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result){
     bool temp_pathfinding_on = pathfinding_on;
@@ -165,10 +178,5 @@ void MyGraphicsScene::poisonLevelChanged(std::vector<std::pair<int,int>>& pairs,
     }
 }
 
-void MyGraphicsScene::updateAnimationSpeed(int newvalue){
-    animationMilliSec = newvalue;
-}
 
-void MyGraphicsScene::updateMovingDirection(Direction d){
-    movingDirection = d;
-}
+

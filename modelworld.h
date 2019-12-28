@@ -20,13 +20,11 @@ public:
     ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location);
     ~ModelWorld() override = default;
 
-    std::vector<std::shared_ptr<Entity>> getMyEntities() const{return myEntities;}
+    std::vector<std::shared_ptr<MyTile>>* getMyTiles(){return &myTiles;}
+    std::vector<std::shared_ptr<Entity>>* getMyEntities(){return &myEntities;}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
     std::vector<std::vector<MyTile>>* getOriginal2DRepresentation(){return &original_representation_2D;}
-
-    std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(GridLocation start, GridLocation finish);
-    void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
 
     int getFieldOfView() const{return fieldOfView;}
     void setFieldOfView(int newvalue){if(newvalue > 0 && newvalue < rows) fieldOfView = newvalue;}
@@ -35,19 +33,22 @@ public:
     int getColumns() const{return columns;}
 
     std::vector<std::vector<std::shared_ptr<MyTile>>>make2DRepresentationAroundPointWithRange(int x, int y, int range);
+    std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(GridLocation start, GridLocation finish);
+    void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
 
 private:
     void createWorld(QString filename, int nrOfEnemies, int nrOfHealthpacks);
-    void initializeCollections();
+
     void initializeAnimations();
-    void moveProtagonist(Direction direction);
-    void addOccupantToTile(std::shared_ptr<Tile> newEnemy);
+    void initializeCollections();
 
     std::pair<int,int> generateNewEnemyPosition();
 
     World world;
     int rows, columns, fieldOfView, nrOfXenemies, remainingEnemies;
     bool game_ended;
+
+    float pathfindingHWeight, pathfindingStepCost;
 
     std::shared_ptr<aStarFast> pathfindingAlgorithm;
 
