@@ -166,29 +166,29 @@ int MainController::startGameInstance(){
                 for (auto &c : commands)
                 {
                     QObject::connect(
-                        c.get(), &Command::movementKeyPressed,
-                        model.get(), &ModelWorld::protagonistMoveRequested); //movement commands to
+                        c.get(), &Command::movementKeyPressed, //Movement commands to model
+                        model.get(), &ModelWorld::protagonistMoveRequested);
                     QObject::connect(
-                        c.get(), &Command::moveCompleted,
+                        c.get(), &Command::moveCompleted, //Complete movement to bypass delay
                         model.get(), &ModelWorld::protagonistMoveCompleted);
                     QObject::connect(
-                        c.get(), &Command::zoom,
+                        c.get(), &Command::zoom, //Update FoV in model
                         model.get(), &ModelWorld::zoomRequested);
                     QObject::connect(
-                        c.get(), &Command::zoom,
+                        c.get(), &Command::zoom, //Print entities to update FoV
                         &textView, &TextView::printEntities);
                     QObject::connect(
-                        c.get(), &Command::updateCameraCenter,
+                        c.get(), &Command::updateCameraCenter, //Update cameracenter from command
                         &textView, &TextView::updateCameraCenter);
                 }
                 QObject::connect(
-                    model.get(), &ModelWorld::changeCameraCenter,
+                    model.get(), &ModelWorld::changeCameraCenter, //Update camera center
                     &textView, &TextView::updateCameraCenter);
                 QObject::connect(
-                    model.get(), &ModelWorld::updateView,
+                    model.get(), &ModelWorld::updateView, //Print to show updates
                     &textView, &TextView::printEntities);
                 QObject::connect(
-                    model.get(), &ModelWorld::poisonVisualChange,
+                    model.get(), &ModelWorld::poisonVisualChange,  //Print entities to show change in poison
                     &textView, &TextView::printEntities);
                 QObject::connect(
                     model.get(), &ModelWorld::newPathfindingResult, //Update pathfinding result pointer in textView

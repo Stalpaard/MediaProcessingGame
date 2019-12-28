@@ -16,10 +16,25 @@ void MyXEnemy::deathAction(){
 }
 QString MyXEnemy::getTextRepresentation()
 {
-    if(state == EntityState::DEFEATED) return "<span style=\"color:black; font-family: monospace;  white-space: pre;\"> x </span>";
+    QString value;
+    if (respawned == true && state == EntityState::IDLE)
+    {
+        if(int(this->getValue()) < 10) value.append("0");
+        value.append(QString::fromStdString(std::to_string(int(this->getValue()))));
+
+        QString text = "<span style=\"color:olivedrab; font-family: monospace;  white-space: pre; font-weight: 900;\">Z</span>";
+        text.append("<span style=\"color:black; font-family: monospace;  white-space: pre; font-weight: 100;\">");
+        text.append(value);
+        text.append("</span>");
+        return text;
+    }
+    if(state == EntityState::DEFEATED )
+    {
+        return "<span style=\"color:black; font-family: monospace;  white-space: pre;\"> x </span>";
+    }
+
     else
     {
-        QString value;
         if(int(this->getValue()) < 10) value.append("0");
         value.append(QString::fromStdString(std::to_string(int(this->getValue()))));
 

@@ -70,8 +70,19 @@ void TextView::printEntities()
                 print.append("<span style=\"color:firebrick; font-family: monospace;  white-space: pre;\">[|]</span>");
             else if(column->getPoisonLevel() > 0)
                 print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; font-weight: bold;\">:::</span>");
+            else if(isinf(column->getValue()))
+                print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; font-weight: bold;\">   </span>");
             else
-                print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">   </span>");
+            {
+                QString valueString;
+                int value = int(10*column->getValue());
+                if(value > 9) value = 9;
+                value = abs(value-9);
+                valueString.append(QString::fromStdString(std::to_string(value)));
+                print.append("<span style=\"color:gainsboro; font-family: monospace;  white-space: pre;\"> ");
+                print.append(valueString);
+                print.append(" </span>");
+            }
         }
         print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">|<br></span>");
     }
