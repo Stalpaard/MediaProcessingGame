@@ -1,32 +1,10 @@
 <RCC>
     <qresource prefix="/img">
         <file>worldmap.png</file>
-        <file>protagonist.png</file>
-        <file>enemy.png</file>
-        <file>Penemy.png</file>
-        <file>Xenemy.png</file>
-        <file>healthpack.png</file>
-        <file>gravestone.png</file>
         <file>worldmap4.png</file>
         <file>maze1.png</file>
         <file>maze2.png</file>
         <file>maze3.png</file>
-        <file>zombie.png</file>
-        <file>Animations/MyEnemy/Dying/0.png</file>
-        <file>Animations/MyEnemy/Dying/1.png</file>
-        <file>Animations/MyEnemy/Dying/10.png</file>
-        <file>Animations/MyEnemy/Dying/11.png</file>
-        <file>Animations/MyEnemy/Dying/12.png</file>
-        <file>Animations/MyEnemy/Dying/13.png</file>
-        <file>Animations/MyEnemy/Dying/14.png</file>
-        <file>Animations/MyEnemy/Dying/2.png</file>
-        <file>Animations/MyEnemy/Dying/3.png</file>
-        <file>Animations/MyEnemy/Dying/4.png</file>
-        <file>Animations/MyEnemy/Dying/5.png</file>
-        <file>Animations/MyEnemy/Dying/6.png</file>
-        <file>Animations/MyEnemy/Dying/7.png</file>
-        <file>Animations/MyEnemy/Dying/8.png</file>
-        <file>Animations/MyEnemy/Dying/9.png</file>
         <file>Animations/MyEnemy/Idle/0.png</file>
         <file>Animations/MyEnemy/Idle/1.png</file>
         <file>Animations/MyEnemy/Idle/10.png</file>
@@ -45,21 +23,6 @@
         <file>Animations/MyEnemy/Idle/7.png</file>
         <file>Animations/MyEnemy/Idle/8.png</file>
         <file>Animations/MyEnemy/Idle/9.png</file>
-        <file>Animations/MyPEnemy/Dying/0.png</file>
-        <file>Animations/MyPEnemy/Dying/1.png</file>
-        <file>Animations/MyPEnemy/Dying/10.png</file>
-        <file>Animations/MyPEnemy/Dying/11.png</file>
-        <file>Animations/MyPEnemy/Dying/12.png</file>
-        <file>Animations/MyPEnemy/Dying/13.png</file>
-        <file>Animations/MyPEnemy/Dying/14.png</file>
-        <file>Animations/MyPEnemy/Dying/2.png</file>
-        <file>Animations/MyPEnemy/Dying/3.png</file>
-        <file>Animations/MyPEnemy/Dying/4.png</file>
-        <file>Animations/MyPEnemy/Dying/5.png</file>
-        <file>Animations/MyPEnemy/Dying/6.png</file>
-        <file>Animations/MyPEnemy/Dying/7.png</file>
-        <file>Animations/MyPEnemy/Dying/8.png</file>
-        <file>Animations/MyPEnemy/Dying/9.png</file>
         <file>Animations/MyPEnemy/Idle/0.png</file>
         <file>Animations/MyPEnemy/Idle/1.png</file>
         <file>Animations/MyPEnemy/Idle/10.png</file>
@@ -78,21 +41,6 @@
         <file>Animations/MyPEnemy/Idle/7.png</file>
         <file>Animations/MyPEnemy/Idle/8.png</file>
         <file>Animations/MyPEnemy/Idle/9.png</file>
-        <file>Animations/MyProtagonist/Dying/0.png</file>
-        <file>Animations/MyProtagonist/Dying/1.png</file>
-        <file>Animations/MyProtagonist/Dying/10.png</file>
-        <file>Animations/MyProtagonist/Dying/11.png</file>
-        <file>Animations/MyProtagonist/Dying/12.png</file>
-        <file>Animations/MyProtagonist/Dying/13.png</file>
-        <file>Animations/MyProtagonist/Dying/14.png</file>
-        <file>Animations/MyProtagonist/Dying/2.png</file>
-        <file>Animations/MyProtagonist/Dying/3.png</file>
-        <file>Animations/MyProtagonist/Dying/4.png</file>
-        <file>Animations/MyProtagonist/Dying/5.png</file>
-        <file>Animations/MyProtagonist/Dying/6.png</file>
-        <file>Animations/MyProtagonist/Dying/7.png</file>
-        <file>Animations/MyProtagonist/Dying/8.png</file>
-        <file>Animations/MyProtagonist/Dying/9.png</file>
         <file>Animations/MyProtagonist/Idle/0.png</file>
         <file>Animations/MyProtagonist/Idle/1.png</file>
         <file>Animations/MyProtagonist/Idle/10.png</file>
@@ -135,21 +83,6 @@
         <file>Animations/MyProtagonist/Walking/7.png</file>
         <file>Animations/MyProtagonist/Walking/8.png</file>
         <file>Animations/MyProtagonist/Walking/9.png</file>
-        <file>Animations/MyXEnemy/Dying/0.png</file>
-        <file>Animations/MyXEnemy/Dying/1.png</file>
-        <file>Animations/MyXEnemy/Dying/10.png</file>
-        <file>Animations/MyXEnemy/Dying/11.png</file>
-        <file>Animations/MyXEnemy/Dying/12.png</file>
-        <file>Animations/MyXEnemy/Dying/13.png</file>
-        <file>Animations/MyXEnemy/Dying/14.png</file>
-        <file>Animations/MyXEnemy/Dying/2.png</file>
-        <file>Animations/MyXEnemy/Dying/3.png</file>
-        <file>Animations/MyXEnemy/Dying/4.png</file>
-        <file>Animations/MyXEnemy/Dying/5.png</file>
-        <file>Animations/MyXEnemy/Dying/6.png</file>
-        <file>Animations/MyXEnemy/Dying/7.png</file>
-        <file>Animations/MyXEnemy/Dying/8.png</file>
-        <file>Animations/MyXEnemy/Dying/9.png</file>
         <file>Animations/MyXEnemy/Idle/0.png</file>
         <file>Animations/MyXEnemy/Idle/1.png</file>
         <file>Animations/MyXEnemy/Idle/10.png</file>
@@ -168,21 +101,6 @@
         <file>Animations/MyXEnemy/Idle/7.png</file>
         <file>Animations/MyXEnemy/Idle/8.png</file>
         <file>Animations/MyXEnemy/Idle/9.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/0.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/1.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/10.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/11.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/12.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/13.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/14.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/2.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/3.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/4.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/5.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/6.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/7.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/8.png</file>
-        <file>Animations/MyXEnemyZombie/Dying/9.png</file>
         <file>Animations/MyXEnemyZombie/Idle/0.png</file>
         <file>Animations/MyXEnemyZombie/Idle/1.png</file>
         <file>Animations/MyXEnemyZombie/Idle/10.png</file>
