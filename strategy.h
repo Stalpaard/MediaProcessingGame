@@ -12,6 +12,7 @@ private:
     std::shared_ptr<ModelWorld> model;
 
     std::vector<std::vector<std::shared_ptr<MyTile>>>* representation_2D;
+    std::vector<std::vector<MyTile>>* original_representation_2D;
 
     MyProtagonist* protagonist;
     void followPath(std::shared_ptr<std::vector<std::pair<int, int>>> path);

@@ -72,14 +72,17 @@ void ModelWorld::initializeCollections(){
 
     //creating 2D representation
     std::vector<std::shared_ptr<MyTile>> row;
+    std::vector<MyTile> original_row;
 
     for(int i = 0; i < rows ; i++){
         row.clear();
         for(int j = 0; j < columns; j++){
             int index = i*columns+j;
             row.push_back(myTiles.at(index));
+            original_row.push_back(*(myTiles.at(index)));
         }
         representation_2D.push_back(row);
+        original_representation_2D.push_back(original_row);
     }
 
     //Initializing healthpacks collections
@@ -310,7 +313,7 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
         if(Xchanged || Ychanged){
             float currentEnergy = myProtagonist->getEnergy();
             std::shared_ptr<MyTile> destinationTile = representation_2D.at(newY).at(newX);
-            float costOfMovement = destinationTile->getValue();
+            float costOfMovement = std::abs(destinationTile->getValue()-original_representation_2D.at(currentY).at(currentX).getValue());
             if(currentEnergy > costOfMovement){
                 myProtagonist->setWalking(true);
                 myProtagonist->setEnergy(currentEnergy-costOfMovement);

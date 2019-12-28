@@ -26,6 +26,7 @@ public:
     std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
+    std::vector<std::vector<MyTile>>* getOriginal2DRepresentation(){return &original_representation_2D;}
 
     std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(GridLocation start, GridLocation finish);
     void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
@@ -56,6 +57,7 @@ private:
     std::shared_ptr<std::vector<std::pair<int,int>>> algoResult;
     std::shared_ptr<MyProtagonist> myProtagonist;
     std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
+    std::vector<std::vector<MyTile>> original_representation_2D;
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
     std::vector<std::shared_ptr<MyEnemy>> myEnemies;

@@ -5,6 +5,7 @@ Strategy::Strategy(std::shared_ptr<ModelWorld> model) : model{model}, strategyEn
 {
     protagonist = model->getMyProtagonist();
     representation_2D = model->get2DRepresentation();
+    original_representation_2D = model->getOriginal2DRepresentation();
 }
 
 void Strategy::enableStrategy(bool newvalue){
@@ -34,11 +35,14 @@ void Strategy::calculateBestPath(){
                 destination_loc.x = entity->getXPos();
                 destination_loc.y = entity->getYPos();
                 currentPath = model->runPathfinding(protagonist_loc,destination_loc);
-                for(int i = 1; i < currentPath->size(); i++){
+                for(int i = 0; i < currentPath->size()-1; i++){
                     std::pair<int,int> pair = currentPath->at(i);
-
-                    float newvalue = representation_2D->at(pair.second).at(pair.first)->getValue();
-                    required_energy = required_energy + newvalue;
+                    std::pair<int,int> secondPair = currentPath->at(i+1);
+                    float pairValue;
+                    if(i <= 0) pairValue = original_representation_2D->at(pair.second).at(pair.first).getValue();
+                    else pairValue = representation_2D->at(pair.second).at(pair.first)->getValue();
+                    float energy_difference = std::abs(pairValue-representation_2D->at(secondPair.second).at(secondPair.first)->getValue());
+                    required_energy = required_energy + energy_difference;
                 }
                 if((required_energy < minimum_energy) || bestPath == nullptr){
                     minimum_energy = required_energy;
@@ -69,9 +73,14 @@ void Strategy::calculateBestPath(){
                     destination_loc.x = healthpack->getXPos();
                     destination_loc.y = healthpack->getYPos();
                     currentPath = model->runPathfinding(protagonist_loc,destination_loc);
-                    for(int i = 1; i < currentPath->size(); i++){
+                    for(int i = 0; i < currentPath->size()-1; i++){
                         std::pair<int,int> pair = currentPath->at(i);
-                        required_energy = required_energy + representation_2D->at(std::get<1>(pair)).at(std::get<0>(pair))->getValue();
+                        std::pair<int,int> secondPair = currentPath->at(i+1);
+                        float pairValue;
+                        if(i <= 0) pairValue = original_representation_2D->at(pair.second).at(pair.first).getValue();
+                        else pairValue = representation_2D->at(pair.second).at(pair.first)->getValue();
+                        float energy_difference = std::abs(pairValue-representation_2D->at(secondPair.second).at(secondPair.first)->getValue());
+                        required_energy = required_energy + energy_difference;
                     }
                     if(((required_energy < minimum_energy) || bestPath == nullptr) && (healing >= healthNeeded)){
                         minimum_energy = required_energy;
