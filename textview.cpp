@@ -142,13 +142,19 @@ void TextView::resizeEvent(QResizeEvent *event)
 void TextView::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result)
 {
     path = result;
-    printEntities();
+    showPathfinding(true);
 }
 
 void TextView::showPathfinding(bool newvalue)
 {
     displayPathfinding = newvalue;
     printEntities(); //toegevoegd door Elias
+}
+
+void TextView::togglePathfinding()
+{
+    displayPathfinding = !displayPathfinding;
+    printEntities();
 }
 
 bool TextView::checkIfPath(int Xpos, int Ypos)

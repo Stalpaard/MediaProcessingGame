@@ -25,6 +25,7 @@ signals:
     void moveCompleted();
     void zoom(bool in_out);
     void updateCameraCenter(int dx, int dy);
+    void togglePathfinding();
 
 };
 

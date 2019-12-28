@@ -163,3 +163,9 @@ void MainWindow::on_actionabortStrategy_triggered()
 {
     emit enableStrategy(false);
 }
+
+void MainWindow::togglePathfindingCheckbox()
+{
+    if(ui->pathfindingCheckBox->isChecked()) ui->pathfindingCheckBox->setChecked(false);
+    else ui->pathfindingCheckBox->setChecked(true);
+}

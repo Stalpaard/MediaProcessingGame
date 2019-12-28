@@ -45,6 +45,7 @@ public slots:
     void printEntities();
     void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
     void showPathfinding(bool newvalue);
+    void togglePathfinding();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

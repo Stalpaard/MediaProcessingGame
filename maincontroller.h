@@ -17,6 +17,7 @@
 #include "commandpanleft.h"
 #include "commandpanright.h"
 #include "commandpanup.h"
+#include "commandtogglepathfinding.h"
 #include "textview.h"
 
 #include <QApplication>

@@ -52,6 +52,7 @@ public slots:
     void pathfindingAvailable();
     void updateRemainingEnemies(int remainingAmount);
     void updateProtagonistPositionLabel(int x, int y);
+    void togglePathfindingCheckbox();
 
 signals:
     void zoom(bool in_out);
