@@ -16,7 +16,7 @@ class TextEdit : public QTextEdit
 
 public:
     TextEdit(QWidget *parent = nullptr, std::vector<std::shared_ptr<Command>> *commands = nullptr);
-    ~TextEdit() override;
+    ~TextEdit() override = default;
 
     void setCompleter(QCompleter *c);
     QCompleter *completer() const;

@@ -24,6 +24,7 @@ class TextView : public QWidget
 public:
     TextView(QWidget *parent = nullptr,  std::vector<std::shared_ptr<Command>> *commands = nullptr, std::shared_ptr<ModelWorld> model =  nullptr);
     void fitLabel();
+    ~TextView() override = default;
 
 private:
     QCompleter *completer;

@@ -8,6 +8,7 @@ class Strategy : public QObject
     Q_OBJECT
 public:
     Strategy(std::shared_ptr<ModelWorld> model);
+    ~Strategy() override = default;
 private:
     std::shared_ptr<ModelWorld> model;
     std::shared_ptr<std::vector<std::pair<int,int>>> currentPath, bestPath, altBestPath, pathToBeFollowed;

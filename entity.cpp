@@ -10,6 +10,7 @@ Entity::Entity(int xPosition, int yPosition, float strength, std::shared_ptr<std
 }
 
 void Entity::setDefeated(bool newvalue){
+    //Change state and animations
     if (newvalue){
         state = EntityState::DEFEATED;
         current_animations = death_animations;
@@ -23,6 +24,7 @@ void Entity::setDefeated(bool newvalue){
 }
 
 void Entity::setWalking(bool newvalue){
+    //Change state and animations
     if(newvalue){
         state = EntityState::WALKING;
         current_animations = walking_animations;
@@ -35,6 +37,7 @@ void Entity::setWalking(bool newvalue){
 }
 
 std::shared_ptr<QImage> Entity::getRepresentation(){
+    //Return next representation of entity that should be printed unto the next frame
     if(!stopAnimation){
         if(representation_index >= current_animations->size()){
             if(!(state == EntityState::DEFEATED)) representation_index = 0;

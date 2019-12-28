@@ -15,10 +15,6 @@ TextEdit::TextEdit(QWidget *parent, std::vector<std::shared_ptr<Command>> *comma
 {
 }
 
-TextEdit::~TextEdit()
-{
-}
-
 void TextEdit::setCompleter(QCompleter *completer)
 {
     if (c)

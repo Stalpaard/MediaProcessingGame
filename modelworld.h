@@ -45,8 +45,8 @@ private:
     std::pair<int,int> generateNewEnemyPosition();
 
     World world;
-    int rows, columns, fieldOfView, nrOfXenemies, remainingEnemies;
     bool game_ended;
+    int rows, columns, fieldOfView, nrOfXenemies, remainingEnemies;
 
     float pathfindingHWeight, pathfindingStepCost;
 

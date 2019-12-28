@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+const int defaultAnimationSpeed = 15;
+
 MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *textView, int amountOfEnemies, int mapCols, int mapRows)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow), game_ended{false}, pathfinding_available{false}
@@ -8,10 +10,10 @@ MainWindow::MainWindow(QWidget *parent, GraphicalView *graphicalView, TextView *
     this->graphicalView = graphicalView;
     ui->setupUi(this);
     ui->viewWidget->insertWidget(3,graphicalView);
-    ui->viewWidget->setCurrentIndex(3);
-    ui->animationSlider->setValue(15);
-    ui->sliderLabel->setText("Animation speed (" + QString::number(15) + " ms/frame)");
     ui->viewWidget->insertWidget(4, textView);
+    ui->viewWidget->setCurrentIndex(3);
+    ui->animationSlider->setValue(defaultAnimationSpeed);
+    ui->sliderLabel->setText("Animation speed (" + QString::number(defaultAnimationSpeed) + " ms/frame)");
     updateRemainingEnemies(amountOfEnemies);
     ui->xSpinBox->setMaximum(mapCols-1);
     ui->ySpinBox->setMaximum(mapRows-1);

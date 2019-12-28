@@ -14,8 +14,8 @@ class MyGraphicsScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    ~MyGraphicsScene() override = default;
     MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model);
+    ~MyGraphicsScene() override = default;
 
 private:
     std::shared_ptr<QImage> world_data;

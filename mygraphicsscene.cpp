@@ -1,11 +1,19 @@
 #include "mygraphicsscene.h"
 
 const int defaultAnimationMillisec = 15;
+const int tileSize = 32;
+const int xOffset = 6;
+const int yOffset = 1;
+const int xTileTextOffset = 10;
+const int yTileTextOffset = 20;
+const int xEntityTextOffset = 8;
+const int yEntityTextOffset = 4;
 
-MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model) : animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}, pathfinding_on{true},
-    data_model{model}, pathfindingResult{nullptr}
+MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model) : data_model{model}, pathfindingResult{nullptr}, pathfinding_on{true}, animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}
+
 {
     world_data = std::make_shared<QImage>(location);
+    //Convert world data to RGB space in order to use non-grayscale colors
     *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
     original_world_data = *world_data;
     camera_center = std::make_pair(0,0);
@@ -23,6 +31,7 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     std::vector<std::vector<std::shared_ptr<MyTile>>> areaOfInterest = data_model->make2DRepresentationAroundPointWithRange(centerX,centerY,range+1);
 
     painter.begin(&source);
+    //Tell QPainter to paint on top of the provided source file
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
     QFont font;
     font.setPixelSize(15);
@@ -31,13 +40,15 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 
     xDistance = protagonist->getXPos()-std::get<0>(camera_center);
     yDistance = protagonist->getYPos()-std::get<1>(camera_center);
-    xDraw = (range*32)+6+(32*xDistance);
-    yDraw = (range*32)+1+(32*yDistance);
-    xRangeCheck = std::abs(xDistance); //Move camera when the protagonist is at the edge of the screen to see nearby enemies
+    xDraw = (range*tileSize)+xOffset+(tileSize*xDistance);
+    yDraw = (range*tileSize)+yOffset+(tileSize*yDistance);
+    //Range check needed in order to move camera when protagonist is near the edge of the visible screen in order to see adjacent enemies
+    xRangeCheck = std::abs(xDistance);
     yRangeCheck = std::abs(yDistance);
 
 
     if(protagonist->isWalking()){
+        //Draw protagonist between start and end tile according to the move counter
         moveCounter++;
         if(moveCounter >= 31){
             moveCounter=0;
@@ -72,7 +83,7 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
     }
     painter.drawImage(xDraw,yDraw,protagonist_representation);
 
-
+    //Draw representations of occupants occupying the tiles in the area of interest
     for(std::vector<std::shared_ptr<MyTile>> row : areaOfInterest){
         for(std::shared_ptr<MyTile> column : row){
             xDistance = column->getXPos()-centerX;
@@ -82,17 +93,17 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
                 std::shared_ptr<Entity> occupant = column->getOccupant();
                 float occupant_value = occupant->getValue();
                 std::shared_ptr<QImage> representation = occupant->getRepresentation();
-                painter.drawImage(6+(32*xDistance)+(range*32),1+(32*yDistance)+(range*32),*representation);
+                painter.drawImage(xOffset+(tileSize*xDistance)+(range*tileSize),yOffset+(tileSize*yDistance)+(range*tileSize),*representation);
 
                 if(!(occupant->isDefeated())){
                     if(occupant_value > 0) painter.setPen(Qt::red);
                     else painter.setPen(Qt::white);
-                    painter.drawText(8+(32*xDistance)+(range*32),4+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
+                    painter.drawText(xEntityTextOffset+(tileSize*xDistance)+(range*tileSize),yEntityTextOffset+(tileSize*yDistance)+(range*tileSize),QString::number(std::abs(static_cast<int>(occupant->getValue()))));
                 }
             }
             if(column->getPoisonLevel() > 0){
                 painter.setPen(Qt::green);
-                painter.drawText(10+(32*xDistance)+(range*32),20+(32*yDistance)+(range*32),QString::number(std::abs(static_cast<int>(column->getPoisonLevel()))));
+                painter.drawText(xTileTextOffset+(tileSize*xDistance)+(range*tileSize),yTileTextOffset+(tileSize*yDistance)+(range*tileSize),QString::number(std::abs(static_cast<int>(column->getPoisonLevel()))));
             }
         }
     }
@@ -101,14 +112,15 @@ void MyGraphicsScene::drawEntities(QImage &source, int centerX, int centerY, int
 }
 
 QImage MyGraphicsScene::calculateScaled(int centerX, int centerY, int range){
+    //Return scaled image of the world (in order to fit images of entities unto tiles)
     QImage newImage = world_data->copy(QRect(QPoint(centerX-range,centerY-range),QPoint(centerX+range,centerY+range)));
-    return newImage.scaled(newImage.width()*32,newImage.height()*32, Qt::AspectRatioMode::KeepAspectRatio,Qt::FastTransformation);
+    return newImage.scaled(newImage.width()*tileSize,newImage.height()*tileSize, Qt::AspectRatioMode::KeepAspectRatio,Qt::FastTransformation);
 }
 
 //PRIVATE SLOTS
 
 void MyGraphicsScene::animationLoop(){
-    //change QImage data according to changed conditions and generate new pixmap item
+    //Generate new frame using up-to-date parameters
     clear();
     int range = data_model->getFieldOfView();
 
@@ -169,6 +181,7 @@ void MyGraphicsScene::showPathfinding(bool t_f){
 }
 
 void MyGraphicsScene::poisonLevelChanged(std::vector<std::pair<int,int>>& pairs, float level){
+    //Color poisoned tiles according to their level
     for (auto &pair : pairs){
             int greenLevel = static_cast<int>(level);
             if(greenLevel > 255) greenLevel = 255;
