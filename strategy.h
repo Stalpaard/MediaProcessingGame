@@ -10,25 +10,30 @@ public:
     Strategy(std::shared_ptr<ModelWorld> model);
 private:
     std::shared_ptr<ModelWorld> model;
-    std::vector<std::pair<int,int>> currentPath;
+    std::shared_ptr<std::vector<std::pair<int,int>>> currentPath, bestPath, altBestPath, pathToBeFollowed;
+
     std::vector<std::vector<std::shared_ptr<MyTile>>>* representation_2D;
+    std::vector<std::vector<MyTile>>* original_representation_2D;
+
     MyProtagonist* protagonist;
+    GridLocation protagonist_loc, destination_loc;
+    int moveIndex;
+    bool strategyEnabled, gameEnded;
+
     void followPath(std::shared_ptr<std::vector<std::pair<int, int>>> path);
     void calculateBestPath();
-    GridLocation protagonist_loc, destination_loc;
-    std::shared_ptr<std::vector<std::pair<int,int>>> bestPath;
-    std::shared_ptr<std::vector<std::pair<int,int>>> pathToBeFollowed;
+    float calculateRequiredEnergyToEntity(GridLocation protagonist_loc, std::shared_ptr<Entity> entity);
 
-    int moveIndex;
-
-    bool gameEnded;
-    bool strategyEnabled;
 public slots:
     void gameEnd();
     void enableStrategy(bool enabled);
     void nextMove();
+
 signals:
     void requestMove(Direction d);
+    void noPossibleSolution(QString reason);
+    void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
+    void pathfindingAvailable();
 };
 
 #endif // STRATEGY_H

@@ -1,6 +1,8 @@
 #ifndef MODELWORLD_H
 #define MODELWORLD_H
 
+#include <iostream>
+
 #include "world.h"
 #include "direction.h"
 #include "aStarFast.h"
@@ -11,23 +13,19 @@
 #include "mypenemy.h"
 #include "myxenemy.h"
 
-
-
 class ModelWorld : public QObject
 {
     Q_OBJECT
-
 public:
     ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location);
-    std::vector<std::shared_ptr<MyEnemy>> getMyEnemies() const{return myEnemies;}
-    std::vector<std::shared_ptr<MyPEnemy>> getMyPEnemies() const{return myPEnemies;}
-    std::vector<std::shared_ptr<MyXEnemy>> getMyXEnemies() const{return myXEnemies;}
+    ~ModelWorld() override = default;
+
     std::vector<std::shared_ptr<Entity>> getMyEntities() const{return myEntities;}
-    std::vector<std::shared_ptr<MyHealthpack>> getMyHealthPacks() const{return myHealthPacks;}
     MyProtagonist* getMyProtagonist() const{return myProtagonist.get();}
     std::vector<std::vector<std::shared_ptr<MyTile>>>* get2DRepresentation(){return &representation_2D;}
+    std::vector<std::vector<MyTile>>* getOriginal2DRepresentation(){return &original_representation_2D;}
 
-    std::vector<std::pair<int,int>> runPathfinding(GridLocation start, GridLocation finish);
+    std::shared_ptr<std::vector<std::pair<int,int>>> runPathfinding(GridLocation start, GridLocation finish);
     void setPathfindingAlgorithm(std::shared_ptr<aStarFast> algorithm){pathfindingAlgorithm = algorithm;}
 
     int getFieldOfView() const{return fieldOfView;}
@@ -37,7 +35,6 @@ public:
     int getColumns() const{return columns;}
 
     std::vector<std::vector<std::shared_ptr<MyTile>>>make2DRepresentationAroundPointWithRange(int x, int y, int range);
-
 
 private:
     void createWorld(QString filename, int nrOfEnemies, int nrOfHealthpacks);
@@ -50,18 +47,16 @@ private:
 
     World world;
     int rows, columns, fieldOfView, nrOfXenemies, remainingEnemies;
+    bool game_ended;
 
     std::shared_ptr<aStarFast> pathfindingAlgorithm;
 
     std::shared_ptr<std::vector<std::pair<int,int>>> algoResult;
     std::shared_ptr<MyProtagonist> myProtagonist;
     std::vector<std::vector<std::shared_ptr<MyTile>>> representation_2D;
+    std::vector<std::vector<MyTile>> original_representation_2D;
 
     std::vector<std::shared_ptr<MyTile>> myTiles;
-    std::vector<std::shared_ptr<MyEnemy>> myEnemies;
-    std::vector<std::shared_ptr<MyPEnemy>> myPEnemies;
-    std::vector<std::shared_ptr<MyXEnemy>> myXEnemies;
-    std::vector<std::shared_ptr<MyHealthpack>> myHealthPacks;
     std::vector<std::shared_ptr<Entity>> myEntities;
 
 
@@ -74,8 +69,11 @@ public slots:
     void protagonistMoveRequested(Direction direction);
     void protagonistMoveCompleted();
 
+    void noPossibleSolution(QString reason);
+
     void zoomRequested(bool in_out);
     void pathfindingViewRequest(int destX, int destY);
+
 private slots:
     void respawnEnemy(int x, int y);
     void poisonTile(float value, int x, int y);
@@ -83,13 +81,14 @@ private slots:
     void broadcastHealthChange(int h);
     void broadcastEnergyChange(int e);
     void broadcastPositionChange(int x, int y);
+
 signals:
     void remainingEnemiesChanged(int remainingAmount);
     void protagonistHealthChanged(int h);
     void protagonistEnergyChanged(int e);
     void protagonistPositionChanged(int x, int y);
     void protagonistMovingDirection(Direction d);
-    void gameDefeat();
+    void gameDefeat(QString reason);
     void gameVictory();
     void endGame();
 
@@ -99,10 +98,6 @@ signals:
     void changeCameraCenter(int x, int y);
     void updateView();
     void poisonVisualChange(std::vector<std::pair<int,int>>& area, float level);
-
 };
-
-
-
 
 #endif // MODELWORLD_H

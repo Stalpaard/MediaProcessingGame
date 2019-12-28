@@ -1,15 +1,13 @@
 #include "mygraphicsscene.h"
-#include <iostream>
 
 const int defaultAnimationMillisec = 15;
 
-MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model) : animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}
+MyGraphicsScene::MyGraphicsScene(QString& location, std::shared_ptr<ModelWorld> model) : animationMilliSec{defaultAnimationMillisec}, moveCounter{0}, movingDirection{Direction::UP}, pathfinding_on{true},
+    data_model{model}, pathfindingResult{nullptr}
 {
     world_data = std::make_shared<QImage>(location);
     *world_data = world_data->convertToFormat(QImage::Format_RGB16,Qt::ColorOnly);
     original_world_data = *world_data;
-    pathfindingResult = nullptr;
-    data_model = model;
     camera_center = std::make_pair(0,0);
     animationLoop();
 }
@@ -135,14 +133,16 @@ void MyGraphicsScene::updateCameraCenter(int dx, int dy){
 }
 
 void MyGraphicsScene::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result){
+    bool temp_pathfinding_on = pathfinding_on;
     showPathfinding(false);
     pathfindingResult = result;
-    showPathfinding(true);
+    showPathfinding(temp_pathfinding_on);
 }
 
 void MyGraphicsScene::showPathfinding(bool t_f){
     if(pathfindingResult != nullptr){
-        if(t_f){
+        pathfinding_on = t_f;
+        if(pathfinding_on){
             for(auto& pair : *pathfindingResult){
                 world_data->setPixelColor(std::get<0>(pair),std::get<1>(pair),QColor(255,0,0));
             }

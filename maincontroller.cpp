@@ -24,9 +24,6 @@ int MainController::startGameInstance(){
                 MyGraphicsScene scene{worldFileName,model};
                 GraphicalView view{&scene};
 
-                //Pathfinding part
-                model->setPathfindingAlgorithm(std::make_shared<aStarFast>(*(model->get2DRepresentation()),model->getColumns(),model->getRows()));
-
                 //Text view part
                 std::vector<std::shared_ptr<Command>> commands;
                 commands.emplace_back(new CommandDown);
@@ -36,6 +33,7 @@ int MainController::startGameInstance(){
                 commands.emplace_back(new CommandPanRight);
                 commands.emplace_back(new CommandPanUp);
                 commands.emplace_back(new CommandRight);
+                commands.emplace_back(new CommandTogglePathfinding);
                 commands.emplace_back(new CommandUp);
                 commands.emplace_back(new CommandZoomIn);
                 commands.emplace_back(new CommandZoomOut);
@@ -72,6 +70,10 @@ int MainController::startGameInstance(){
                     &w, &MainWindow::pathfindingAvailable
                 );
                 QObject::connect(
+                    &strategy, &Strategy::pathfindingAvailable, //Show pathfinding checkbox
+                    &w, &MainWindow::pathfindingAvailable
+                );
+                QObject::connect(
                     model.get(), &ModelWorld::gameDefeat, //Show defeat screen
                     &w, &MainWindow::gameDefeat
                 );
@@ -93,6 +95,10 @@ int MainController::startGameInstance(){
                     model.get(), &ModelWorld::zoomRequested
                 );
                 QObject::connect(
+                    &strategy, &Strategy::noPossibleSolution, //Update field-of-view in ModelWorld
+                    model.get(), &ModelWorld::noPossibleSolution
+                );
+                QObject::connect(
                     &w, &MainWindow::runPathfinding, //Run pathfinding by pressing 'Run Algorithm' button
                     model.get(), &ModelWorld::pathfindingViewRequest
                 );
@@ -100,10 +106,6 @@ int MainController::startGameInstance(){
                 QObject::connect(
                     &scene, &MyGraphicsScene::updateFitScene, //Update view so whole scene fits in it
                     &view, &GraphicalView::fitScene
-                );
-                QObject::connect(
-                    model.get(), &ModelWorld::endGame, //Disable input in GraphicalView
-                    &view, &GraphicalView::gameEnd
                 );
                     //MyGraphicsScene updates
                 QObject::connect(
@@ -116,6 +118,10 @@ int MainController::startGameInstance(){
                 );
                 QObject::connect(
                     model.get(), &ModelWorld::newPathfindingResult, //Update pathfinding result pointer in MyGraphicsScene
+                    &scene, &MyGraphicsScene::newPathfindingResult
+                );
+                QObject::connect(
+                    &strategy, &Strategy::newPathfindingResult, //Update pathfinding result pointer in MyGraphicsScene
                     &scene, &MyGraphicsScene::newPathfindingResult
                 );
                 QObject::connect(
@@ -157,30 +163,46 @@ int MainController::startGameInstance(){
                 for (auto &c : commands)
                 {
                     QObject::connect(
-                        c.get(), &Command::movementKeyPressed,
+                        c.get(), &Command::movementKeyPressed, //Movement commands to model
                         model.get(), &ModelWorld::protagonistMoveRequested);
                     QObject::connect(
-                        c.get(), &Command::moveCompleted,
+                        c.get(), &Command::moveCompleted, //Complete movement to bypass delay
                         model.get(), &ModelWorld::protagonistMoveCompleted);
                     QObject::connect(
-                        c.get(), &Command::zoom,
+                        c.get(), &Command::zoom, //Update FoV in model
                         model.get(), &ModelWorld::zoomRequested);
                     QObject::connect(
-                        c.get(), &Command::zoom,
+                        c.get(), &Command::zoom, //Print entities to update FoV
                         &textView, &TextView::printEntities);
                     QObject::connect(
-                        c.get(), &Command::updateCameraCenter,
+                        c.get(), &Command::updateCameraCenter, //Update cameracenter from command
                         &textView, &TextView::updateCameraCenter);
+                    QObject::connect(
+                        c.get(), &Command::togglePathfinding, //toggle pathfinding from command
+                        &textView, &TextView::togglePathfinding);
+                    QObject::connect(
+                        c.get(), &Command::togglePathfinding, //toggle pathfinding from command
+                        &w, &MainWindow::togglePathfindingCheckbox);
+
                 }
                 QObject::connect(
-                    model.get(), &ModelWorld::changeCameraCenter,
+                    model.get(), &ModelWorld::changeCameraCenter, //Update camera center
                     &textView, &TextView::updateCameraCenter);
                 QObject::connect(
-                    model.get(), &ModelWorld::updateView,
+                    model.get(), &ModelWorld::updateView, //Print to show updates
                     &textView, &TextView::printEntities);
                 QObject::connect(
-                    model.get(), &ModelWorld::poisonVisualChange,
+                    model.get(), &ModelWorld::poisonVisualChange,  //Print entities to show change in poison
                     &textView, &TextView::printEntities);
+                QObject::connect(
+                    model.get(), &ModelWorld::newPathfindingResult, //Update pathfinding result pointer in textView
+                    &textView, &TextView::newPathfindingResult);
+                QObject::connect(
+                    &strategy, &Strategy::newPathfindingResult, //Update pathfinding result pointer in textView
+                    &textView, &TextView::newPathfindingResult);
+                QObject::connect(
+                    &w, &MainWindow::showPathfinding,
+                    &textView, &TextView::showPathfinding);
 
                 w.setWindowTitle("The Most Epic Game Ever");
                 w.show();

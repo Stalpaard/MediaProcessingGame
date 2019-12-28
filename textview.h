@@ -32,13 +32,20 @@ private:
     QFont font;
     QVBoxLayout *layout;
     QString print;
+    bool displayPathfinding;
     std::shared_ptr<ModelWorld> data_model;
     std::tuple<int,int> camera_center;
     std::tuple<int,int> printSize;
+    std::shared_ptr<std::vector<std::pair<int,int>>> path;
+
+    bool checkIfPath(int Xpos, int Ypos);
 
 public slots:
     void updateCameraCenter(int dx, int dy);
     void printEntities();
+    void newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result);
+    void showPathfinding(bool newvalue);
+    void togglePathfinding();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

@@ -207,7 +207,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="defeat">
          <property name="sizePolicy">
@@ -216,7 +216,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <widget class="QFrame" name="frame">
+         <widget class="QFrame" name="defeatFrame">
           <property name="geometry">
            <rect>
             <x>-1</x>
@@ -240,7 +240,7 @@
           <property name="lineWidth">
            <number>1</number>
           </property>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="defeatLabel">
            <property name="geometry">
             <rect>
              <x>230</x>
@@ -273,6 +273,19 @@
             <bool>false</bool>
            </property>
           </widget>
+          <widget class="QLabel" name="defeatReasonLabel">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>320</y>
+             <width>641</width>
+             <height>111</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>BLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLABLA</string>
+           </property>
+          </widget>
          </widget>
         </widget>
         <widget class="QWidget" name="win">
@@ -282,7 +295,7 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <widget class="QFrame" name="frame_2">
+         <widget class="QFrame" name="winFrame">
           <property name="geometry">
            <rect>
             <x>-10</x>
@@ -297,7 +310,7 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="winLabel">
            <property name="geometry">
             <rect>
              <x>90</x>

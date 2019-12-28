@@ -2,7 +2,7 @@
 #include <QtWidgets>
 
 TextView::TextView(QWidget *parent, std::vector<std::shared_ptr<Command>> *commands, std::shared_ptr<ModelWorld> model)
-    : QWidget(parent), completer(nullptr), data_model(model), camera_center(std::make_tuple(0,0)), printSize(std::make_tuple(0,0))
+    : QWidget(parent), completer(nullptr), displayPathfinding(false), data_model(model), camera_center(std::make_tuple(0,0)), printSize(std::make_tuple(0,0)), path{nullptr}
 {  
     // Textedit:
     completingTextEdit = new TextEdit(parent, commands);
@@ -66,10 +66,23 @@ void TextView::printEntities()
                 print.append("<span style=\"color:blue; font-family: monospace;  white-space: pre; font-weight: bold;\">YOU</span>");
             else if(column->isOccupied())
                 print.append(column->getOccupant()->getTextRepresentation());
+            else if(checkIfPath(column->getXPos(), column->getYPos()))
+                print.append("<span style=\"color:firebrick; font-family: monospace;  white-space: pre;\">[|]</span>");
             else if(column->getPoisonLevel() > 0)
                 print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; font-weight: bold;\">:::</span>");
+            else if(isinf(column->getValue()))
+                print.append("<span style=\"color:lime; font-family: monospace;  white-space: pre; font-weight: bold;\">   </span>");
             else
-                print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">   </span>");
+            {
+                QString valueString;
+                int value = int(10*column->getValue());
+                if(value > 9) value = 9;
+                value = abs(value-9);
+                valueString.append(QString::fromStdString(std::to_string(value)));
+                print.append("<span style=\"color:gainsboro; font-family: monospace;  white-space: pre;\"> ");
+                print.append(valueString);
+                print.append(" </span>");
+            }
         }
         print.append("<span style=\"color:grey; font-family: monospace;  white-space: pre;\">|<br></span>");
     }
@@ -126,3 +139,34 @@ void TextView::resizeEvent(QResizeEvent *event)
     printEntities();
 }
 
+void TextView::newPathfindingResult(std::shared_ptr<std::vector<std::pair<int,int>>> result)
+{
+    path = result;
+    showPathfinding(true);
+}
+
+void TextView::showPathfinding(bool newvalue)
+{
+    displayPathfinding = newvalue;
+    printEntities(); //toegevoegd door Elias
+}
+
+void TextView::togglePathfinding()
+{
+    if(path != nullptr){ //toegevoegd door Elias, anders null pointer exception bij toggle zonder results
+        displayPathfinding = !displayPathfinding;
+        printEntities();
+    }
+}
+
+bool TextView::checkIfPath(int Xpos, int Ypos)
+{
+    if(displayPathfinding)
+    {
+        for(auto& pair : *path)
+        {
+            if(std::get<0>(pair) == Xpos && std::get<1>(pair) == Ypos) return true;
+        }
+    }
+    return false;
+}
