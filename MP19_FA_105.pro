@@ -43,7 +43,8 @@ SOURCES += \
     commandleft.cpp \
     commandright.cpp \
     aStar.cpp   \
-    commandup.cpp
+    commandup.cpp \
+    commandtogglepathfinding.cpp \
 
 
 
@@ -79,7 +80,8 @@ HEADERS += \
     commandleft.h \
     commandright.h \
     aStar.h \
-    commandup.h
+    commandup.h \
+    commandtogglepathfinding.h
 
 
 FORMS += \
