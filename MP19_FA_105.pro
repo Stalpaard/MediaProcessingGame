@@ -20,6 +20,7 @@ SOURCES += \
     commandpanleft.cpp \
     commandpanright.cpp \
     commandpanup.cpp \
+    commandtogglestrategy.cpp \
     commandzoomin.cpp \
     commandzoomout.cpp \
     entity.cpp \
@@ -54,6 +55,7 @@ HEADERS += \
     commandpanleft.h \
     commandpanright.h \
     commandpanup.h \
+    commandtogglestrategy.h \
     commandzoomin.h \
     commandzoomout.h \
     direction.h \

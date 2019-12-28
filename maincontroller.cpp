@@ -34,6 +34,7 @@ int MainController::startGameInstance(){
                 commands.emplace_back(new CommandPanUp);
                 commands.emplace_back(new CommandRight);
                 commands.emplace_back(new CommandTogglePathfinding);
+                commands.emplace_back(new CommandToggleStrategy);
                 commands.emplace_back(new CommandUp);
                 commands.emplace_back(new CommandZoomIn);
                 commands.emplace_back(new CommandZoomOut);
@@ -183,7 +184,9 @@ int MainController::startGameInstance(){
                     QObject::connect(
                         c.get(), &Command::togglePathfinding, //toggle pathfinding from command
                         &w, &MainWindow::togglePathfindingCheckbox);
-
+                    QObject::connect(
+                        c.get(), &Command::toggleStrategy, //toggle pathfinding from command
+                        &strategy, &Strategy::toggleStrategy);
                 }
                 QObject::connect(
                     model.get(), &ModelWorld::changeCameraCenter, //Update camera center

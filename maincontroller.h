@@ -23,6 +23,7 @@
 #include "commandpanright.h"
 #include "commandpanup.h"
 #include "commandtogglepathfinding.h"
+#include "commandtogglestrategy.h"
 #include "textview.h"
 
 class MainController : public QObject

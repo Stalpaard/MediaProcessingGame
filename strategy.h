@@ -27,6 +27,7 @@ private:
 public slots:
     void gameEnd();
     void enableStrategy(bool enabled);
+    void toggleStrategy();
     void nextMove();
 
 signals:

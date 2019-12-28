@@ -15,6 +15,12 @@ void Strategy::enableStrategy(bool newvalue){
     }
 }
 
+void Strategy::toggleStrategy()
+{
+    if(strategyEnabled) enableStrategy(false);
+    else enableStrategy(true);
+}
+
 void Strategy::calculateBestPath(){
     float required_energy = 0;
     float minimum_energy = 0;
