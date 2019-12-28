@@ -1,5 +1,4 @@
 #include "entity.h"
-#include <iostream>
 
 Entity::Entity(int xPosition, int yPosition, float strength, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations):
     Tile{xPosition, yPosition, strength}, state{EntityState::IDLE}, representation_index{0}, stopAnimation{false}

@@ -1,5 +1,4 @@
 #include "modelworld.h"
-#include <iostream>
 
 const int poisonRange {1};
 const int default_fieldOfView = 5;
@@ -7,7 +6,7 @@ const int deathMaxIndex = 14;
 const int idleMaxIndex = 17;
 const int walkingMaxIndex = 23;
 
-ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location)
+ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location) : game_ended{false}
 { 
     remainingEnemies = nrOfEnemies;
     emit remainingEnemiesChanged(nrOfEnemies);
@@ -22,7 +21,6 @@ ModelWorld::ModelWorld(int nrOfEnemies, int nrOfHealthpacks, QString location)
 
     initializeAnimations();
     initializeCollections();
-
 }
 
 void ModelWorld::initializeAnimations(){
@@ -92,7 +90,6 @@ void ModelWorld::initializeCollections(){
         std::shared_ptr<MyHealthpack> tempMyHealthPack = std::make_shared<MyHealthpack>(xPos, yPos, -healthPack->getValue(),healthpack_idle,healthpack_idle,healthpack_idle);
         tempMyHealthPack->setWalking(true);//TEMP
         representation_2D.at(yPos).at(xPos)->setOccupant(tempMyHealthPack);
-        myHealthPacks.push_back(tempMyHealthPack);
         myEntities.push_back(tempMyHealthPack);
     }
 
@@ -110,13 +107,11 @@ void ModelWorld::initializeCollections(){
                 this, &ModelWorld::poisonTile
             );
             representation_2D.at(yPos).at(xPos)->setOccupant(newMyPEnemy);
-            myPEnemies.push_back(newMyPEnemy);
             myEntities.push_back(newMyPEnemy);
         }
         else{
             std::shared_ptr<MyEnemy> tempMyEnemy = std::make_shared<MyEnemy>(xPos,yPos,enemy->getValue(),enemy_idle,enemy_dying,protagonist_walking);
             representation_2D.at(yPos).at(xPos)->setOccupant(tempMyEnemy);
-            myEnemies.push_back(tempMyEnemy);
             myEntities.push_back(tempMyEnemy);
         }
     }
@@ -137,7 +132,8 @@ void ModelWorld::initializeCollections(){
     );
 
     // Initialize XEnemies
-    while(myXEnemies.size() < nrOfXenemies){
+    int currentXEnemies = 0;
+    while(currentXEnemies < nrOfXenemies){
         std::pair<int,int> position = generateNewEnemyPosition();
         int xPos = std::get<0>(position);
         int yPos = std::get<1>(position);
@@ -148,7 +144,7 @@ void ModelWorld::initializeCollections(){
             this, &ModelWorld::respawnEnemy
         );
         tile->setOccupant(tempMyXenemy);
-        myXEnemies.push_back(tempMyXenemy);
+        currentXEnemies++;
         myEntities.push_back(tempMyXenemy);
     }
 
@@ -209,7 +205,6 @@ std::shared_ptr<std::vector<std::pair<int,int>>> ModelWorld::runPathfinding(Grid
     return algoResult;
 }
 
-
 //SLOTS
 
 void ModelWorld::pathfindingViewRequest(int destX, int destY){
@@ -261,14 +256,20 @@ void ModelWorld::broadcastPositionChange(int x, int y){
 void ModelWorld::broadcastHealthChange(int h){
     emit protagonistHealthChanged(h);
     if(h <= 0){
-        emit gameDefeat("Protagonist dead");
-        emit endGame();
+        if(!game_ended){
+            emit gameDefeat("Protagonist dead");
+            game_ended = true;
+            emit endGame();
+        }
     }
 }
 
 void ModelWorld::noPossibleSolution(QString reason){
-    emit gameDefeat(reason);
-    emit endGame();
+    if(!game_ended){
+        emit gameDefeat(reason);
+        game_ended = true;
+        emit endGame();
+    }
 }
 
 void ModelWorld::broadcastEnergyChange(int e){
@@ -276,7 +277,7 @@ void ModelWorld::broadcastEnergyChange(int e){
 }
 
 void ModelWorld::protagonistMoveRequested(Direction direction){
-    if(!(myProtagonist->isWalking())){
+    if(!(myProtagonist->isWalking()) && !game_ended){
         int currentX = myProtagonist->getXPos();
         int currentY = myProtagonist->getYPos();
         int newX=currentX;
@@ -334,8 +335,9 @@ void ModelWorld::protagonistMoveRequested(Direction direction){
                             myProtagonist->setEnergy(100.0f); //Defeating enemies restores energy
                             remainingEnemies--;
                             emit remainingEnemiesChanged(remainingEnemies);
-                            if(remainingEnemies == 0){
+                            if(remainingEnemies == 0 && !game_ended){
                                 emit gameVictory();
+                                game_ended = true;
                                 emit endGame();
                             }
                         }
@@ -356,33 +358,35 @@ void ModelWorld::protagonistMoveCompleted(){
 }
 
 void ModelWorld::poisonTile(float value, int x, int y){
-    //Protagonist operation first because first time no poison after defeating enemy
-    float protagonistPoison = representation_2D.at(myProtagonist->getYPos()).at(myProtagonist->getXPos())->getPoisonLevel();
-    if(protagonistPoison > 0){
-        float newHealth = myProtagonist->getHealth()-protagonistPoison;
+    if(!game_ended){
+        //Protagonist operation first because first time no poison after defeating enemy
+        float protagonistPoison = representation_2D.at(myProtagonist->getYPos()).at(myProtagonist->getXPos())->getPoisonLevel();
+        if(protagonistPoison > 0){
+            float newHealth = myProtagonist->getHealth()-protagonistPoison;
 
-        if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
-        else myProtagonist->setHealth(0);
-        std::cout << "Protagonist took " << protagonistPoison << " poison damage!" << std::endl;
-    }
+            if(newHealth > 0) myProtagonist->setHealth(myProtagonist->getHealth()-protagonistPoison);
+            else myProtagonist->setHealth(0);
+            std::cout << "Protagonist took " << protagonistPoison << " poison damage!" << std::endl;
+        }
 
-    //Set poison levels and pass pairs of (int,int) to views
-    int startY = y-poisonRange;
-    int startX = x-poisonRange;
-    std::vector<std::pair<int,int>> pairs;
+        //Set poison levels and pass pairs of (int,int) to views
+        int startY = y-poisonRange;
+        int startX = x-poisonRange;
+        std::vector<std::pair<int,int>> pairs;
 
-    for(int i = 0; i <= 2*poisonRange; i++){
-        for(int j = 0; j <= 2*poisonRange; j++){
-            int tileX = startX+i;
-            int tileY = startY+j;
-            if(tileX >= 0 && tileY >= 0 && tileX < rows && tileY < columns){
-                pairs.push_back(std::make_pair(tileX,tileY));
-                if(value < 0) representation_2D.at(tileY).at(tileX)->setPoisonLevel(0);
-                else representation_2D.at(tileY).at(tileX)->setPoisonLevel(value);
+        for(int i = 0; i <= 2*poisonRange; i++){
+            for(int j = 0; j <= 2*poisonRange; j++){
+                int tileX = startX+i;
+                int tileY = startY+j;
+                if(tileX >= 0 && tileY >= 0 && tileX < rows && tileY < columns){
+                    pairs.push_back(std::make_pair(tileX,tileY));
+                    if(value < 0) representation_2D.at(tileY).at(tileX)->setPoisonLevel(0);
+                    else representation_2D.at(tileY).at(tileX)->setPoisonLevel(value);
+                }
             }
         }
+        emit poisonVisualChange(pairs, value);
     }
-    emit poisonVisualChange(pairs, value);
 }
 
 

@@ -1,6 +1,11 @@
 #ifndef MAINCONTROLLER_H
 #define MAINCONTROLLER_H
 
+#include <QApplication>
+#include <QProcess>
+#include <QFileDialog>
+#include <QInputDialog>
+
 #include "mainwindow.h"
 #include "modelworld.h"
 #include "strategy.h"
@@ -20,19 +25,16 @@
 #include "commandtogglepathfinding.h"
 #include "textview.h"
 
-#include <QApplication>
-#include <QProcess>
-#include <QFileDialog>
-#include <QInputDialog>
-
-
 class MainController : public QObject
 {
 public:
     MainController(QApplication& a);
+    ~MainController() override = default;
     int startGameInstance();
+
 private:
     QApplication& app;
+
 public slots:
     void quitApp();
     void openNewWorld();

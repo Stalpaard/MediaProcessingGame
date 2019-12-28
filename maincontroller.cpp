@@ -107,10 +107,6 @@ int MainController::startGameInstance(){
                     &scene, &MyGraphicsScene::updateFitScene, //Update view so whole scene fits in it
                     &view, &GraphicalView::fitScene
                 );
-                QObject::connect(
-                    model.get(), &ModelWorld::endGame, //Disable input in GraphicalView
-                    &view, &GraphicalView::toggleKeyEvents
-                );
                     //MyGraphicsScene updates
                 QObject::connect(
                     &view, &GraphicalView::pan,

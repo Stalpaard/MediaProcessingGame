@@ -7,6 +7,8 @@ class MyHealthpack : public Entity
 {
 public:
     MyHealthpack(int xPosition, int yPosition, float health, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> idle_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> death_animations, std::shared_ptr<std::vector<std::shared_ptr<QImage>>> walking_animations);
+    ~MyHealthpack() override = default;
+
     virtual void deathAction() override{}
     virtual QString getTextRepresentation() override;
 };

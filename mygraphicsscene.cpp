@@ -1,5 +1,4 @@
 #include "mygraphicsscene.h"
-#include <iostream>
 
 const int defaultAnimationMillisec = 15;
 

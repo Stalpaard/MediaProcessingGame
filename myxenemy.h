@@ -3,7 +3,6 @@
 
 #include "entity.h"
 
-
 class MyXEnemy : public Entity
 {
     Q_OBJECT
